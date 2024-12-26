@@ -1,0 +1,2 @@
+google_api_keyとserpapi_keyをlocal_migration.pyに入力してください。
+あとはstreamlit run app.pyで起動できます。
