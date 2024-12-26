@@ -1,0 +1,146 @@
+/* リセットと基本のスタイル */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+/* ヘッダーのスタイル */
+header {
+    display: flex;
+    justify-content: space-between; /* ロゴとナビゲーションを両端に配置 */
+    align-items: center; /* 縦方向に中央揃え */
+    padding: 20px 31px;
+    background-color:white; /* ヘッダーの背景色 */
+    color: black; /* 文字色 */
+    }
+
+    header .logo img {
+        max-height: 50px; /* ロゴの最大高さ */
+      }
+
+      nav ul {
+        list-style: none;
+        display: flex; /* 水平にメニューアイテムを並べる */
+        margin: 0;
+        padding: 0;
+      }
+      
+      nav ul li {
+        margin-left: 40px; /* メニューアイテム間の余白 */
+      }
+      
+      nav ul li a {
+        text-decoration: none; /* 下線を削除 */
+        color: black; /* 文字色 */
+        font-size: 16px;
+        font-weight: bold;
+        transition: color 0.3s ease; /* ホバー時の色変更にスムーズなトランジションを追加 */
+      }
+      
+      nav ul li a:hover {
+        color: #f39c12; /* ホバー時の文字色 */
+      }
+      
+      /* サイト紹介エリア */
+.intro {
+    display: flex;
+    padding: 40px 30px;
+    background-color: #fff;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.intro-image img {
+    max-width: 80%;
+    border-radius: 8px;
+}
+
+.intro-text {
+    max-width: 45%;
+}
+
+.intro-text h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.intro-text p {
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+
+
+/* 地域マッチングエリア */
+.matching {
+    padding: 30px;
+    text-align: center;
+    background: #F5F9FB; 
+    margin: 20px 0;
+}
+
+.matching h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.matching p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.matching button {
+    padding: 15px 30px;
+    background-color: #28a745;
+    color: white;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.matching button:hover {
+    background-color: #218838;
+}
+
+/* フッター */
+footer {
+    background-color: #F5F9FB;
+    color: black;
+    text-align: center;
+    padding: 44px 0 36px; 
+    margin-top: 30px;
+}
+
+footer p {
+    font-size: 1rem;
+}
+ /* レスポンシブ対応 */
+      @media (max-width: 768px) {
+        header {
+          flex-direction: column; /* ヘッダーの要素を縦に並べる */
+          align-items: flex-start;
+        }
+      
+        nav ul {
+          flex-direction: column; /* メニューアイテムを縦に並べる */
+          margin-top: 10px;
+        }
+      
+        nav ul li {
+          margin-left: 0;
+          margin-bottom: 10px; /* メニューアイテム間の縦の余白 */
+        }
+      }
+
+
+    
