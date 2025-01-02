@@ -1,0 +1,104 @@
+/* 全体設定 */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    margin: 0;
+    overflow-y: auto; /* 允许垂直滚动 */
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin-top: 20px; /* 加一点顶部间距 */
+    min-height: 100%; /* 使容器最小高度为视口的高度 */
+    overflow-y: auto; /* 允许垂直滚动 */
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+fieldset {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+legend {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px; 
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.results {
+    display: none;
+    margin-top: 30px;
+    max-height: 400px; /* 限制结果区域最大高度 */
+    overflow-y: auto; /* 允许垂直滚动 */
+}
+
+.results h2 {
+    text-align: center;
+    color: #333;
+}
+
+#results-list {
+    list-style: none;
+    padding: 0;
+}
+
+#results-list li {
+    background-color: #f9f9f9;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+
