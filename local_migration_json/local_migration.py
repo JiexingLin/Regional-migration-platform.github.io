@@ -1,5 +1,6 @@
 import os
 import json
+import asyncio
 from typing import Dict, List
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
@@ -71,25 +72,39 @@ class JapaneseMigrationAgent:
         self.location_recommendation_prompt = PromptTemplate(
             input_variables=['user_profile', 'search_results'],
             template="""
-            ユーザー情報と検索結果に基づき、ユーザー情報にある地域に基づき、適切な日本移住先を推奨してください、市まで特定してください：
-
+            あなたは地方移住コンサルタントとして、以下のユーザー情報と検索結果に基づいて、制約に従って回答してください：
             ユーザー情報：
             {user_profile}
 
             検索結果：
             {search_results}
-
-            以下の形式で推奨地域と詳細な理由を出力してください：
-            1. 地域名
-            - 推奨理由
-            - 生活に適した特徴
-            - 関連支援政策
-
-            2. 地域名
-            - 推奨理由
-            - 生活に適した特徴
-            - 関連支援政策
-            ...
+            制約：
+            - 人口30万人以下の地域を「地方」、人口10万人以下の地域を「特に地方」とする
+            - 大都市圏は除外する
+            - 提案は具体的な市町村レベルまで三つを特定する
+            - 提案する地域はユーザーの優先地域の中から選ぶ
+            - 各地域について3つの観点（推奨理由、特徴、支援政策）で説明する
+            - 各説明は200文字以内で簡潔に記述する
+            - 必ず以下のJSON形式だけで出力してください,JSON以外の出力は絶対不要：
+            {{
+                "locations": [
+                    {{
+                        "name": "地域名",
+                        "reasons": [
+                            "理由1",
+                            "理由2"
+                        ],
+                        "features": [
+                            "特徴1",
+                            "特徴2"
+                        ],
+                        "policies": [
+                            "政策1",
+                            "政策2"
+                        ]
+                    }}
+                ]
+            }}
             """
         )
         
@@ -97,25 +112,46 @@ class JapaneseMigrationAgent:
         self.life_plan_prompt = PromptTemplate(
             input_variables=['user_profile', 'recommended_locations'],
             template="""
-            日本での移住生活に関する詳細な計画提案を提供してください：
-
+            あなたは地方移住コンサルタントとして、以下のユーザー情報と検索結果に基づいて、制約に従って移住計画を提案してください：
             ユーザー情報：
             {user_profile}
 
             推奨地域：
             {recommended_locations}
+            制約：
+            - 各フェーズの計画は具体的で実行可能な内容にする
+            - 各ステップは150文字以内で簡潔に記述する
+            - ユーザーの職業と家族構成を考慮する
+            - 地域特性を活かした提案をする
+            - 時系列に沿って段階的に計画を立てる
+            - 必ず以下のJSON形式で出力してください,JSON以外の出力は絶対不要：
 
-            以下を考えに含む移住生活計画を提供してください：
-            1. 初期適応アドバイス
-            2. キャリア発展パス
-            3. 社会生活とコミュニケーションの提案
-            4. 長期的な発展計画
-
-            そして計画は以下の形式で提案してください：
-            1. 移住準備（6ヶ月前～移住1ヶ月前）の計画
-            2. 移住初期（移住後3ヶ月）の計画
-            3. 定着と発展（移住後1年後～）の計画
             
+
+            以下のJSON形式で出力してください：
+            {{
+                "preparation": {{
+                    "period": "6ヶ月前～移住1ヶ月前",
+                    "steps": [
+                        "ステップ1",
+                        "ステップ2"
+                    ]
+                }},
+                "initial": {{
+                    "period": "移住後3ヶ月",
+                    "steps": [
+                        "ステップ1",
+                        "ステップ2"
+                    ]
+                }},
+                "settlement": {{
+                    "period": "移住後1年後～",
+                    "steps": [
+                        "ステップ1",
+                        "ステップ2"
+                    ]
+                }}
+            }}
             """
         )
         
@@ -144,86 +180,96 @@ class JapaneseMigrationAgent:
             )
         ]
         
-        # 初始化Agent
-        self.agent = initialize_agent(
-            tools=self.tools,
-            llm=self.llm,
-            agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,
-            memory=self.memory,
-            verbose=True
+        # # 初始化Agent
+        # self.agent = initialize_agent(
+        #     tools=self.tools,
+        #     llm=self.llm,
+        #     agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,
+        #     memory=self.memory,
+        #     verbose=True
+        # )
+    
+    async def generate_locations(self, user_profile: Dict) -> str:
+        """
+        生成推荐地点
+        """
+        profile_str = "\n".join([f"{k}: {str(v)}" for k, v in user_profile.items()])
+        
+        # 搜索相关资源
+        search_results = {}
+        for question in self.profile_analysis_chain.run(user_profile=profile_str).split('\n'):
+            if question.strip():
+                search_results[question] = self.search.run(question)
+        
+        # 生成推荐地点
+        response = self.location_recommendation_chain.run(
+            user_profile=profile_str,
+            search_results=str(search_results)
         )
+        # 清理响应中的markdown标记
+        response = response.replace('```json\n', '').replace('\n```', '').strip()
+        
+        try:
+            # 验证JSON格式
+            json.loads(response)
+            return response
+        except json.JSONDecodeError as e:
+            print(f"JSON解析错误: {e}")
+            raise
+
+    async def generate_life_plan(self, user_profile: Dict, recommended_locations: str) -> str:
+        """
+        生成生活规划
+        """
+        profile_str = "\n".join([f"{k}: {str(v)}" for k, v in user_profile.items()])
+        
+        response = self.life_plan_chain.run(
+            user_profile=profile_str,
+            recommended_locations=recommended_locations
+        )
+        response = response.replace('```json\n', '').replace('\n```', '').strip()
+        
+        try:
+            json.loads(response)
+            return response
+        except json.JSONDecodeError as e:
+            print(f"JSON解析错误: {e}")
+            raise 
     
     def process_migration_consultation(self, user_profile: Dict) -> Dict:
         """
-        执行完整的移居咨询流程并保存为JSON
-        
-        :param user_profile: 用户信息
-        :return: 咨询结果
+        执行完整的移居咨询流程
         """
-        # 转换用户配置为字符串
-        profile_str = "\n".join([f"{k}: {str(v)}" for k, v in user_profile.items()])
-        
         try:
-            # 分析用户画像，获取子问题
-            sub_questions = self.profile_analysis_chain.run(
-                user_profile=profile_str
-            )
+            # 生成推荐地点和生活计划
+            recommended_locations = asyncio.run(self.generate_locations(user_profile))
+            life_plan = asyncio.run(self.generate_life_plan(user_profile, recommended_locations))
             
-            # 搜索相关资源
-            search_results = {}
-            for question in sub_questions.split('\n'):
-                if question.strip():
-                    search_results[question] = self.search.run(question)
             
-            # 推荐移居地点
-            recommended_locations = self.location_recommendation_chain.run(
-                user_profile=profile_str,
-                search_results=str(search_results)
-            )
-            
-            # 规划生活
-            life_plan = self.life_plan_chain.run(
-                user_profile=profile_str,
-                recommended_locations=recommended_locations
-            )
-            
-            # 准备JSON数据
             result = {
                 "timestamp": datetime.now().strftime("%Y%m%d_%H%M%S"),
                 "user_profile": user_profile,
-                "consultation_result": {
-                    "sub_questions": sub_questions,
-                    "search_results": search_results,
-                    "recommended_locations": recommended_locations,
-                    "life_plan": life_plan
+                "recommended_locations": recommended_locations,
+                "life_plan": life_plan
                 }
-            }
+            
             
             # 保存为JSON文件
-            self._save_to_json(result)
+            try:
+                if not os.path.exists('data'):
+                    os.makedirs('data')
+                filename = f"data/migration_consultation_{result['timestamp']}.json"
+                with open(filename, 'w', encoding='utf-8') as f:
+                    json.dump(result, f, ensure_ascii=False, indent=2)
+                print(f"結果を{filename}に保存しました。")
+            except Exception as e:
+                print(f"JSONファイルの保存中にエラーが発生しました: {e}")
             
             return result
+            
         except Exception as e:
             print(f"処理中にエラーが発生しました: {e}")
             return {}
-
-    def _save_to_json(self, result: Dict):
-        """
-        将结果保存为JSON文件
-        
-        :param result: 咨询结果
-        """
-        try:
-            timestamp = result["timestamp"]
-            filename = f"migration_consultation_{timestamp}.json"
-            
-            with open("./data/"+filename, 'w', encoding='utf-8') as f:
-                json.dump(result, f, ensure_ascii=False, indent=2)
-                
-            print(f"結果を{filename}に保存しました。")
-            
-        except Exception as e:
-            print(f"JSONファイルの保存中にエラーが発生しました: {e}")
 
 def main():
     try:
