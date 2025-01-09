@@ -205,8 +205,7 @@ def main():
                 f"{history_text}\n\n"
                 "上記を踏まえ、次の要件を満たす質問を3つ提案してください。\n"
                 "1. ユーザーが興味を持ちそうな質問を3つ\n"
-                "2. いずれの質問も、新たにWeb検索をしなくても答えられる内容にする\n\n"
-                "回答は質問だけを箇条書きで提案したものをください"
+                "2. いずれの質問も、Web検索で情報を集めるのが困難でない\n\n"
             )
 
             suggestion_response = llm.invoke(suggestion_prompt)
@@ -230,8 +229,7 @@ def main():
                 memory.chat_memory.add_message(
                     AIMessage(content=f"質問の提案:\n{suggestion_text}")
                 )
-            else:
-                st.info("次に続きそうな質問の提案が得られませんでした。")
+
 
         except Exception as e:
             st.error(f"次の質問提案の生成でエラーが発生しました: {e}")
