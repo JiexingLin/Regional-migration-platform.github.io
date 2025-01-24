@@ -16,9 +16,10 @@ pip install streamlit beautifulsoup4 python-dotenv langchain_google_genai langch
 
 #### 4. 環境変数の設定
 
-.envファイルを作成し、発行したGemini API Key, Google API Key, 検索エンジンIDを以下のように追記
+./streamlit/secrets.tomlファイルを作成し、発行したGemini API Key, Google API Key, 検索エンジンIDを以下のように追記
 
 ```
+[general]
 GEMINI_API_KEY = 'あなたのGEMINI APIキー'
 GOOGLE_API_KEY = 'あなたのGOOGLE APIキー'
 CUSTOM_SEARCH_ENGINE_ID = 'あなたの検索エンジンID'

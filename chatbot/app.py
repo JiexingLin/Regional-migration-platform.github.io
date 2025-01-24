@@ -1,7 +1,5 @@
-import os
 import requests
 import streamlit as st
-from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.memory import ConversationSummaryMemory
 from langchain.schema import AIMessage, HumanMessage
@@ -81,10 +79,9 @@ def main():
     st.title("地方移住サポート ChatBot")
 
     # 環境変数の読み込み
-    load_dotenv()
-    GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-    CUSTOM_SEARCH_ENGINE_ID = os.getenv("CUSTOM_SEARCH_ENGINE_ID")
-    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+    GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
+    CUSTOM_SEARCH_ENGINE_ID = st.secrets["CUSTOM_SEARCH_ENGINE_ID"]
+    GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 
     #APIが.envに設定されているのかを確認
     if not GOOGLE_API_KEY or not CUSTOM_SEARCH_ENGINE_ID:
