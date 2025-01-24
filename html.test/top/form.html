@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お問い合わせフォーム</title>
+    <link rel="stylesheet" href="form.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="logo.png" alt="サイトのロゴ">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="https://hogugu.com">私たちについて</a></li>
+                <li><a href="https://hogugu.com">チャットボット</a></li>
+                <li><a href="search/search.html">地域マッチング</a></li>
+                <li><a href="https://hogugu.com">よくあるご質問</a></li>
+                <li><a href="https://hogugu.com">お問い合わせ</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="main-content">
+        <section class="form-container">
+            <h1>お問い合わせフォーム</h1>
+            <form action="example.php" method="POST">
+                <label for="name">お名前</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="email">メールアドレス</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="phone">電話番号(ハイフンなし)</label>
+                <input type="tel" id="phone" name="phone" pattern="[0-9]{3}[0-9]{4}[0-9]{4}" required>
+
+                <label for="message">お問い合わせ内容</label>
+                <textarea id="message" name="message" rows="6" required></textarea>
+
+                <button type="submit">送信</button>
+            </form>
+        </section>
+    </div>
+    <script>
+        const inputs = document.querySelectorAll('input, textarea');
+
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                if (input.checkValidity()) {
+                    input.style.borderColor = 'black';
+                } else {
+                    input.style.borderColor = 'red';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
