@@ -1,0 +1,141 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.formGroup {
+  margin-bottom: 15px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.formGroup input,
+.formGroup select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.fieldset {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.legend {
+  padding: 0 10px;
+  font-weight: bold;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.submitButton:hover {
+  background-color: #0056b3;
+}
+
+.results {
+  margin-top: 30px;
+}
+
+.results h2 {
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 10px;
+}
+
+.resultsList {
+  list-style: none;
+  padding: 0;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  font-size: 1.2em;
+  color: #666;
+}
+
+.locationCard {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.locationCard h3 {
+  color: #007bff;
+  margin-bottom: 15px;
+}
+
+.locationCard h4 {
+  color: #495057;
+  margin: 15px 0 10px;
+}
+
+.locationCard ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.locationCard li {
+  margin-bottom: 8px;
+  padding-left: 20px;
+  position: relative;
+}
+
+.locationCard li:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #007bff;
+}
+
+.lifePlanSection {
+  margin-top: 40px;
+}
+
+.planPhase {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.planPhase h4 {
+  color: #007bff;
+  margin-bottom: 15px;
+}
+
+.planPhase ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.planPhase li {
+  margin-bottom: 10px;
+  padding-left: 25px;
+  position: relative;
+}
+
+.planPhase li:before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: #007bff;
+} 
