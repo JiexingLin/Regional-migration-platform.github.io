@@ -19,50 +19,58 @@ body {
 /* ヘッダーのスタイル */
 header {
     display: flex;
-    justify-content: space-between; /* ロゴとナビゲーションを両端に配置 */
-    align-items: center; /* 縦方向に中央揃え */
+    justify-content: space-between;
+    align-items: center;
     padding: 20px 31px;
-    background-color:white; /* ヘッダーの背景色 */
+    background: linear-gradient(
+        to bottom,
+        rgb(12, 135, 47) 10%,
+        rgba(177, 174, 174, 0.5) 100%
+    );
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    color: black;
+    position: relative;
+    z-index: 2; /* 确保header在最上层 */
+}
+
+header .logo img {
+    max-height: 50px; /* ロゴの最大高さ */
+}
+
+nav ul {
+    list-style: none;
+    display: flex; /* 水平にメニューアイテムを並べる */
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    margin-left: 40px; /* メニューアイテム間の余白 */
+}
+
+nav ul li a {
+    text-decoration: none; /* 下線を削除 */
     color: black; /* 文字色 */
-    }
+    font-size: 16px;
+    font-weight: bold;
+    transition: color 0.3s ease; /* ホバー時の色変更にスムーズなトランジションを追加 */
+}
 
-    header .logo img {
-        max-height: 50px; /* ロゴの最大高さ */
-      }
+.active {
+    color: #f39c12; /* 高亮颜色 */
+    font-weight: bold;
+}
 
-      nav ul {
-        list-style: none;
-        display: flex; /* 水平にメニューアイテムを並べる */
-        margin: 0;
-        padding: 0;
-      }
-      
-      nav ul li {
-        margin-left: 40px; /* メニューアイテム間の余白 */
-      }
-      
-      nav ul li a {
-        text-decoration: none; /* 下線を削除 */
-        color: black; /* 文字色 */
-        font-size: 16px;
-        font-weight: bold;
-        transition: color 0.3s ease; /* ホバー時の色変更にスムーズなトランジションを追加 */
-      }
+nav ul li a:hover {
+    color: #f39c12; /* ホバー時の文字色 */
+}
 
-      .active {
-        color: #f39c12; /* 高亮颜色 */
-        font-weight: bold;
-      }
-      
-      nav ul li a:hover {
-        color: #f39c12; /* ホバー時の文字色 */
-      }
-      
-      /* サイト紹介エリア */
+/* サイト紹介エリア */
 .intro {
     display: flex;
     padding: 40px 30px;
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.5); /* 降低不透明度 */
+    backdrop-filter: blur(5px);
     justify-content: space-between;
     align-items: center;
 }
@@ -74,6 +82,12 @@ header {
 
 .intro-text {
     max-width: 45%;
+    color: #333;
+    background-color: rgba(255, 255, 255, 0); /* 降低不透明度 */
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 60px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .intro-text h2 {
@@ -86,14 +100,15 @@ header {
     line-height: 1.5;
 }
 
-
-
 /* 地域マッチングエリア */
 .matching {
-    padding: 30px;
+    padding: 20px;
     text-align: center;
-    background: #F5F9FB; 
-    margin: 20px 0;
+    background-color: rgba(255, 255, 255, 0.5); /* 降低不透明度 */
+    backdrop-filter: blur(5px); /* 添加模糊效果 */
+    border-radius: 8px;
+    margin-top: 40px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 添加轻微阴影 */
 }
 
 .matching h2 {
@@ -123,7 +138,8 @@ header {
 
 /* フッター */
 footer {
-    background-color: #F5F9FB;
+    background-color: rgba(245, 249, 251, 0.5); /* 改为半透明 */
+    backdrop-filter: blur(5px);
     color: black;
     text-align: center;
     padding: 44px 0 36px; 
@@ -133,20 +149,39 @@ footer {
 footer p {
     font-size: 1rem;
 }
- /* レスポンシブ対応 */
-      @media (max-width: 768px) {
-        header {
-          flex-direction: column; /* ヘッダーの要素を縦に並べる */
-          align-items: flex-start;
-        }
-      
-        nav ul {
-          flex-direction: column; /* メニューアイテムを縦に並べる */
-          margin-top: 10px;
-        }
-      
-        nav ul li {
-          margin-left: 0;
-          margin-bottom: 10px; /* メニューアイテム間の縦の余白 */
-        }
-      }
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column; /* ヘッダーの要素を縦に並べる */
+        align-items: flex-start;
+    }
+
+    nav ul {
+        flex-direction: column; /* メニューアイテムを縦に並べる */
+        margin-top: 10px;
+    }
+
+    nav ul li {
+        margin-left: 0;
+        margin-bottom: 10px; /* メニューアイテム間の縦の余白 */
+    }
+}
+
+.header-layout {
+    position: relative;
+    min-height: 100vh;
+}
+
+.content-wrapper {
+    position: relative;
+    z-index: 1; /* 确保内容在最上层 */
+    padding: 20px;
+}
+
+/* 添加hover效果 */
+.intro-text:hover,
+.matching:hover {
+    background-color: rgba(255, 255, 255, 0.6);
+    transition: background-color 0.3s ease;
+}
