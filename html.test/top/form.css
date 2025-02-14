@@ -1,28 +1,15 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    margin: 0;
-    padding: 0;
+    line-height: 1.6;
+    background-color: #f4f4f4;
+    color: #333;
 }
 
-.main-content {
+.form-content {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: calc(100vh - 80px);
-}
-
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 31px;
-    background-color: white;
-    color: black;
-}
-
-header .logo img {
-    max-height: 50px;
 }
 
 nav ul {

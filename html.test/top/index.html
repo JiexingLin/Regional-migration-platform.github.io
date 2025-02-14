@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>地域移住</title>
   <link rel="stylesheet" href="style.css">
+  
   <meta name="description" content="">
 
   <meta property="og:title" content="">
@@ -20,6 +21,8 @@
 
   <link rel="manifest" href="site.webmanifest">
   <meta name="theme-color" content="#fafafa">
+  <script src="js/app.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -32,51 +35,62 @@
       <ul>
         <li><a href="https://hogugu.com">私たちについて</a></li>
         <li><a href="https://hogugu.com">チャットボット</a></li>
-        <li><a href="search/search.html">地域マッチング</a></li>
+        <li><a href="../search/search.html">地域マッチング</a></li>
         <li><a href="https://hogugu.com">よくあるご質問</a></li>
-        <li><a href="https://hogugu.com">お問い合わせ</a></li>
+        <li><a class="contact-header-button">お問い合わせ</a></li>
       </ul>
     </nav>
   </header>
   
- <!-- サイト宣伝と紹介 -->
-  <section class="intro">
-    <div class="intro-image">
-        <img src="image.png" alt="移住イメージ">
-    </div>
-    <div class="intro-text">
-        <h2>あなたの新しい暮らしがここに</h2>
-        <p>地方での暮らしを考え始めたあなたへ。私たちのサイトでは、地域ごとの生活情報や移住者同士のマッチング機能を提供しています。</p>
-    </div>
-</section>
-
-       
-        <!-- 地域マッチングボタン -->
+  <section class="main-content">
+  <!-- サイト宣伝と紹介 -->
+    <section class="intro">
+      <div class="intro-image">
+          <img src="image.png" alt="移住イメージ">
+      </div>
+      <div class="intro-text">
+          <h2>あなたの新しい暮らしがここに</h2>
+          <p>地方での暮らしを考え始めたあなたへ。私たちのサイトでは、地域ごとの生活情報や移住者同士のマッチング機能を提供しています。</p>
+      </div>
+    </section>
+          <!-- 地域マッチングボタン -->
         <section class="matching">
           <h2>地域マッチング</h2>
           <p>あなたにぴったりの移住先を見つけよう！</p>
           <button onclick="window.location.href='#'">マッチングを始める</button>
-      </section>
-      <!-- お問い合わせエリア -->
-      <section class="contact-section">
-        <div class="contact-container">
-          <h1 class="contact-title">お問い合わせ</h1>
-          <p class="contact-description">
-            ご依頼やご相談など、まずはお気軽にお問い合わせください!
-          </p>
-          <a href="mailto:info@careercampas.com" class="contact-email">info@careercampas.com</a>
-          <a href="form.html" class="contact-button">お問い合わせ</a><!-- ここは〇〇.htmlに変更する -->
-        </div>
-      </section>
-      <!-- フッター -->
-      <footer>
-          <p>&copy; 2024 地方移住者サイト | すべての権利を保有</p>
-      </footer>
-  
-      <!-- Add your site or application content here -->
-  <p> </p>
-  <script src="js/app.js"></script>
-
+        </section>
+        <!-- お問い合わせエリア -->
+        <section class="contact-section">
+          <div class="contact-container">
+            <h1 class="contact-title">お問い合わせ</h1>
+            <p class="contact-description">
+              ご依頼やご相談など、まずはお気軽にお問い合わせください!
+            </p>
+            <a href="mailto:info@info.com" class="contact-email">info@info.com</a>
+            <input type="button" class="contact-button" value="お問い合わせ">
+          </div>
+        </section>
+  </section>
+  <!-- フッター -->
+  <footer>
+      <p>&copy; 2024 地方移住者サイト | すべての権利を保有</p>
+  </footer>
+  <script>
+    //.contact_buttonが押されるとajax通信を行う
+    $(function(){
+      $(document).on('click', '.contact-header-button, .contact-button', function(){
+        $.ajax({
+            url: 'form.html',
+            type: 'GET',
+            dataType: 'html'
+          }).done(function(data){
+            $('.main-content').html(data); // フォームのHTMLを読み込む
+          }).fail(function(){
+            alert('通信失敗！');
+        });
+      });
+    });
+    </script>
 </body>
 
 </html>

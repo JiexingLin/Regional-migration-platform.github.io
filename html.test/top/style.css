@@ -14,40 +14,40 @@ body {
 
 /* ヘッダーのスタイル */
 header {
-    display: flex;
-    justify-content: space-between; /* ロゴとナビゲーションを両端に配置 */
-    align-items: center; /* 縦方向に中央揃え */
-    padding: 20px 31px;
-    background-color:white; /* ヘッダーの背景色 */
-    color: black; /* 文字色 */
-    }
+  display: flex;
+  justify-content: space-between; /* ロゴとナビゲーションを両端に配置 */
+  align-items: center; /* 縦方向に中央揃え */
+  padding: 20px 31px;
+  background-color:white; /* ヘッダーの背景色 */
+  color: black; /* 文字色 */
+}
 
-    header .logo img {
-        max-height: 50px; /* ロゴの最大高さ */
-      }
+header .logo img {
+  max-height: 50px; /* ロゴの最大高さ */
+}
 
-      nav ul {
-        list-style: none;
-        display: flex; /* 水平にメニューアイテムを並べる */
-        margin: 0;
-        padding: 0;
-      }
-      
-      nav ul li {
-        margin-left: 40px; /* メニューアイテム間の余白 */
-      }
-      
-      nav ul li a {
-        text-decoration: none; /* 下線を削除 */
-        color: black; /* 文字色 */
-        font-size: 16px;
-        font-weight: bold;
-        transition: color 0.3s ease; /* ホバー時の色変更にスムーズなトランジションを追加 */
-      }
-      
-      nav ul li a:hover {
-        color: #f39c12; /* ホバー時の文字色 */
-      }
+nav ul {
+  list-style: none;
+  display: flex; /* 水平にメニューアイテムを並べる */
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li {
+  margin-left: 40px; /* メニューアイテム間の余白 */
+}
+
+nav ul li a {
+  text-decoration: none; /* 下線を削除 */
+  color: black; /* 文字色 */
+  font-size: 16px;
+  font-weight: bold;
+  transition: color 0.3s ease; /* ホバー時の色変更にスムーズなトランジションを追加 */
+}
+
+nav ul li a:hover {
+  color: #f39c12; /* ホバー時の文字色 */
+}
       
       /* サイト紹介エリア */
 .intro {
@@ -76,8 +76,6 @@ header {
     font-size: 1.1rem;
     line-height: 1.5;
 }
-
-
 
 /* 地域マッチングエリア */
 .matching {
@@ -241,6 +239,3 @@ footer p {
           margin-bottom: 10px; /* メニューアイテム間の縦の余白 */
         }
       }
-
-
-    
