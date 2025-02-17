@@ -18,17 +18,24 @@
   <meta name="theme-color" content="#fafafa">
 </head>
 <body>
-  <header>
+
+  <header id="top">
     <div class="logo">
       <img src="logo.png" alt="イジュカツ">
     </div>
     <nav>
       <ul>
-        <li><a href="https://hogugu.com">私たちについて</a></li>
-        <li><a href="https://hogugu.com">チャットボット</a></li>
-        <li><a href="file:///Users/linjiexing/Documents/html.test/search/search.html">地域マッチング</a></li>
-        <li><a href="file:///Users/linjiexing/Documents/html.test/faq/faq.html">よくあるご質問</a></li>
-        <li><a href="https://hogugu.com">お問い合わせ</a></li>
+          <li><button class="scrollBtn" data-target="section1">私たちについて</button></li>
+          <li><button class="scrollBtn" data-target="section2">チャットボット</button></li>
+          <li>
+            <a href="#section3"><button class="scrollBtn" data-target="section3">地域マッチング</button></a>
+          </li>
+          <li>
+            <button class="scrollBtn" data-target="section4">よくあるご質問</button>
+          </li>
+          <li>
+            <a href="#contact-section"><button class="scrollBtn" data-target="contact-section">お問い合わせ</button></a>
+          </li>
       </ul>
     </nav>
   </header>
@@ -49,8 +56,23 @@
       <h2>
           <span>地方移住の魅力</span>
       </h2>
+
+<!-- 地域マッチングボタン -->
+<section class="matching" id="section3">
+    <h2>地域マッチング</h2>
+    <p>あなたにぴったりの移住先を見つけよう！</p>
+    <button onclick="window.location.href='#'"><a href="../search/search.html">マッチングを始める</a></button>
+</section>
+
+      <!-- ポップアップモーダル -->
+  <div id="privacy-policy-modal" class="modal-overlay">
+    <div class="modal-content">
+      <span class="close-btn" id="close-modal-btn">&times;</span>
+      <h2>GDPRプライバシーポリシー</h2>
       <p>
-         地方移住には、都会暮らしにはない魅力がたくさんあります。その一部をご紹介します。</p>
+         地方移住には、都会暮らしにはない魅力がたくさんあります。その一部をご紹介します。
+      </p>
+      <br />
   </div>
   <div class="points">
       <div class="points__element">
@@ -104,31 +126,37 @@
   </div>
 </div>
        
-        <!-- 地域マッチングボタン -->
-        <section class="matching">
-          <h2>地域マッチング</h2>
-          <p>あなたにぴったりの移住先を見つけよう！</p>
-          <button onclick="window.location.href='maching/maching.html'">マッチングを始める</button>
-      </section>
+  <!-- 地域マッチングボタン -->
+  <section class="matching">
+      <h2>地域マッチング</h2>
+      <p>あなたにぴったりの移住先を見つけよう！</p>
+      <button onclick="window.location.href='maching/maching.html'">マッチングを始める</button>
+  </section>
 
-      <!-- お問い合わせエリア -->
-      <section class="contact-section">
-        <div class="contact-container">
-          <h1 class="contact-title">お問い合わせ</h1>
-          <p class="contact-description">
-            ご依頼やご相談など、まずはお気軽にお問い合わせください!
-          </p>
-          <a href="mailto:info@careercampas.com" class="contact-email">info@careercampas.com</a>
-          <a href="form.html" class="contact-button">お問い合わせ</a><!-- ここは〇〇.htmlに変更する -->
-        </div>
-      </section>
-      <!-- フッター -->
-      <footer>
-          <p>&copy; 2024 地方移住者サイト | すべての権利を保有</p>
-      </footer>
+  <!-- お問い合わせエリア -->
+  <section class="contact-section" id="contact-section">
+    <div class="contact-container">
+      <h1 class="contact-title">お問い合わせ</h1>
+      <p class="contact-description">
+        ご依頼やご相談など、まずはお気軽にお問い合わせください!
+      </p>
+      <a href="mailto:info@careercampas.com" class="contact-email">info@careercampas.com</a>
+      <a href="form.html" class="contact-button">お問い合わせ</a><!-- ここは〇〇.htmlに変更する -->
+    </div>
+  </section>
+  <!-- フッター -->
+  <footer>
+      <p>&copy; 2024 地方移住者サイト | すべての権利を保有</p>
+  </footer>
   
-      <!-- Add your site or application content here -->
+  <!-- Add your site or application content here -->
   <p> </p>
   <script src="js/app.js"></script>
+  <div id="back-to-top-button">
+    <a href="#top"><button>⇧</button></a>
+  </div>
+
+  <script src="script.js"></script>
+
 </body>
 </html>
