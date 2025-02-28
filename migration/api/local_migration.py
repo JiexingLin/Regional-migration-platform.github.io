@@ -2,15 +2,17 @@ import os
 import json
 import asyncio
 from typing import Dict, List
-from langchain.chat_models import ChatOpenAI
+# from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
-from langchain.agents import initialize_agent, Tool, AgentType
-from langchain.utilities import SerpAPIWrapper
+# from langchain.agents import initialize_agent, Tool, AgentType
+# from langchain.utilities import SerpAPIWrapper
 from langchain.memory import ConversationBufferMemory
 from langchain_google_genai import ChatGoogleGenerativeAI
 #import pandas as pd
 from datetime import datetime
+import re
+from serpapi import GoogleSearch
 
 # 设置OpenAI和SerpApi的API密钥
 os.environ["GOOGLE_API_KEY"] = ""
@@ -22,12 +24,7 @@ class JapaneseMigrationAgent:
         google_api_key: str = None,
         serpapi_key: str = None
     ):
-        """
-        初始化日本移居咨询Agent
         
-        :param google_api_key: OpenAI API密钥
-        :param serpapi_key: SerpAPI搜索密钥
-        """
         # 如果没有传入API Key，则尝试从环境变量获取
         google_api_key = google_api_key or os.environ["GOOGLE_API_KEY"]
         serpapi_key = serpapi_key or os.environ["SERPAPI_API_KEY"]
@@ -44,7 +41,7 @@ class JapaneseMigrationAgent:
         except Exception as e:
             raise RuntimeError("モデルの初期化に失敗しました: {}".format(e))
         # 初始化搜索工具
-        self.search = SerpAPIWrapper(serpapi_api_key=serpapi_key)
+        self.serpapi_key = serpapi_key
         
         # 对话记忆
         self.memory = ConversationBufferMemory(
@@ -171,14 +168,14 @@ class JapaneseMigrationAgent:
             prompt=self.life_plan_prompt
         )
         
-        # 创建工具列表
-        self.tools = [
-            Tool(
-                name="日本の地方政策検索",
-                func=self.search.run,
-                description="日本各地域の政策、補助金、生活情報を検索"
-            )
-        ]
+        # # 创建工具列表
+        # self.tools = [
+        #     Tool(
+        #         name="日本の地方政策検索",
+        #         func=self.search.run,
+        #         description="日本各地域の政策、補助金、生活情報を検索"
+        #     )
+        # ]
         
         # # 初始化Agent
         # self.agent = initialize_agent(
@@ -189,17 +186,70 @@ class JapaneseMigrationAgent:
         #     verbose=True
         # )
     
-    async def generate_locations(self, user_profile: Dict) -> str:
+    async def search_with_serpapi(self, query: str) -> tuple:
         """
-        生成推荐地点
+        使用SerpAPI进行搜索并返回完整结果和前两条结果的标题与URL
+        """
+        try:
+            # 设置搜索参数
+            params = {
+                "q": query,
+                "api_key": self.serpapi_key,
+                "engine": "google",
+                "google_domain": "google.co.jp",
+                "gl": "jp",
+                "hl": "ja"
+            }
+            
+            # 正确初始化GoogleSearch
+            search = GoogleSearch(params)
+            
+            # 获取结果字典
+            results = search.get_dict()
+            
+            # 从organic_results中提取URL和标题
+            title_url_pairs = []
+            if isinstance(results, dict) and 'organic_results' in results and results['organic_results']:
+                for result in results.get('organic_results', [])[:2]:
+                    if result.get('link'):
+                        title_url_pairs.append({
+                            'title': result.get('title'),
+                            'link': result.get('link')
+                        })
+            
+            # 返回完整的organic_results和标题-URL对
+            return results.get('organic_results', [])[:3], title_url_pairs
+        except Exception as e:
+            print(f"検索中にエラーが発生しました: {e}")
+            import traceback
+            traceback.print_exc()
+            return [], []
+
+    async def generate_locations(self, user_profile: Dict) -> tuple:
+        """
+        生成推荐地点，并返回搜索结果
         """
         profile_str = "\n".join([f"{k}: {str(v)}" for k, v in user_profile.items()])
         
         # 搜索相关资源
         search_results = {}
-        for question in self.profile_analysis_chain.run(user_profile=profile_str).split('\n'):
-            if question.strip():
-                search_results[question] = self.search.run(question)
+        search_top_results = {}  # 存储每个问题的前两条搜索结果
+        
+        # 分析用户资料，生成问题
+        questions_text = self.profile_analysis_chain.run(user_profile=profile_str)
+        questions = [q.strip() for q in questions_text.split('\n') if q.strip()]
+        
+        for question in questions:
+            if question.startswith(('1.', '2.', '3.', '4.')):
+                # 去掉问题前面的序号
+                clean_question = question[2:].strip()
+            else:
+                clean_question = question
+                
+            # 执行搜索并获取完整结果和前两条结果
+            full_result, top_two = await self.search_with_serpapi(clean_question)
+            search_results[clean_question] = full_result
+            search_top_results[clean_question] = top_two
         
         # 生成推荐地点
         response = self.location_recommendation_chain.run(
@@ -212,9 +262,9 @@ class JapaneseMigrationAgent:
         try:
             # 验证JSON格式
             json.loads(response)
-            return response
+            return response, search_top_results
         except json.JSONDecodeError as e:
-            print(f"JSON解析错误: {e}")
+            print(f"JSON解析にエラーが発生しました: {e}")
             raise
 
     async def generate_life_plan(self, user_profile: Dict, recommended_locations: str) -> str:
@@ -233,7 +283,7 @@ class JapaneseMigrationAgent:
             json.loads(response)
             return response
         except json.JSONDecodeError as e:
-            print(f"JSON解析错误: {e}")
+            print(f"JSON解析にエラーが発生しました: {e}")
             raise 
     
     async def process_migration_consultation(self, user_profile: Dict) -> Dict:
@@ -241,16 +291,17 @@ class JapaneseMigrationAgent:
         执行完整的移居咨询流程
         """
         try:
-            # 生成推荐地点和生活计划
-            recommended_locations = await self.generate_locations(user_profile)
+            # 生成推荐地点和生活计划，同时获取搜索结果
+            recommended_locations, search_top_results = await self.generate_locations(user_profile)
             life_plan = await self.generate_life_plan(user_profile, recommended_locations)
             
-            # 确保返回的数据是解析后的字典格式
+            # 确保返回的数据是解析后的字典格式，并包含搜索结果
             return {
                 "timestamp": datetime.now().strftime("%Y%m%d_%H%M%S"),
                 "user_profile": user_profile,
                 "recommended_locations": json.loads(recommended_locations),
-                "life_plan": json.loads(life_plan)
+                "life_plan": json.loads(life_plan),
+                "search_top_results": search_top_results  # 添加前两条搜索结果到返回数据中
             }
             
         except Exception as e:
@@ -272,7 +323,9 @@ def main():
         }
         
         # 执行咨询
-        result = migration_agent.process_migration_consultation(user_profile)
+        import asyncio
+        result = asyncio.run(migration_agent.process_migration_consultation(user_profile))
+        print(json.dumps(result, ensure_ascii=False, indent=2))
         
     except Exception as e:
         print(f"実行中にエラーが発生しました: {e}")
