@@ -45,9 +45,9 @@ function displayResults(results) {
         
         row.innerHTML = `
             <td>${result.region}</td>
-            <td>生活費：\t¥${result.living_cost.toLocaleString()}
-            <br>家賃：\t¥${result.rent.toLocaleString()}
-            <br>水道光熱費：¥${result.utilities.toLocaleString()}</td>
+            <td>¥${result.living_cost.toLocaleString()}</td>
+            <td>¥${result.rent.toLocaleString()}</td>
+            <td>¥${result.utilities.toLocaleString()}</td>
             <td>${result.security}</td>
             <td>${result.facilities.join(', ')}</td>
             <td>${result.transportation.join(', ')}</td>

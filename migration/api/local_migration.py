@@ -1,7 +1,7 @@
 import os
 import json
 import asyncio
-from typing import Dict, List
+from typing import Dict, List, Optional
 # from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
@@ -13,31 +13,29 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from datetime import datetime
 import re
 from serpapi import GoogleSearch
+from langchain_community.chat_models import ChatOpenAI
 
-# 设置OpenAI和SerpApi的API密钥
-os.environ["GOOGLE_API_KEY"] = ""
-os.environ["SERPAPI_API_KEY"] = ""
+
+
 
 class JapaneseMigrationAgent:
     def __init__(
         self, 
-        google_api_key: str = None,
+        openai_api_key: str = None,
         serpapi_key: str = None
     ):
         
-        # 如果没有传入API Key，则尝试从环境变量获取
-        google_api_key = google_api_key or os.environ["GOOGLE_API_KEY"]
-        serpapi_key = serpapi_key or os.environ["SERPAPI_API_KEY"]
-
-        # 检查API Key
-        if not google_api_key:
-            raise ValueError("Please provide Google API Key")
-        if not serpapi_key:
-            raise ValueError("Please provide SerpAPI Key")
+        
+        openai_api_key = openai_api_key or os.getenv('OPENROUTER_API_KEY')
+        serpapi_key = serpapi_key or os.getenv('SERPAPI_API_KEY')
+        openai_api_base = "https://openrouter.ai/api/v1"
 
         # 初始化大语言模型
         try:
-            self.llm  = ChatGoogleGenerativeAI(model="gemini-1.5-flash", streaming=True)
+            self.llm  = ChatOpenAI(openai_api_key=openai_api_key,
+                                openai_api_base=openai_api_base,
+                                model_name="google/gemma-3-27b-it:free"
+                                )
         except Exception as e:
             raise RuntimeError("モデルの初期化に失敗しました: {}".format(e))
         # 初始化搜索工具
@@ -53,12 +51,12 @@ class JapaneseMigrationAgent:
         self.profile_analysis_prompt = PromptTemplate(
             input_variables=['user_profile'],
             template="""
-            専門の日本地方移住コンサルタントとして、以下のユーザー情報に基づき、移住ニーズを3-4つの具体的なサブ質問に分解してください。地方の定義は、人口30万人以下の地域を「地方」、人口10万人以下の地域を「特に地方」とし、大都市圏は除外します。：
+            専門の日本地方移住コンサルタントとして、以下のユーザー情報に基づき、移住ニーズを3-4つの具体的なサブ質問に分解してください。地方の定義は、人口30万人以下の地域を「地方」、人口10万人以下の地域を「地方」とし、大都市圏は除外します。：
 
             ユーザー情報：
             {user_profile}
 
-            以下の形式でサブ質問を出力してください：
+            以下の形式でサブ質問だけ出力してください：
             1. 具体的なサブ質問1
             2. 具体的なサブ質問2
             3. 具体的なサブ質問3

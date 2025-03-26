@@ -83,7 +83,7 @@ nav ul li a:hover {
 .intro-text {
     max-width: 45%;
     color: #333;
-    background-color: rgba(255, 255, 255, 0); /* 降低不透明度 */
+    background-color: rgba(255, 255, 255, 0.5); /* 降低不透明度 */
     padding: 20px;
     border-radius: 8px;
     margin-top: 60px;
@@ -99,7 +99,123 @@ nav ul li a:hover {
     font-size: 1.1rem;
     line-height: 1.5;
 }
+/* 魅力紹介エリア */
+.advantage {
+    margin-top:66px
+}
 
+.advantage__header {
+margin-bottom: 81px;
+padding:0 150px;
+}
+
+.advantage__header > h2 {
+-webkit-font-feature-settings: "palt" 1;
+font-feature-settings: "palt" 1;
+font-size: 3rem;
+font-weight: 700;
+letter-spacing: 3px;
+line-height: 60px;
+margin-bottom: 34px;
+text-align:center
+}
+
+.advantage__header > h2 span {
+background: url(/iikamo/assets/images/common/line_bottom_black.png) repeat-x 0 100%;
+padding-bottom:11px
+}
+
+.advantage__header p {
+font-size: 1rem;
+font-weight: 500;
+letter-spacing: .2px;
+line-height: 36px;
+text-align:center
+}
+
+.advantage .points {
+display: -webkit-box;
+display: -ms-flexbox;
+display: flex;
+-ms-flex-wrap: wrap;
+flex-wrap:wrap
+}
+
+.advantage .points__element {
+background-color: #fff;
+border-radius: 10px;
+margin-bottom: 69px;
+padding: 57px 24px 39px;
+position: relative;
+width:380px
+}
+
+.advantage .points__element > h3 {
+font-size: 1.5rem;
+font-weight: 700;
+letter-spacing: 2px;
+line-height: 30px;
+margin-bottom: 27px;
+text-align:center
+}
+
+.advantage .points__element figure {
+border-radius: 1.3020833333333335vw;
+height: 300px;
+margin-bottom: 4.817708333333334vw;
+width:100%
+}
+
+
+.fit {
+font-family: "object-fit: cover;";
+height: 100%;
+-o-object-fit: cover;
+object-fit: cover;
+width:100%
+}
+
+.fit--contain {
+font-family: "object-fit: contain;";
+-o-object-fit: contain;
+object-fit:contain
+}
+
+.advantage .points__element p {
+font-size: 1.2rem;
+line-height:26px
+}
+
+.advantage .points__element .points-tag {
+-webkit-box-pack: center;
+-ms-flex-pack: center;
+-webkit-box-align: center;
+-ms-flex-align: center;
+align-items: center;
+background-color: #000;
+border-radius: 25px;
+color: #fff;
+display: -webkit-box;
+display: -ms-flexbox;
+display: flex;
+font-family: Oswald, sans-serif;
+font-size: 1.6rem;
+height: 50px;
+justify-content: center;
+left: 50%;
+letter-spacing: 3px;
+line-height: 30px;
+position: absolute;
+top: -20px;
+-webkit-transform: translateX(-50%);
+transform: translateX(-50%);
+width:144px
+}
+
+.advantage .points__element:nth-of-type(3n-1) {
+margin-left: 30px;
+margin-right:30px
+}
 /* 地域マッチングエリア */
 .matching {
     padding: 20px;
