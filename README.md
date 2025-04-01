@@ -1,6 +1,6 @@
-1. migration/api/local_migration.pyファイルの中に"GOOGLE_API_KEY"と"SERPAPI_API_KEY"を記入
+1. migration/api/local_migration.pyファイルの中に"openai_api_key"と"serpapi_api_key"を記入
 
-2. FastAPIサービスを起動：
+3. FastAPIサービスを起動：
    
 	cd migration/api
 
