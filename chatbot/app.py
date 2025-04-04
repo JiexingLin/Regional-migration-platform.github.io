@@ -41,31 +41,30 @@ def search_google(query: str, api_key: str, cx: str, max_results: int = 5) -> st
         return f"予期しないエラーが発生しました: {e}"
 
 # 検索クエリを生成する関数
-def generate_query_with_ai(prompt: str, llm: ChatGoogleGenerativeAI, memory: ConversationSummaryMemory) -> str:
+def generate_query_with_ai(prompt: str, llm: ChatGoogleGenerativeAI, memory: ConversationSummaryMemory) -> list:
     try:
-        #これまでの会話履歴をまとめる
-        past_user_messages = [
-            m.content for m in memory.chat_memory.messages if isinstance(m, HumanMessage)
-        ]
-        past_prompts = "\n".join(past_user_messages)
-
-        #会話履歴を参考にして検索クエリを生成するプロンプト
+        # 現在の質問のみを基に検索クエリを生成するプロンプト
         query_prompt = (
-            "あなたは地方移住アドバイザーです。以下はユーザーの過去の質問履歴です:\n"
-            f"{past_prompts}\n\n"
-            f"今回の質問: {prompt}\n"
-            "この文脈を踏まえ、地方移住に関する適切な検索クエリを生成してください。"
+            "あなたは地方移住アドバイザーです。\n"
+            f"以下はユーザーの質問です: {prompt}\n"
+            "この質問に基づいて、適切な検索クエリを10個生成してください。\n"
+            "それぞれのクエリを新しい行に記載してください。"
         )
 
         query_response = llm.invoke(query_prompt)
         if query_response and hasattr(query_response, "content"):
-            return query_response.content.strip()
+            queries = [
+                line.strip()
+                for line in query_response.content.strip().split("\n")
+                if line.strip()
+            ]
+            return queries
         else:
-            return prompt
+            return [prompt]
 
     except Exception:
-        # 失敗した場合は元のプロンプトをそのまま返す
-        return prompt
+        # 失敗した場合は元のプロンプトをリストで返す
+        return [prompt]
 
 # 次の質問をセットする関数
 def set_next_question(suggestion):
@@ -90,7 +89,7 @@ def main():
 
     # LLM の初期化
     llm = ChatGoogleGenerativeAI(
-        model="gemini-pro",
+        model="gemini-1.5-flash",
         api_key=GEMINI_API_KEY,
         system_message=(
             "あなたは地方移住に関心がある人々に助言を提供する専門家です。"
@@ -155,15 +154,22 @@ def main():
         # AIで検索用クエリを生成
         city_name = st.session_state["city_name"]
         prompt_with_city = f"{city_name} に関連する: {prompt}" if city_name else prompt
-        search_query = generate_query_with_ai(prompt_with_city, llm, memory)
+        search_queries = generate_query_with_ai(prompt_with_city, llm, memory)
+        print(search_queries)
 
-        # 検索を実行
-        search_results = search_google(search_query, GOOGLE_API_KEY, CUSTOM_SEARCH_ENGINE_ID)
+        # 検索を実行し、結果を結合
+        search_results = []
+        for query in search_queries:
+            result = search_google(query, GOOGLE_API_KEY, CUSTOM_SEARCH_ENGINE_ID)
+            search_results.append(f"クエリ: {query}\n結果:\n{result}")
+
+        combined_search_results = "\n\n".join(search_results)
+        print(combined_search_results)
 
         # 最終的な回答を得るためのプロンプト
         final_prompt = (
             "あなたは地方移住の専門アドバイザーです。\n"
-            f"以下の検索結果を参考に、移住希望者の質問に答えてください:\n{search_results}\n\n"
+            f"以下の検索結果を参考に、移住希望者の質問に答えてください:\n{combined_search_results}\n\n"
             f"質問: {prompt}\n"
             "詳細な回答と参考URLをわかりやすく提示してください。"
         )

@@ -1,1 +1,4 @@
-chatbot/requirements.txt
+streamlit
+requests
+langchain
+langchain-google-genai
