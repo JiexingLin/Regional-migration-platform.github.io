@@ -6,6 +6,12 @@ body {
 }
 
 .form-content {
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+
+.main-content {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -14,6 +20,12 @@ body {
 
 header {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 31px;
+    background-color: white;
+    color: black;
+}
 
 header .logo img {
     max-height: 50px;
