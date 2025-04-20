@@ -12,6 +12,13 @@ body {
     min-height: calc(100vh - 80px);
 }
 
+header {
+    display: flex;
+
+header .logo img {
+    max-height: 50px;
+}
+
 nav ul {
     list-style: none;
     display: flex;
@@ -91,4 +98,3 @@ button {
 button:hover {
     background-color: #1f6d31;
 }
-
