@@ -34,7 +34,7 @@ class JapaneseMigrationAgent:
         try:
             self.llm  = ChatOpenAI(openai_api_key=openai_api_key,
                                 openai_api_base=openai_api_base,
-                                model_name="google/gemma-3-27b-it:free"
+                                model_name="google/gemini-2.0-flash-exp:free"
                                 )
         except Exception as e:
             raise RuntimeError("モデルの初期化に失敗しました: {}".format(e))

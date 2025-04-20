@@ -26,28 +26,43 @@ const NavBar = () => {
       <nav>
         <ul>
           <li>
-            <Link href="/aboutus" legacyBehavior>
-              <a className={pathname === '/aboutus' ? 'active' : ''}>私たちについて</a>
+            <Link 
+              href="/aboutus" 
+              className={pathname === '/aboutus' ? 'active' : ''}
+            >
+              私たちについて
             </Link>
           </li>
           <li>
-            <Link href="/chatbot" legacyBehavior>
-              <a className={pathname === '/chatbot' ? 'active' : ''}>チャットボット</a>
+            <Link 
+              href="/chatbot" 
+              className={pathname === '/chatbot' ? 'active' : ''}
+            >
+              チャットボット
             </Link>
           </li>
           <li>
-            <Link href="/matching" legacyBehavior>
-              <a className={pathname === '/matching' ? 'active' : ''}>地域マッチング</a>
+            <Link 
+              href="/matching" 
+              className={pathname === '/matching' ? 'active' : ''}
+            >
+              地域マッチング
             </Link>
           </li>
           <li>
-            <Link href="/faq" legacyBehavior>
-              <a className={pathname === '/faq' ? 'active' : ''}>よくあるご質問</a>
+            <Link 
+              href="/faq" 
+              className={pathname === '/faq' ? 'active' : ''}
+            >
+              よくあるご質問
             </Link>
           </li>
           <li>
-            <Link href="/contactus" legacyBehavior>
-              <a className={pathname === '/contactus' ? 'active' : ''}>お問い合わせ</a>
+            <Link 
+              href="/contactus" 
+              className={pathname === '/contactus' ? 'active' : ''}
+            >
+              お問い合わせ
             </Link>
           </li>
         </ul>
