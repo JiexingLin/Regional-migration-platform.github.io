@@ -24,7 +24,7 @@
 
   <header id="top">
     <div class="logo">
-      <img src="logo.png" alt="イジュカツ">
+      <img src="../../migration/src/global/logo.png" alt="イジュカツ">
     </div>
     <nav>
       <ul>
@@ -39,57 +39,9 @@
   </header>
   <section class="main-content">
   <!-- サイト宣伝と紹介 -->
-    <section class="intro">
-      <div class="intro-image">
-          <img src="image.png" alt="移住イメージ">
-      </div>
-      <div class="intro-text">
-          <h2>あなたの新しい暮らしがここに</h2>
-          <p>地方での暮らしを考え始めたあなたへ。私たちのサイトでは、地域ごとの生活情報や移住者同士のマッチング機能を提供しています。</p>
-      </div>
-    </section>
-          <!-- 地域マッチングボタン -->
-        <section class="matching">
-          <h2>地域マッチング</h2>
-          <p>あなたにぴったりの移住先を見つけよう！</p>
-          <button onclick="window.location.href='#'">マッチングを始める</button>
-        </section>
-        <!-- お問い合わせエリア -->
-        <section class="contact-section">
-          <div class="contact-container">
-            <h1 class="contact-title">お問い合わせ</h1>
-            <p class="contact-description">
-              ご依頼やご相談など、まずはお気軽にお問い合わせください!
-            </p>
-            <a href="mailto:info@info.com" class="contact-email">info@info.com</a>
-            <input type="button" class="contact-button" value="お問い合わせ">
-          </div>
-        </section>
-  </section>
-  <!-- フッター -->
-  <footer>
-      <p>&copy; 2024 地方移住者サイト | すべての権利を保有</p>
-  </footer>
-  <script>
-    //.contact_buttonが押されるとajax通信
-    $(function(){
-      $(document).on('click', '.contact-header-button, .contact-button', function(){
-        $.ajax({
-            url: 'form.html',
-            type: 'GET',
-            dataType: 'html'
-          }).done(function(data){
-            $('.main-content').html(data); // フォームのHTMLを読み込む
-          }).fail(function(){
-            alert('通信失敗！');
-        });
-      });
-    });
-    </script>
- <!-- サイト宣伝と紹介 -->
   <section class="intro">
     <div class="intro-image">
-        <img src="image.png" alt="移住イメージ">
+        <img src="../../migration/src/global/top_image.png" alt="移住イメージ">
     </div>
     <div class="intro-text">
         <h2>あなたの新しい暮らしがここに</h2>
@@ -125,7 +77,7 @@
           <span class="points-tag">POINT 1</span>
           <h3>自然豊かな環境</h3>
           <figure>
-              <img class="fit" src="image copy.png"　alt="POINT 1 自然豊かな暮らし"/>
+              <img class="fit" src="../../migration/src/global/image copy.png"alt="POINT 1 自然豊かな暮らし"/>
           </figure>
           <p>空気がきれいで四季を感じられ、ストレスの少ない生活が可能。</p>
       </div>
@@ -133,7 +85,7 @@
           <span class="points-tag">POINT 2</span>
           <h3>生活コストを抑えやすい</h3>
           <figure>
-              <img class="fit" src="image copy 2.png" alt="POINT 2 快適な空間で暮らせる"/>
+              <img class="fit" src="../../migration/src/global/image copy 2.png" alt="POINT 2 快適な空間で暮らせる"/>
           </figure>
            <p>家賃や食費が都市部より安く、自治体の移住支援も充実。</p>
       </div>
@@ -141,7 +93,7 @@
           <span class="points-tag">POINT 3</span>
           <h3>子育て・教育環境が充実</h3>
           <figure>
-              <img class="fit" src="image copy 3.png" alt="POINT 3 豊かな子育て環境"/>
+              <img class="fit" src="../../migration/src/global/image copy 3.png" alt="POINT 3 豊かな子育て環境"/>
           </figure>
           <p>少人数教育や自然体験が豊富で、地域全体で子どもを見守る風土がある。</p>
       </div>
@@ -149,7 +101,7 @@
           <span class="points-tag">POINT 4</span>
           <h3>人とのつながりが深まる</h3>
           <figure>
-              <img class="fit" src="image copy 6.png" alt="POINT 4 趣味中心の生活が出来る"/>
+              <img class="fit" src="../../migration/src/global/image copy 6.png" alt="POINT 4 趣味中心の生活が出来る"/>
           </figure>
           <p>地域コミュニティが強く、温かい人間関係を築きやすい。</p>
       </div>
@@ -157,7 +109,7 @@
           <span class="points-tag">POINT 5</span>
           <h3>満員電車ストレスが減る</h3>
           <figure>
-              <img class="fit" src="image copy 4.png" alt="POINT 5 食べ物が魅力"/>
+              <img class="fit" src="../../migration/src/global/image copy 4.png" alt="POINT 5 食べ物が魅力"/>
           </figure>
           <p>車移動や徒歩圏内の生活で、時間と心の余裕が生まれる。</p>
       </div>
@@ -165,7 +117,7 @@
           <span class="points-tag">POINT 6</span>
           <h3>仕事の選択肢が広がる</h3>
           <figure>
-              <img class="fit" src="image copy 5.png" alt="POINT 6 社会の役に立てる"/>
+              <img class="fit" src="../../migration/src/global/image copy 5.png" alt="POINT 6 社会の役に立てる"/>
           </figure>
           <p>リモートワークや地域密着の仕事（農業・観光業など）の可能性が増える。</p>
       </div>
@@ -176,7 +128,7 @@
   <section class="matching">
       <h2>地域マッチング</h2>
       <p>あなたにぴったりの移住先を見つけよう！</p>
-      <button onclick="window.location.href='maching/maching.html'">マッチングを始める</button>
+      <button onclick="window.location.href='../maching/maching.html'">マッチングを始める</button>
   </section>
 
   <!-- お問い合わせエリア -->
@@ -187,7 +139,7 @@
         ご依頼やご相談など、まずはお気軽にお問い合わせください!
       </p>
       <a href="mailto:info@careercampas.com" class="contact-email">info@careercampas.com</a>
-      <a href="form.html" class="contact-button">お問い合わせ</a><!-- ここは〇〇.htmlに変更する -->
+      <a href="../../migration/src/global/form.html" class="contact-button">お問い合わせ</a><!-- ここは〇〇.htmlに変更する -->
     </div>
   </section>
   <!-- フッター -->
