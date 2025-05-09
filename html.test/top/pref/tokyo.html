@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>東京都の魅力</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<!-- imageMapResizer の CDN -->
+<script src="https://unpkg.com/image-map-resizer@1.0.10/js/imageMapResizer.min.js"></script>
+<script>
+  // ページ読み込み後に、すべての <map> を自動リサイズ
+  window.addEventListener('load', () => {
+    imageMapResize(); 
+  });
+  </script>  
+<body>
+  <!-- ヘッダー（共通ナビなど） -->
+  <header>
+    <!-- 必要であれば共通ナビをinclude-->
+    <div class="logo">
+
+        <img src="../image copy 8.png" alt="イジュカツ">
+      </div>
+      <nav>
+        <ul>
+            <li><a href="../index.html">私たちについて</a></li>
+            <li><a href="../index.html">チャットボット</a></li>
+            <li><a href="../search.html">地域マッチング</a></li>
+            <li><a href="../faq.html">よくあるご質問</a></li>
+            <li><a href="../form.html">お問い合わせ</a></li>  
+        </ul>
+      </nav>
+  </header>
+
+  <main>
+    <!-- ヒーローセクション -->
+    <section class="hero">
+        <div class="hero__inner">
+          <h1 class="hero__title">東京都の魅力</h1>
+          <p class="hero__lead">
+            東京都は浅草寺や東京タワー、東京スカイツリー、上野恩賜公園などの名所や絶景スポットが充実し、江戸から続く伝統文化や祭りも多彩です。寿司やもんじゃ焼き、ラーメンなど地元グルメも豊富。自然と都市が調和し、人の温かさ、全国・世界各地からの抜群の交通アクセスも魅力です
+          </p>
+          <a href="#overview" class="hero__button">詳しく見る</a>
+        </div>
+      </section>
+    
+      <!-- ② 県概要セクション -->
+      <section id="overview" class="overview">
+        <h2 class="overview__heading">東京都の概要</h2>
+        <div class="overview__grid">
+          <div class="overview__box">
+            <h3>地形・気候</h3>
+            <ul>
+                <li>位置・面積：関東地方／約2,194平方km</li>
+                <li>主な地形：関東平野、多摩丘陵、奥多摩の山地、伊豆諸島・小笠原諸島などの離島、東京湾に面した海岸線</li>
+                <li>気候区分：太平洋側気候（温暖で四季が明瞭）</li>
+                <li>平均気温・降水量：春（15℃・120mm）、夏（27℃・160mm）、秋（18℃・140mm）、冬（7℃・50mm）※東京23区の都市部目安</li>
+              </ul>
+              
+          </div>
+          <div class="overview__box">
+            <h3>人口・中心都市</h3>
+            <ul>
+                <li>総人口：約14,040,000人（2025年推計）</li>
+                <li>人口密度：約6,400人／km²</li>
+                <li>中心都市：東京都区部（特に千代田区・新宿区・渋谷区など、行政・経済・文化の中心。東京駅や新宿駅、渋谷駅など交通・商業の要衝）</li>
+              </ul>
+          </div>
+        </div>
+      </section>    
+
+    <!-- 市区町村マップ -->
+    <section id="municipal-map">
+      <h2>市区町村マップ</h2>
+        <!-- ★ここからドロップダウンを追加 -->
+  <div id="municipality-select">
+    <label for="muni">市区町村を選択：</label>
+    <select id="muni">
+      <option value="">— 選んでください —</option>
+      <!-- 東京都 市区町村リスト -->
+<!-- 23区 -->
+<option value="https://www.city.chiyoda.lg.jp/">千代田区</option>
+<option value="https://www.city.chuo.lg.jp/">中央区</option>
+<option value="https://www.city.minato.tokyo.jp/">港区</option>
+<option value="https://www.city.shinjuku.lg.jp/">新宿区</option>
+<option value="https://www.city.bunkyo.lg.jp/">文京区</option>
+<option value="https://www.city.taito.lg.jp/">台東区</option>
+<option value="https://www.city.sumida.lg.jp/">墨田区</option>
+<option value="https://www.city.koto.lg.jp/">江東区</option>
+<option value="https://www.city.shinagawa.tokyo.jp/">品川区</option>
+<option value="https://www.city.meguro.tokyo.jp/">目黒区</option>
+<option value="https://www.city.ota.tokyo.jp/">大田区</option>
+<option value="https://www.city.setagaya.lg.jp/">世田谷区</option>
+<option value="https://www.city.shibuya.tokyo.jp/">渋谷区</option>
+<option value="https://www.city.nakano.tokyo.jp/">中野区</option>
+<option value="https://www.city.suginami.tokyo.jp/">杉並区</option>
+<option value="https://www.city.toshima.lg.jp/">豊島区</option>
+<option value="https://www.city.kita.tokyo.jp/">北区</option>
+<option value="https://www.city.arakawa.tokyo.jp/">荒川区</option>
+<option value="https://www.city.itabashi.tokyo.jp/">板橋区</option>
+<option value="https://www.city.nerima.tokyo.jp/">練馬区</option>
+<option value="https://www.city.adachi.tokyo.jp/">足立区</option>
+<option value="https://www.city.katsushika.lg.jp/">葛飾区</option>
+<option value="https://www.city.edogawa.tokyo.jp/">江戸川区</option>
+
+<!-- 26市 -->
+<option value="https://www.city.hachioji.tokyo.jp/">八王子市</option>
+<option value="https://www.city.tachikawa.lg.jp/">立川市</option>
+<option value="https://www.city.musashino.lg.jp/">武蔵野市</option>
+<option value="https://www.city.mitaka.lg.jp/">三鷹市</option>
+<option value="https://www.city.ome.tokyo.jp/">青梅市</option>
+<option value="https://www.city.fuchu.tokyo.jp/">府中市</option>
+<option value="https://www.city.akishima.lg.jp/">昭島市</option>
+<option value="https://www.city.chofu.tokyo.jp/">調布市</option>
+<option value="https://www.city.machida.tokyo.jp/">町田市</option>
+<option value="https://www.city.koganei.lg.jp/">小金井市</option>
+<option value="https://www.city.kodaira.tokyo.jp/">小平市</option>
+<option value="https://www.city.hino.lg.jp/">日野市</option>
+<option value="https://www.city.higashimurayama.tokyo.jp/">東村山市</option>
+<option value="https://www.city.kokubunji.tokyo.jp/">国分寺市</option>
+<option value="https://www.city.kunitachi.tokyo.jp/">国立市</option>
+<option value="https://www.city.fussa.tokyo.jp/">福生市</option>
+<option value="https://www.city.komae.tokyo.jp/">狛江市</option>
+<option value="https://www.city.higashiyamato.lg.jp/">東大和市</option>
+<option value="https://www.city.kiyose.lg.jp/">清瀬市</option>
+<option value="https://www.city.higashikurume.lg.jp/">東久留米市</option>
+<option value="https://www.city.musashimurayama.lg.jp/">武蔵村山市</option>
+<option value="https://www.city.tama.lg.jp/">多摩市</option>
+<option value="https://www.city.inagi.tokyo.jp/">稲城市</option>
+<option value="https://www.city.hamura.tokyo.jp/">羽村市</option>
+<option value="https://www.city.akiruno.tokyo.jp/">あきる野市</option>
+<option value="https://www.city.nishitokyo.lg.jp/">西東京市</option>
+
+<!-- 5町 -->
+<option value="https://www.town.hinohara.tokyo.jp/">檜原村</option>
+<option value="https://www.town.okutama.tokyo.jp/">奥多摩町</option>
+<option value="https://www.town.mizuho.tokyo.jp/">瑞穂町</option>
+<option value="https://www.town.hinode.tokyo.jp/">日の出町</option>
+<option value="https://www.town.hachioji.tokyo.jp/">日の出町（八王子市内）</option>
+
+<!-- 8村（島しょ部） -->
+<option value="https://www.vill.oshima.tokyo.jp/">大島町</option>
+<option value="https://www.vill.toshima.tokyo.jp/">利島村</option>
+<option value="https://www.vill.niijima.tokyo.jp/">新島村</option>
+<option value="https://www.vill.kouzushima.tokyo.jp/">神津島村</option>
+<option value="https://www.vill.miyake.tokyo.jp/">三宅村</option>
+<option value="https://www.vill.mikurajima.tokyo.jp/">御蔵島村</option>
+<option value="https://www.vill.hachijojima.tokyo.jp/">八丈町</option>
+<option value="https://www.vill.aogashima.tokyo.jp/">青ヶ島村</option>
+<option value="https://www.vill.ogasawara.tokyo.jp/">小笠原村</option>
+
+      <!-- 以降、必要な市区町村を順次追加 -->
+    </select>
+    <button id="go" type="button">公式サイトへ</button>
+  </div>
+  <!-- ★ドロップダウンここまで -->
+      <!-- ここから次のステップ -->
+      <img
+      src="../img/tokyo.png"
+      alt="東京都市区町村マップ"
+      usemap="#tokyomap"
+      style="max-width:100%;height:auto;display:block;"
+    />
+    <map name="tokyomap">
+      <!-- <area> は次ステップで追加 -->
+      <area target="" alt="蘂取村" title="" href="https://itchao.jp/hokkaido/shibetoromura" coords="4507,2661,4184,2356" shape="rect">
+    </map>
+    
+    </section>
+
+    <!-- 以下、他のセクション… -->
+    <script>
+        document.getElementById('go').addEventListener('click', ()=>{
+          const url = document.getElementById('muni').value;
+          if (url){
+            window.open(url, '_blank');
+          } else {
+            alert('市区町村を選択してください');
+          }
+        });
+      </script>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 地方移住者サイト | すべての権利を保有</p>
+</footer>
+</body>
+</html>
