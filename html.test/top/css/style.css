@@ -10,11 +10,10 @@
 body {
   font-family: Arial, sans-serif;
   line-height: 1.6;
-  background-color: #f4f4f4;
+  background-color: white;
   color: #333;
   font-family: Arial, sans-serif;
   line-height: 1.6;
-  background-color: #f4f4f4;
   color: #333;
 }
 header {
@@ -88,10 +87,31 @@ nav ul li a:hover {
   line-height: 1.5;
 }
 /*日本地図部分のcss*/
+.map-title {
+  font-size: 40px;
+  font-weight: bold;
+  margin: 20px auto;
+  max-width: 1000px;
+  color: #333;
+  text-align: center;
+}
+
+.map-border {
+  width: 85%;
+  margin: 0 auto;
+  padding: 30px;
+  border: 1px solid transparent #333;
+  border-radius: 12px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 img[usemap] {
-  max-width: 100%;
+  max-width: 900px;
+  width: 100%;
   height: auto;
   display: block;
+  margin: 0 auto;
 }
 /* ドロップダウン＋ボタン周り */
 #municipality-select {
