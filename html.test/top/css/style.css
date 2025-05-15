@@ -15,16 +15,29 @@ body {
   font-family: Arial, sans-serif;
   line-height: 1.6;
   color: #333;
+  padding-top: 120px;
 }
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 30px;
+  padding: 10px 30px;
   background-color: white;
   color: black;
   width: 100vw; /* 画面いっぱいに広げる */
   box-sizing: border-box;
+}
+
+.sticky-header {
+  position: fixed;       /* 固定位置 */
+  top: 0;                /* 距离顶部 0 */
+  left: 0;
+  width: 100%;           /* 宽度全屏 */
+  background-color: white;
+  color: white;
+  padding: 16px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 999;          /* 保证在最上层 */
 }
 
 .logo img {
