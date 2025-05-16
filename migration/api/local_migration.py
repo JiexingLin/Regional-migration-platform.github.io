@@ -21,21 +21,19 @@ from langchain_community.chat_models import ChatOpenAI
 class JapaneseMigrationAgent:
     def __init__(
         self, 
-        openai_api_key: str = None,
+        google_api_key: str = None,
         serpapi_key: str = None
     ):
-        
-        
-        openai_api_key = openai_api_key or os.getenv('OPENROUTER_API_KEY')
+        # 获取API密钥
+        google_api_key = google_api_key or os.getenv('GOOGLE_API_KEY')
         serpapi_key = serpapi_key or os.getenv('SERPAPI_API_KEY')
-        openai_api_base = "https://openrouter.ai/api/v1"
 
         # 初始化大语言模型
         try:
-            self.llm  = ChatOpenAI(openai_api_key=openai_api_key,
-                                openai_api_base=openai_api_base,
-                                model_name="google/gemini-2.0-flash-exp:free"
-                                )
+            self.llm = ChatGoogleGenerativeAI(
+                model="gemini-2.0-flash",
+                google_api_key=google_api_key
+            )
         except Exception as e:
             raise RuntimeError("モデルの初期化に失敗しました: {}".format(e))
         # 初始化搜索工具
