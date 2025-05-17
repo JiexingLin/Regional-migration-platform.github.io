@@ -46,7 +46,7 @@
   </header>
   
 <!-- サイト宣伝と紹介 -->
-  <section class="intro">
+  <section class="intro fade-in">
     <div class="intro-image">
         <img src="image copy 7.png" alt="移住イメージ">
     </div>
@@ -66,7 +66,7 @@
   </div>
 
   <div class="points">
-      <div class="points__element">
+      <div class="points__element slide-in-left">
           <span class="points-tag">POINT 1</span>
           <h3>自然豊かな環境</h3>
           <figure>
@@ -74,7 +74,7 @@
           </figure>
           <p>空気がきれいで四季を感じられ、ストレスの少ない生活が可能。</p>
       </div>
-      <div class="points__element">
+      <div class="points__element slide-in-left">
           <span class="points-tag">POINT 2</span>
           <h3>生活コストを抑えやすい</h3>
           <figure>
@@ -82,7 +82,7 @@
           </figure>
             <p>家賃や食費が都市部より安く、自治体の移住支援も充実。</p>
       </div>
-      <div class="points__element">
+      <div class="points__element slide-in-left">
           <span class="points-tag">POINT 3</span>
           <h3>子育て・教育環境が充実</h3>
           <figure>
@@ -90,7 +90,7 @@
           </figure>
           <p>少人数教育や自然体験が豊富で、地域全体で子どもを見守る風土がある。</p>
       </div>
-      <div class="points__element">
+      <div class="points__element slide-in-right">
           <span class="points-tag">POINT 4</span>
           <h3>人とのつながりが深まる</h3>
           <figure>
@@ -98,7 +98,7 @@
           </figure>
           <p>地域コミュニティが強く、温かい人間関係を築きやすい。</p>
       </div>
-      <div class="points__element">
+      <div class="points__element slide-in-right">
           <span class="points-tag">POINT 5</span>
           <h3>満員電車ストレスが減る</h3>
           <figure>
@@ -106,7 +106,7 @@
           </figure>
           <p>車移動や徒歩圏内の生活で、時間と心の余裕が生まれる。</p>
       </div>
-      <div class="points__element">
+      <div class="points__element slide-in-right">
           <span class="points-tag">POINT 6</span>
           <h3>仕事の選択肢が広がる</h3>
           <figure>
@@ -178,9 +178,9 @@
 </section>
 
 <!--ここに日本地図を置く-->
-<p class="map-title">地図から気に入る地方を探す</p>
+<p class="map-title fade-in">地図から気に入る地方を探す</p>
 
-<div class="map-border">
+<div class="map-border fade-in">
 <img
   src="img/nihonchizu-color-todofuken.png"
   alt="日本地図"
@@ -274,6 +274,22 @@
   </div>
 
   <script src="script.js"></script>
-
+  <!--以下動きを付けるJSスクリプト-->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const els = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right');
+      const obs = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+    
+      els.forEach(el => obs.observe(el));
+    });
+    </script>
+    
 </body>
 </html>
