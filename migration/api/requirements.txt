@@ -1,8 +1,0 @@
-fastapi
-uvicorn
-python-multipart
-langchain
-langchain-google-genai
-google-generativeai
-google-api-python-client
-google-search-results 
