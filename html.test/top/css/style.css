@@ -10,20 +10,30 @@
 body {
   font-family: Arial, sans-serif;
   line-height: 1.6;
-  background-color: white;
-  color: #333;
-  font-family: Arial, sans-serif;
-  line-height: 1.6;
-  color: #333;
+  color: #4a2d13;
   padding-top: 120px;
+  margin: 0;
+  background-image: url('/Users/linjiexing/Documents/GitHub/Regional-migration-platform.github.io/html.test/top/img/image.png');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
 }
+
+.page-container {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  margin: 40px auto;
+  max-width: 1000px;
+  padding: 40px;
+}
+
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 30px;
-  background-color: white;
-  color: black;
   width: 100vw; /* 画面いっぱいに広げる */
   box-sizing: border-box;
 }
@@ -33,12 +43,11 @@ header {
   top: 0;                /* 距离顶部 0 */
   left: 0;
   width: 100%;           /* 宽度全屏 */
-  background-color: white;
-  color: white;
+  background-color:transparent;
   padding: 16px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  z-index: 999;          /* 保证在最上层 */
+  z-index: 999;
 }
+
 
 .logo img {
   max-height: 100px;
@@ -46,7 +55,7 @@ header {
 
 nav ul {
   display: flex;
-  list-style: none;
+  list-style: none;;
 }
 
 nav ul li {
@@ -55,7 +64,7 @@ nav ul li {
 
 nav ul li a {
   text-decoration: none;
-  color: black;
+  color: rgb(var(--color-foreground));
   font-weight: bold;
   font-size: 16px;
   transition: color 0.3s ease;
@@ -65,47 +74,112 @@ nav ul li a:hover {
   color: #f39c12;
 }
         
+.ranking-section {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.ranking-link {
+  text-decoration: none;  /* 去掉下划线 */
+  color: inherit;         /* 保持文字颜色 */
+  display: inline-block;  /* 保证包裹 div 正常工作 */
+}
+
+.ranking-title {
+  font-size: 32px;
+  margin-bottom: 30px;
+  color: #5c3a21; /* 深棕色字体 */
+}
+
+.ranking-row {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto; /* 横向滚动 */
+  padding-bottom: 10px;
+}
+
+.ranking-card {
+  min-width: 260px;
+  background: rgba(255, 255, 255, 0.4); /* 半透明白 */
+  border-radius: 16px;
+  backdrop-filter: blur(8px); /* 磨砂感核心 */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  flex-shrink: 0;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.ranking-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+}
+
+.rank-number {
+  font-size: 24px;
+  color: #c49b66;
+  font-weight: bold;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.rank-info h3 {
+  font-size: 20px;
+  margin: 5px 0;
+  color: #4a2d13;
+}
+
+.rank-info p {
+  font-size: 14px;
+  color: #6b4c2f;
+}
+
       /* サイト紹介エリア */
 .intro {
-  display: flex;
-  padding: 40px 30px;
-  background-color: #fff;
-  justify-content: space-between;
-  align-items: center;
-  display: flex;
-  padding: 40px 30px;
-  background-color: #fff;
-  justify-content: space-between;
-  align-items: center;
-}
-.intro-image img {
-  max-width: 80%;
-  border-radius: 8px;
-  max-width: 80%;
-  border-radius: 8px;
-}
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 40px 30px;
+        margin: 60px auto;
+        max-width: 2000px;
+      
+        background: rgba(255, 255, 255, 0.35);      /* 半透明白 */
+        backdrop-filter: blur(10px);               /* 玻璃模糊 */
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); /* 浮起阴影 */
+      }
+      
+
 .intro-text {
     max-width: 45%;
 }
+
 .intro-text h2 {
   font-size: 2rem;
   margin-bottom: 20px;
-  font-size: 2rem;
-  margin-bottom: 20px;
+  color: #5c3a21;
 }
+
 .intro-text p {
   font-size: 1.1rem;
-  line-height: 1.5;
-  font-size: 1.1rem;
-  line-height: 1.5;
+  line-height: 1.6;
+  color: #6b4c2f;
 }
+
+.intro-image img {
+  max-width: 80%;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
 /*日本地図部分のcss*/
 .map-title {
   font-size: 40px;
   font-weight: bold;
   margin: 20px auto;
   max-width: 1000px;
-  color: #333;
   text-align: center;
 }
 
@@ -114,15 +188,17 @@ nav ul li a:hover {
   margin: 0 auto;
   padding: 30px;
   border: 1px solid transparent #333;
-  border-radius: 12px;
-  background-color: #f9f9f9;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.35);      /* 半透明白 */
+  backdrop-filter: blur(10px);               /* 玻璃模糊 */
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); /* 浮起阴影 */
 }
 
 img[usemap] {
   max-width: 900px;
   width: 100%;
-  height: auto;
+  height: 750px;
   display: block;
   margin: 0 auto;
 }
@@ -245,11 +321,13 @@ img[usemap] {
 .advantage {
   margin-top:66px
   justify-content: center; 
+  
 }
 
 .advantage__header {
   margin-bottom: 81px;
   padding:0 150px;
+  
 }
 
 .advantage__header > h2 {
@@ -286,8 +364,11 @@ img[usemap] {
 }
 
 .advantage .points__element {
-  background-color: #fff;
-  border-radius: 10px;
+  background-color:rgba(255, 255, 255, 0.35);      /* 半透明白 */
+  backdrop-filter: blur(10px);               /* 玻璃模糊 */
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); /* 浮起阴影 */
   margin: 0 15px 60px;
   margin-bottom: 69px;
   padding: 57px 24px 39px;
@@ -318,6 +399,7 @@ img[usemap] {
   -o-object-fit: cover;
   object-fit: cover;
   width:100%
+  
 }
 
 .fit--contain {
@@ -337,7 +419,7 @@ img[usemap] {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  background-color: #000;
+  background-color: #4a2d13;
   border-radius: 25px;
   color: #fff;
   display: -webkit-box;
@@ -368,10 +450,12 @@ img[usemap] {
   text-align: center;
   background: #F5F9FB; 
   margin: 20px 0;
-  padding: 30px;
   text-align: center;
-  background: #F5F9FB; 
-  margin: 20px 0;
+  background: rgba(255, 255, 255, 0.35);      /* 半透明白 */
+  backdrop-filter: blur(10px);               /* 玻璃模糊 */
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); /* 浮起阴影 */
 }
 
 .matching-container {
@@ -408,7 +492,11 @@ img[usemap] {
 
 /* お問い合わせエリアのセクションスタイル */
 .contact-section {
-background-color: #28a746;
+  background-color:#28a745;      /* 半透明白 */
+  backdrop-filter: blur(10px);               /* 玻璃模糊 */
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); /* 浮起阴影 */;
 color: white;
 text-align: center;
 padding: 10px 20px;
@@ -467,19 +555,7 @@ background-color: rgba(255, 255, 255, 0.4);
 /* ボタン */
 .contact-button {
 background: linear-gradient(135deg, #324851, #90AFC5);
-color: white;
-text-decoration: none;
-font-weight: bold;
-padding: 15px 30px;
-border-radius: 50px;
-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-transition: all 0.3s ease;
-font-size: 18px;
-display: inline-block;
-margin-left: 20px; /* 横の間隔を増やす */
-margin-bottom: 20px;
-background: linear-gradient(135deg, #324851, #90AFC5);
-color: white;
+color:#F5F9FB;
 text-decoration: none;
 font-weight: bold;
 padding: 15px 30px;
