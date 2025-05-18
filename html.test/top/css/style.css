@@ -1,0 +1,705 @@
+/* リセットと基本のスタイル */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  color: #4a2d13;
+  padding-top: 120px;
+  margin: 0;
+  background-image: url('../img/image.png');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}
+
+.page-container {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  margin: 40px auto;
+  max-width: 1000px;
+  padding: 40px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 30px;
+  width: 100vw; /* 画面いっぱいに広げる */
+  box-sizing: border-box;
+}
+
+.sticky-header {
+  position: fixed;       /* 固定位置 */
+  top: 0;                /* 距离顶部 0 */
+  left: 0;
+  width: 100%;           /* 宽度全屏 */
+  background-color:transparent;
+  padding: 16px;
+  z-index: 999;
+}
+
+
+.logo img {
+  max-height: 100px;
+}
+
+nav ul {
+  display: flex;
+  list-style: none;;
+}
+
+nav ul li {
+  margin-left: 40px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: rgb(var(--color-foreground));
+  font-weight: bold;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+  color: #f39c12;
+}
+        
+.ranking-section {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.ranking-link {
+  text-decoration: none;  /* 去掉下划线 */
+  color: inherit;         /* 保持文字颜色 */
+  display: inline-block;  /* 保证包裹 div 正常工作 */
+}
+
+.ranking-title {
+  font-size: 32px;
+  margin-bottom: 30px;
+  color: #5c3a21; /* 深棕色字体 */
+}
+
+.ranking-row {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto; /* 横向滚动 */
+  padding-bottom: 10px;
+}
+
+.ranking-card {
+  min-width: 260px;
+  background: rgba(255, 255, 255, 0.4); /* 半透明白 */
+  border-radius: 16px;
+  backdrop-filter: blur(8px); /* 磨砂感核心 */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  flex-shrink: 0;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.ranking-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+}
+
+.rank-number {
+  font-size: 24px;
+  color: #c49b66;
+  font-weight: bold;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.rank-info h3 {
+  font-size: 20px;
+  margin: 5px 0;
+  color: #4a2d13;
+}
+
+.rank-info p {
+  font-size: 14px;
+  color: #6b4c2f;
+}
+
+      /* サイト紹介エリア */
+.intro {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 40px 30px;
+        margin: 60px auto;
+        max-width: 2000px;
+      
+        background: rgba(255, 255, 255, 0.35);      /* 半透明白 */
+        backdrop-filter: blur(10px);               /* 玻璃模糊 */
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); /* 浮起阴影 */
+      }
+      
+
+.intro-text {
+    max-width: 45%;
+}
+
+.intro-text h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #5c3a21;
+}
+
+.intro-text p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #6b4c2f;
+}
+
+.intro-image img {
+  max-width: 80%;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+/*日本地図部分のcss*/
+.map-title {
+  font-size: 40px;
+  font-weight: bold;
+  margin: 20px auto;
+  max-width: 1000px;
+  text-align: center;
+}
+
+.map-border {
+  width: 85%;
+  margin: 0 auto;
+  padding: 30px;
+  border: 1px solid transparent #333;
+  background: rgba(255, 255, 255, 0.35);      /* 半透明白 */
+  backdrop-filter: blur(10px);               /* 玻璃模糊 */
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); /* 浮起阴影 */
+}
+
+img[usemap] {
+  max-width: 900px;
+  width: 100%;
+  height: 750px;
+  display: block;
+  margin: 0 auto;
+}
+/* ドロップダウン＋ボタン周り */
+#municipality-select {
+  margin: 1.5rem 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+#municipality-select label {
+  font-weight: bold;
+}
+#municipality-select select {
+  padding: 0.4rem;
+  font-size: 1rem;
+}
+#municipality-select button {
+  padding: 0.45rem 1rem;
+  font-size: 1rem;
+  background: #0066cc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#municipality-select button:hover {
+  background: #005bb5;
+}
+/* ① ヒーローセクション */
+.hero {
+  position: relative;
+  background: url("../img/hokkaido-hero.jpg") center/cover no-repeat;
+  height: 60vh;                   /* お好みで調整 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4); /* 暗めのオーバーレイで文字を読みやすく */
+}
+.hero__inner {
+  position: relative;             /* ::before より上に出すため */
+  text-align: center;
+  max-width: 800px;
+  padding: 0 1rem;
+}
+.hero__title {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+.hero__lead {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+.hero__button {
+  display: inline-block;
+  background: #000;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+/* ② 県概要セクション */
+.overview {
+  padding: 4rem 1rem;             /* 上下余白 */
+  text-align: center;
+}
+.overview__heading {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+.overview__heading::after {
+  content: "";
+  display: block;
+  width: 50px;
+  height: 4px;
+  background: #000;
+  margin: 0.5rem auto 0;
+}
+.overview__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+.overview__box {
+  background: #f5f5f5;
+  padding: 1.5rem;
+  border-radius: 6px;
+  text-align: left;
+}
+.overview__box h3 {
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+}
+.overview__box p {
+  line-height: 1.6;
+}
+
+/* レスポンシブはお好みでさらに調整可能 */
+@media (max-width: 600px) {
+  .hero {
+    height: 40vh;
+  }
+  .hero__title {
+    font-size: 2rem;
+  }
+}
+/*日本地図部分のcss終わり*/
+/* 地域魅力 */
+.advantage {
+  margin-top:66px;
+  justify-content: center; 
+}
+
+.advantage__header {
+  margin-bottom: 81px;
+  padding:0 150px;
+  
+}
+
+.advantage__header > h2 {
+  -webkit-font-feature-settings: "palt" 1;
+  font-feature-settings: "palt" 1;
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  line-height: 60px;
+  margin-bottom: 34px;
+  text-align:center
+}
+
+.advantage__header > h2 span {
+  background: url(image.png) repeat-x 0 100%;
+  padding-bottom:11px
+}
+
+.advantage__header p {
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: .2px;
+  line-height: 36px;
+  text-align:center
+}
+
+.advantage .points {
+  justify-content: center; 
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap:wrap
+}
+
+.advantage .points__element {
+  background-color:rgba(255, 255, 255, 0.35);      /* 半透明白 */
+  backdrop-filter: blur(10px);               /* 玻璃模糊 */
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); /* 浮起阴影 */
+  margin: 0 15px 60px;
+  margin-bottom: 69px;
+  padding: 57px 24px 39px;
+  position: relative;
+  width:380px
+}
+
+.advantage .points__element > h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  line-height: 30px;
+  margin-bottom: 27px;
+  text-align:center
+}
+
+.advantage .points__element figure {
+  border-radius: 1.3020833333333335vw;
+  height: 300px;
+  margin-bottom: 4.817708333333334vw;
+  width:100%
+}
+
+
+.fit {
+  font-family: "object-fit: cover;";
+  height: 100%;
+  -o-object-fit: cover;
+  object-fit: cover;
+  width:100%
+  
+}
+
+.fit--contain {
+  font-family: "object-fit: contain;";
+  -o-object-fit: contain;
+  object-fit:contain
+}
+
+.advantage .points__element p {
+  font-size: 1.2rem;
+  line-height:26px
+}
+
+.advantage .points__element .points-tag {
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  background-color: #4a2d13;
+  border-radius: 25px;
+  color: #fff;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  font-family: Oswald, sans-serif;
+  font-size: 1.6rem;
+  height: 50px;
+  justify-content: center;
+  left: 50%;
+  letter-spacing: 3px;
+  line-height: 30px;
+  position: absolute;
+  top: -20px;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  width:144px
+}
+
+/* .advantage .points__element:nth-of-type(3n-1) {
+  margin-left: 30px;
+  margin-right:30px
+} */
+
+/* 地域マッチングエリア */
+.matching {
+  padding: 30px;
+  text-align: center;
+  background: #F5F9FB; 
+  margin: 20px 0;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.35);      /* 半透明白 */
+  backdrop-filter: blur(10px);               /* 玻璃模糊 */
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); /* 浮起阴影 */
+}
+
+.matching-container {
+  position: relative;
+  z-index: 1;
+}
+.matching-h2 {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+.matching-p {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.matching-button {
+  padding: 15px 30px;
+  background-color: #7a4b22;
+  color: white;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: inline-block;
+  margin: 0 auto;
+  text-align: center;
+  text-decoration: none;
+}
+.matching-button:hover {
+  background-color: #4a2d13;
+}
+
+
+/* お問い合わせエリアのセクションスタイル */
+.contact-section {
+  background-color:#7a4b22;      /* 半透明白 */
+  backdrop-filter: blur(10px);               /* 玻璃模糊 */
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); /* 浮起阴影 */;
+color: white;
+text-align: center;
+padding: 10px 20px;
+position: relative;
+overflow: hidden;
+}
+
+.contact-section::before {
+content: none;
+}
+
+/* コンテナ */
+.contact-container {
+position: relative;
+z-index: 1;
+}
+
+/* タイトル */
+.contact-title {
+font-size: 50px;
+font-weight: bold;
+margin-top: 10px;
+margin-bottom: 20px;
+text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* 説明文 */
+.contact-description {
+font-size: 20px;
+line-height: 1.8;
+margin-bottom: 30px;
+max-width: 600px;
+margin-left: auto;
+margin-right: auto;
+color: rgba(255, 255, 255, 0.9);
+}
+
+/* メールリンク */
+.contact-email {
+font-size: 22px;
+color: #ffffff;
+text-decoration: none;
+font-weight: bold;
+background-color: rgba(255, 255, 255, 0.2);
+padding: 10px 20px;
+border-radius: 5px;
+display: inline-block;
+transition: all 0.3s ease;
+margin-right: 20px; /* 横の間隔を増やす */
+}
+
+.contact-email:hover {
+background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* ボタン */
+.contact-button {
+background: linear-gradient(135deg, #5f4625, #2e1f0c);
+color:#F5F9FB;
+text-decoration: none;
+font-weight: bold;
+padding: 15px 30px;
+border-radius: 50px;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+transition: all 0.3s ease;
+font-size: 18px;
+display: inline-block;
+margin-left: 20px; /* 横の間隔を増やす */
+margin-bottom: 20px;
+}
+
+.contact-button:hover {
+  background: linear-gradient(135deg, #5f4625, #2e1f0c);
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 15px 30px;
+  border-radius: 50px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+  font-size: 18px;
+  display: inline-block;
+  margin-left: 20px; /* 横の間隔を増やす */
+  margin-bottom: 20px;
+}
+
+.contact-button:hover {
+  background: linear-gradient(135deg, #2e1f0c, #5f4625);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .contact-title {
+    font-size: 36px;
+  }
+
+  .contact-description {
+    font-size: 18px;
+  }
+
+  .contact-email {
+    font-size: 18px;
+  }
+
+  .contact-button {
+    font-size: 16px;
+    padding: 12px 25px;
+  }
+.contact-title {
+  font-size: 36px;
+}
+
+.contact-description {
+  font-size: 18px;
+}
+
+.contact-email {
+  font-size: 18px;
+}
+
+.contact-button {
+  font-size: 16px;
+  padding: 12px 25px;
+}
+
+}
+
+
+/* フッター */
+footer {
+  background-color: #F5F9FB;
+  color: black;
+  text-align: center;
+  padding: 44px 0 36px; 
+  margin-top: 30px;
+  background-color: #F5F9FB;
+  color: black;
+  text-align: center;
+  padding: 44px 0 36px; 
+  margin-top: 30px;
+}
+footer p {
+  font-size: 1rem;
+  font-size: 1rem;
+}
+/* レスポンシブ対応 */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column; /* ヘッダーの要素を縦に並べる */
+        align-items: flex-start;
+      }
+    
+      nav ul {
+        flex-direction: column; /* メニューアイテムを縦に並べる */
+        margin-top: 10px;
+      }
+    
+      nav ul li {
+        margin-left: 0;
+        margin-bottom: 10px; /* メニューアイテム間の縦の余白 */
+      }
+    }
+
+html {
+  scroll-behavior: smooth;
+}
+
+#back-to-top-button{
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  margin-bottom: 10px;
+  margin-right: 15px;
+}
+
+.scrollBtn {
+  all: unset; /* Remove default button styles */
+  font-size: 16px;
+  font-weight: bold;
+  color: black; /* Same as <a> color */
+  cursor: pointer;
+  transition: color 0.3s ease; /* Smooth hover effect */
+}
+
+.scrollBtn:hover {
+  color: #f39c12; /* Hover effect matches <a> */
+}
+/*動的な装飾用のコード↓*/
+/* ベース状態：非表示 */
+.fade-in,
+.slide-in-left,
+.slide-in-right {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+/* スライド用の初期位置調整 */
+.slide-in-left  { transform: translateX(-50px); }
+.slide-in-right { transform: translateX( 50px); }
+
+/* Visible クラスが付いたら動かす */
+.visible {
+  opacity: 1;
+  transform: translateX(0) translateY(0);
+}

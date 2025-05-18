@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>千葉県の魅力</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<!-- imageMapResizer の CDN -->
+<script src="https://unpkg.com/image-map-resizer@1.0.10/js/imageMapResizer.min.js"></script>
+<script>
+  // ページ読み込み後に、すべての <map> を自動リサイズ
+  window.addEventListener('load', () => {
+    imageMapResize(); 
+  });
+  </script>  
+<body>
+  <!-- ヘッダー（共通ナビなど） -->
+  <header>
+    <!-- 必要であれば共通ナビをinclude-->
+    <div class="logo">
+
+        <img src="../image copy 8.png" alt="イジュカツ">
+      </div>
+      <nav>
+        <ul>
+            <li><a href="../index.html">私たちについて</a></li>
+            <li><a href="../index.html">チャットボット</a></li>
+            <li><a href="../search.html">地域マッチング</a></li>
+            <li><a href="../faq.html">よくあるご質問</a></li>
+            <li><a href="../form.html">お問い合わせ</a></li>  
+        </ul>
+      </nav>
+  </header>
+
+  <main>
+    <!-- ヒーローセクション -->
+    <section class="hero">
+        <div class="hero__inner">
+          <h1 class="hero__title">千葉県の魅力</h1>
+          <p class="hero__lead">
+            千葉県は東京ディズニーリゾートや鴨川シーワールド、鋸山や養老渓谷などの絶景スポットが豊富で、勝浦朝市や伝統の祭りも各地で開催されています。落花生やなめろう、海産物など地元グルメも多彩。温暖な気候と人の温かさ、首都圏からの抜群の交通アクセスが住みやすさを支えています
+          </p>
+          <a href="#overview" class="hero__button">詳しく見る</a>
+        </div>
+      </section>
+    
+      <!-- ② 県概要セクション -->
+      <section id="overview" class="overview">
+        <h2 class="overview__heading">千葉県の概要</h2>
+        <div class="overview__grid">
+          <div class="overview__box">
+            <h3>地形・気候</h3>
+            <ul>
+                <li>位置・面積：関東地方／約5,157平方km</li>
+                <li>主な地形：房総半島、九十九里浜、山地（鹿野山・清澄山地）、広大な平野、太平洋・東京湾に面した海岸線</li>
+                <li>気候区分：太平洋側気候（温暖で降水量はやや多め）</li>
+                <li>平均気温・降水量：春（15℃・130mm）、夏（27℃・170mm）、秋（18℃・150mm）、冬（7℃・50mm）※千葉市の都市部目安</li>
+              </ul>
+          </div>
+          <div class="overview__box">
+            <h3>人口・中心都市</h3>
+            <ul>
+                <li>総人口：約6,200,000人（2025年推計）</li>
+                <li>人口密度：約1,203人／km²</li>
+                <li>中心都市：千葉市（人口約970,000人、県庁所在地で行政・経済・文化の中心、幕張メッセや千葉ポートタワー、都市公園が豊富）</li>
+              </ul>
+          </div>
+        </div>
+      </section>
+    
+
+    <!-- 市区町村マップ -->
+    <section id="municipal-map">
+      <h2>市区町村マップ</h2>
+        <!-- ★ここからドロップダウンを追加 -->
+  <div id="municipality-select">
+    <label for="muni">市区町村を選択：</label>
+    <select id="muni">
+      <option value="">— 選んでください —</option>
+     <!-- 千葉県 市区町村リスト -->
+<option value="https://www.city.chiba.jp/">千葉市</option>
+<option value="https://www.city.choshi.chiba.jp/">銚子市</option>
+<option value="https://www.city.ichikawa.lg.jp/">市川市</option>
+<option value="https://www.city.funabashi.lg.jp/">船橋市</option>
+<option value="https://www.city.kisarazu.lg.jp/">木更津市</option>
+<option value="https://www.city.matsudo.chiba.jp/">松戸市</option>
+<option value="https://www.city.noda.chiba.jp/">野田市</option>
+<option value="https://www.city.mobara.chiba.jp/">茂原市</option>
+<option value="https://www.city.narita.chiba.jp/">成田市</option>
+<option value="https://www.city.sakura.lg.jp/">佐倉市</option>
+<option value="https://www.city.togane.chiba.jp/">東金市</option>
+<option value="https://www.city.asahi.chiba.jp/">旭市</option>
+<option value="https://www.city.narashino.chiba.jp/">習志野市</option>
+<option value="https://www.city.kashiwa.lg.jp/">柏市</option>
+<option value="https://www.city.katsurao.chiba.jp/">勝浦市</option>
+<option value="https://www.city.ichihara.chiba.jp/">市原市</option>
+<option value="https://www.city.nagareyama.chiba.jp/">流山市</option>
+<option value="https://www.city.yachiyo.chiba.jp/">八千代市</option>
+<option value="https://www.city.abiko.chiba.jp/">我孫子市</option>
+<option value="https://www.city.kamogawa.lg.jp/">鴨川市</option>
+<option value="https://www.city.kimitsu.lg.jp/">君津市</option>
+<option value="https://www.city.futtsu.lg.jp/">富津市</option>
+<option value="https://www.city.urayasu.lg.jp/">浦安市</option>
+<option value="https://www.city.shiroi.chiba.jp/">白井市</option>
+<option value="https://www.city.tomisan.lg.jp/">富里市</option>
+<option value="https://www.city.katori.lg.jp/">香取市</option>
+<option value="https://www.city.sodegaura.lg.jp/">袖ケ浦市</option>
+<option value="https://www.city.yokoshibahikari.lg.jp/">匝瑳市</option>
+<option value="https://www.city.yachimata.lg.jp/">八街市</option>
+<option value="https://www.city.inzai.lg.jp/">印西市</option>
+<option value="https://www.city.shisui.chiba.jp/">白井市</option>
+<option value="https://www.city.minamiboso.chiba.jp/">南房総市</option>
+<option value="https://www.city.isumi.lg.jp/">いすみ市</option>
+<option value="https://www.city.katori.lg.jp/">香取市</option>
+<option value="https://www.city.sammu.lg.jp/">山武市</option>
+<option value="https://www.city.kamogawa.lg.jp/">鴨川市</option>
+<option value="https://www.city.kimitsu.lg.jp/">君津市</option>
+<option value="https://www.city.futtsu.lg.jp/">富津市</option>
+<option value="https://www.city.sodegaura.lg.jp/">袖ケ浦市</option>
+<option value="https://www.city.nagareyama.chiba.jp/">流山市</option>
+<option value="https://www.town.shisui.chiba.jp/">酒々井町</option>
+<option value="https://www.town.kisarazu.chiba.jp/">栄町</option>
+<option value="https://www.town.shiroi.chiba.jp/">神崎町</option>
+<option value="https://www.town.tako.chiba.jp/">多古町</option>
+<option value="https://www.town.tohnosho.chiba.jp/">東庄町</option>
+<option value="https://www.town.kujukuri.chiba.jp/">九十九里町</option>
+<option value="https://www.town.shibayama.chiba.jp/">芝山町</option>
+<option value="https://www.town.yokoshibahikari.chiba.jp/">横芝光町</option>
+<option value="https://www.town.oamishirasato.chiba.jp/">大網白里町</option>
+<option value="https://www.town.kimitsu.chiba.jp/">睦沢町</option>
+<option value="https://www.town.chonan.chiba.jp/">長南町</option>
+<option value="https://www.town.shirahama.chiba.jp/">白子町</option>
+<option value="https://www.town.nagara.chiba.jp/">長柄町</option>
+<option value="https://www.town.mutsuzawa.chiba.jp/">睦沢町</option>
+<option value="https://www.town.ichinomiya.chiba.jp/">一宮町</option>
+<option value="https://www.town.onjuku.chiba.jp/">御宿町</option>
+<option value="https://www.town.otaki.chiba.jp/">大多喜町</option>
+<option value="https://www.town.kamogawa.chiba.jp/">鋸南町</option>
+<option value="https://www.vill.kamogawa.chiba.jp/">長生村</option>
+
+      <!-- 以降、必要な市区町村を順次追加 -->
+    </select>
+    <button id="go" type="button">公式サイトへ</button>
+  </div>
+  <!-- ★ドロップダウンここまで -->
+      <!-- ここから次のステップ -->
+      <img
+      src="../img/tiba.png"
+      alt="千葉県市区町村マップ"
+      usemap="#tibamap"
+      style="max-width:100%;height:auto;display:block;"
+    />
+    <map name="tibamap">
+      <!-- <area> は次ステップで追加 -->
+      <area target="" alt="蘂取村" title="" href="https://itchao.jp/hokkaido/shibetoromura" coords="4507,2661,4184,2356" shape="rect">
+    </map>
+    
+    </section>
+
+    <!-- 以下、他のセクション… -->
+    <script>
+        document.getElementById('go').addEventListener('click', ()=>{
+          const url = document.getElementById('muni').value;
+          if (url){
+            window.open(url, '_blank');
+          } else {
+            alert('市区町村を選択してください');
+          }
+        });
+      </script>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 地方移住者サイト | すべての権利を保有</p>
+</footer>
+</body>
+</html>

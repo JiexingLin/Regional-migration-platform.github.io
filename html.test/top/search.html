@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>地域移住者向けマッチング検索</title>
+    <link rel="stylesheet" href="css/search.css">
+</head>
+<body>
+    <header id="top">
+        <div class="logo">
+            <img src="img/logo.png" alt="イジュカツ">
+        </div>
+        <nav>
+        <ul>
+            <li><a href="index.html">私たちについて</a></li>
+            <li><a href="index.html">チャットボット</a></li>
+            <li><a href="search.html">地域マッチング</a></li>
+            <li><a href="faq.html">よくあるご質問</a></li>
+            <li><a href="form.html">お問い合わせ</a></li>  
+        </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1>地域移住者向けマッチング検索</h1>
+        <form id="migration-form">
+            <!-- 必須情報 -->
+            <fieldset>
+                <legend>必須情報</legend>
+                <label for="name">氏名（漢字）:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="name-furigana">フリガナ:</label>
+                <input type="text" id="name-furigana" name="name-furigana" required>
+
+                <label for="age">年齢:</label>
+                <input type="number" id="age" name="age" required min="18" max="100">
+
+                <label for="family-structure">家族構成:</label>
+                <input type="text" id="family-structure" name="family-structure" required>
+
+                <label for="contact">連絡先:</label>
+                <input type="tel" id="contact" name="contact" required>
+            </fieldset>
+
+            <!-- 希望条件 -->
+            <fieldset>
+                <legend>希望条件</legend>
+
+                <!-- 生活費 -->
+            <fieldset>
+                    <legend>生活費上限（月額）:</legend>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="living-cost" value="under-50k">5万円未満</label>
+                        <label><input type="checkbox" name="living-cost" value="50k-100k">5〜10万円</label>
+                        <label><input type="checkbox" name="living-cost" value="100k-150k">10万円～15万円</label>
+                        <label><input type="checkbox" name="living-cost" value="over-150k">15万円以上</label>
+                    </div>
+            </fieldset>
+                <!-- 生活環境 -->
+                <legend>生活環境</legend>
+            <fieldset>
+                <label for="security">治安の良さ(人口10万人あたりの刑法犯罪認知件数):</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="security" value="under-0.2k">200件未満</label>
+                    <label><input type="checkbox" name="security" value="0.2k-0.3k">200件~300件</label>
+                    <label><input type="checkbox" name="security" value="0.3k">300件以上</label>
+                </div>
+                <label for="facilities">近隣施設:</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="facilities-variety" value="supermarket">スーパーマーケット</label>
+                    <label><input type="checkbox" name="facilities-variety" value="shopping-mall">ショッピングモール</label>
+                    <label><input type="checkbox" name="facilities-variety" value="government-office">役所</label>
+                    <label><input type="checkbox" name="facilities-variety" value="library">図書館</label>
+                </div>
+            </fieldset>
+                <!-- 交通アクセス -->
+            <fieldset>
+                <legend>交通アクセス</legend>
+                <label for="commute">車の有無:</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="car" value="yes">車を持っている</label>
+                    <label><input type="checkbox" name="car" value="no">車を持っていない</label>
+                </div>
+
+
+                <label for="public-transport">公共交通機関:</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="public-transport-variety" value="subway">電車</label>
+                    <label><input type="checkbox" name="public-transport-variety" value="bus">バス</label>
+                    <label><input type="checkbox" name="public-transport-variety" value="bullet-train">新幹線</label>
+                    <label><input type="checkbox" name="public-transport-variety" value="airport">空港</label>
+                </div>
+            </fieldset>
+            <!-- 教育環境 -->
+            <fieldset>
+                <legend>教育環境</legend>
+                
+                <label for="school-type">学校の区分:</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="school-type" value="ele-school">保育園</label>
+                    <label><input type="checkbox" name="school-type" value="kindergarden">幼稚園</label>
+                    <label><input type="checkbox" name="school-type" value="pri-school">小学校</label>
+                    <label><input type="checkbox" name="school-type" value="jh-school">中学校</label>
+                    <label><input type="checkbox" name="school-type" value="h-school">高校</label>
+                </div>
+
+                <label for="edu-support">教育支援制度:</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="edu-support" value="free">学費無償制度</label>
+                    <label><input type="checkbox" name="edu-support" value="scholarship">奨学金</label>
+                    <label><input type="checkbox" name="edu-support" value="int-edu">国際教育</label>
+                </div>
+            </fieldset>
+            <!-- 医療・福祉 -->
+            <fieldset>
+                <legend>医療・福祉</legend>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="medical" value="hospital">総合病院</label>
+                    <label><input type="checkbox" name="medical" value="clinic">クリニック</label>
+                    <label><input type="checkbox" name="medical" value="nursing-facility">介護施設</label>
+                    <label><input type="checkbox" name="medical" value="nursing-station">訪問看護ステーション</label>
+                </div>
+            </fieldset>
+        </fieldset>
+            <button type="submit">マッチング結果を検索</button>
+        </form>
+
+        <!-- マッチング結果 -->
+        <div id="matching-results" class="results">
+            <h2>マッチング結果</h2>
+            <ul id="results-list">
+                <!-- 検索結果がここに表示されます -->
+            </ul>
+        </div>
+    </div>
+
+    <script src="search.js"></script>
+</body>
+</html>

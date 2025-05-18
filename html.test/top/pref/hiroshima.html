@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>広島県の魅力</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<!-- imageMapResizer の CDN -->
+<script src="https://unpkg.com/image-map-resizer@1.0.10/js/imageMapResizer.min.js"></script>
+<script>
+  // ページ読み込み後に、すべての <map> を自動リサイズ
+  window.addEventListener('load', () => {
+    imageMapResize(); 
+  });
+  </script>  
+<body>
+  <!-- ヘッダー（共通ナビなど） -->
+  <header>
+    <!-- 必要であれば共通ナビをinclude-->
+    <div class="logo">
+
+        <img src="../image copy 8.png" alt="イジュカツ">
+      </div>
+      <nav>
+        <ul>
+            <li><a href="../index.html">私たちについて</a></li>
+            <li><a href="../index.html">チャットボット</a></li>
+            <li><a href="../search.html">地域マッチング</a></li>
+            <li><a href="../faq.html">よくあるご質問</a></li>
+            <li><a href="../form.html">お問い合わせ</a></li>  
+        </ul>
+      </nav>
+  </header>
+
+  <main>
+    <!-- ヒーローセクション -->
+    <section class="hero">
+        <div class="hero__inner">
+          <h1 class="hero__title">広島県の魅力</h1>
+          <p class="hero__lead">
+            広島県は日本三景の一つ、瀬戸内海に浮かぶ嚴島神社や世界遺産「原爆ドーム」など多彩な観光名所と、伝統的な祭りや歴史文化が息づいています。お好み焼きや牡蠣など地元グルメも豊富で、温暖な気候と自然、人の温かさ、交通アクセスの良さが住みやすい環境を支えています
+          </p>
+          <a href="#overview" class="hero__button">詳しく見る</a>
+        </div>
+      </section>
+    
+      <!-- ② 県概要セクション -->
+      <section id="overview" class="overview">
+        <h2 class="overview__heading">広島県の概要</h2>
+        <div class="overview__grid">
+          <div class="overview__box">
+            <h3>地形・気候</h3>
+            <ul>
+                <li>位置・面積：中国地方／約8,479平方km</li>
+                <li>主な地形：中国山地、瀬戸内海に面した海岸線、太田川流域の広島平野</li>
+                <li>気候区分：瀬戸内式気候（温暖少雨）、一部山間部で内陸性気候</li>
+                <li>平均気温・降水量：春（14℃・140mm）、夏（26℃・180mm）、秋（18℃・160mm）、冬（5℃・90mm）※広島市の都市部目安</li>
+              </ul>
+          </div>
+          <div class="overview__box">
+            <h3>人口・中心都市</h3>
+            <ul>
+                <li>総人口：約2,756,000人（2024年推計）</li>
+                <li>人口密度：約325人／km²</li>
+                <li>中心都市：広島市（人口約1,190,000人、県庁所在地で経済・文化・交通の中心、原爆ドームや平和記念公園など観光資源が豊富）[2][5]</li>
+              </ul>
+          </div>
+        </div>
+      </section>    
+
+    <!-- 市区町村マップ -->
+    <section id="municipal-map">
+      <h2>市区町村マップ</h2>
+        <!-- ★ここからドロップダウンを追加 -->
+  <div id="municipality-select">
+    <label for="muni">市区町村を選択：</label>
+    <select id="muni">
+      <option value="">— 選んでください —</option>
+     <!-- 広島県 市区町村リスト -->
+<option value="https://www.city.hiroshima.lg.jp/">広島市</option>
+<option value="https://www.city.kure.lg.jp/">呉市</option>
+<option value="https://www.city.takehara.lg.jp/">竹原市</option>
+<option value="https://www.city.mihara.hiroshima.jp/">三原市</option>
+<option value="https://www.city.ondochou.hiroshima.jp/">尾道市</option>
+<option value="https://www.city.fukuyama.hiroshima.jp/">福山市</option>
+<option value="https://www.city.fuchu.hiroshima.jp/">府中市</option>
+<option value="https://www.city.miyoshi.hiroshima.jp/">三次市</option>
+<option value="https://www.city.shobara.hiroshima.jp/">庄原市</option>
+<option value="https://www.city.otake.hiroshima.jp/">大竹市</option>
+<option value="https://www.city.etajima.hiroshima.jp/">江田島市</option>
+<option value="https://www.city.higashihiroshima.lg.jp/">東広島市</option>
+<option value="https://www.city.hatsukaichi.hiroshima.jp/">廿日市市</option>
+<option value="https://www.city.akiyoshidai.hiroshima.jp/">安芸高田市</option>
+<option value="https://www.town.kaita.hiroshima.jp/">海田町</option>
+<option value="https://www.town.fuchu.hiroshima.jp/">府中町</option>
+<option value="https://www.town.kumano.hiroshima.jp/">熊野町</option>
+<option value="https://www.town.saka.hiroshima.jp/">坂町</option>
+<option value="https://www.town.sera.hiroshima.jp/">世羅町</option>
+<option value="https://www.town.jinsekikogen.hiroshima.jp/">神石高原町</option>
+<option value="https://www.town.akinota.hiroshima.jp/">安芸太田町</option>
+<option value="https://www.town.kitahiroshima.lg.jp/">北広島町</option>
+<option value="https://www.town.osakikamijima.hiroshima.jp/">大崎上島町</option>
+
+      <!-- 以降、必要な市区町村を順次追加 -->
+    </select>
+    <button id="go" type="button">公式サイトへ</button>
+  </div>
+  <!-- ★ドロップダウンここまで -->
+      <!-- ここから次のステップ -->
+      <img
+      src="../img/hiroshima.png"
+      alt="広島県市区町村マップ"
+      usemap="#hiroshimamap"
+      style="max-width:100%;height:auto;display:block;"
+    />
+    <map name="hiroshimamap">
+      <!-- <area> は次ステップで追加 -->
+      <area target="" alt="蘂取村" title="" href="https://itchao.jp/hokkaido/shibetoromura" coords="4507,2661,4184,2356" shape="rect">
+    </map>
+    
+    </section>
+
+    <!-- 以下、他のセクション… -->
+    <script>
+        document.getElementById('go').addEventListener('click', ()=>{
+          const url = document.getElementById('muni').value;
+          if (url){
+            window.open(url, '_blank');
+          } else {
+            alert('市区町村を選択してください');
+          }
+        });
+      </script>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 地方移住者サイト | すべての権利を保有</p>
+</footer>
+</body>
+</html>

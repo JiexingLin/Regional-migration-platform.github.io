@@ -1,0 +1,78 @@
+/* リセットと基本のスタイル */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f4;
+    color: #333;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f4;
+    color: #333;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    background-color: white;
+    color: black;
+    width: 100vw; /* 画面いっぱいに広げる */
+    box-sizing: border-box;
+  }
+  
+
+  .logo img {
+    max-height: 100px;
+  }
+  
+  nav ul {
+    display: flex;
+    list-style: none;
+  }
+  
+  nav ul li {
+    margin-left: 40px;
+  }
+  
+  nav ul li a {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    font-size: 16px;
+    transition: color 0.3s ease;
+  }
+  
+  nav ul li a:hover {
+    color: #f39c12;
+  }
+
+  
+  /* フッター */
+  footer {
+    background-color: #F5F9FB;
+    color: black;
+    text-align: center;
+    padding: 44px 0 36px; 
+    margin-top: 30px;
+    background-color: #F5F9FB;
+    color: black;
+    text-align: center;
+    padding: 44px 0 36px; 
+    margin-top: 30px;
+    justify-content: center; 
+    align-items: center;
+  }
+  footer p {
+    font-size: 1rem;
+    font-size: 1rem;
+    justify-content: center; 
+  }
+
+  
+ 

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>移住先マッチング結果</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .results {
+            display: block;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>移住先マッチング結果</h1>
+        <div id="matching-results" class="results">
+            <table id="results-table">
+                <thead>
+                    <tr>
+                        <th>地域</th>
+                        <th>生活費</th>
+                        <th>治安</th>
+                        <th>施設</th>
+                        <th>交通アクセス</th>
+                        <th>文化・社会活動</th>
+                        <th>自然環境</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- マッチング結果がここに表示されます -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
