@@ -8,34 +8,32 @@ header {
     color: black;
     width: 100vw; /* 画面いっぱいに広げる */
     box-sizing: border-box;
-  }
-  
-  .logo img {
+}
+
+.logo img {
     max-height: 100px;
-  }
-  
-  nav ul {
+}
+
+nav ul {
     display: flex;
     list-style: none;
-  }
-  
-  nav ul li {
+}  
+
+nav ul li {
     margin-left: 40px;
-  }
-  
-  nav ul li a {
+}
+
+nav ul li a {
     text-decoration: none;
     color: black;
     font-weight: bold;
     font-size: 16px;
     transition: color 0.3s ease;
-  }
-  
-  nav ul li a:hover {
-    color: #f39c12;
-  }
-  
+}
 
+nav ul li a:hover {
+    color: #f39c12;
+}
       /* 全体設定 */
 body {
     font-family: Arial, sans-serif;
@@ -67,6 +65,26 @@ form {
     overflow-y: auto;
 }
 
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 20px; /* 行・列の間隔調整 */
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.2;
+    padding: 2px 0;
+}
+
+.checkbox-group input[type="checkbox"] {
+    transform: translateY(6px); /* 縦位置の微調整 */
+}
 
 h1 {
     text-align: center;
@@ -102,7 +120,7 @@ input, select {
 button {
     width: 100%;
     padding: 12px;
-    background-color: #4CAF50;
+    background-color: #7a4b22;
     color: white;
     border: none;
     border-radius: 5px;
@@ -112,7 +130,7 @@ button {
 }
 
 button:hover {
-    background-color: #45a049;
+    background-color: #452a13;
 }
 
 .results {
@@ -139,6 +157,3 @@ button:hover {
     border-radius: 5px;
     border: 1px solid #ddd;
 }
-
-
-      

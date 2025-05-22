@@ -319,9 +319,8 @@ img[usemap] {
 /*日本地図部分のcss終わり*/
 /* 地域魅力 */
 .advantage {
-  margin-top:66px
+  margin-top:66px;
   justify-content: center; 
-  
 }
 
 .advantage__header {
@@ -473,7 +472,7 @@ img[usemap] {
 
 .matching-button {
   padding: 15px 30px;
-  background-color: #28a745;
+  background-color: #7a4b22;
   color: white;
   font-size: 1.2rem;
   border: none;
@@ -486,13 +485,13 @@ img[usemap] {
   text-decoration: none;
 }
 .matching-button:hover {
-  background-color: #218838;
+  background-color: #4a2d13;
 }
 
 
 /* お問い合わせエリアのセクションスタイル */
 .contact-section {
-  background-color:#28a745;      /* 半透明白 */
+  background-color:#7a4b22;      /* 半透明白 */
   backdrop-filter: blur(10px);               /* 玻璃模糊 */
   -webkit-backdrop-filter: blur(10px);
   border-radius: 16px;
@@ -554,7 +553,7 @@ background-color: rgba(255, 255, 255, 0.4);
 
 /* ボタン */
 .contact-button {
-background: linear-gradient(135deg, #324851, #90AFC5);
+background: linear-gradient(135deg, #5f4625, #2e1f0c);
 color:#F5F9FB;
 text-decoration: none;
 font-weight: bold;
@@ -569,34 +568,27 @@ margin-bottom: 20px;
 }
 
 .contact-button:hover {
-  background: linear-gradient(135deg, #90AFC5, #324851);
+  background: linear-gradient(135deg, #5f4625, #2e1f0c);
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 15px 30px;
+  border-radius: 50px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-=========
-=========
->>>>>>>>> Temporary merge branch 2
-background: linear-gradient(135deg, #324851, #90AFC5);
-color: white;
-text-decoration: none;
-font-weight: bold;
-padding: 15px 30px;
-border-radius: 50px;
-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-transition: all 0.3s ease;
-font-size: 18px;
-display: inline-block;
-margin-left: 20px; /* 横の間隔を増やす */
-margin-bottom: 20px;
+  transition: all 0.3s ease;
+  font-size: 18px;
+  display: inline-block;
+  margin-left: 20px; /* 横の間隔を増やす */
+  margin-bottom: 20px;
 }
 
 .contact-button:hover {
-  background: linear-gradient(135deg, #90AFC5, #324851);
+  background: linear-gradient(135deg, #2e1f0c, #5f4625);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 /* レスポンシブ対応 */
 @media (max-width: 768px) {
-<<<<<<<<< Temporary merge branch 1
-<<<<<<<<< Temporary merge branch 1
   .contact-title {
     font-size: 36px;
   }
@@ -613,9 +605,6 @@ margin-bottom: 20px;
     font-size: 16px;
     padding: 12px 25px;
   }
-=========
-=========
->>>>>>>>> Temporary merge branch 2
 .contact-title {
   font-size: 36px;
 }
@@ -632,10 +621,7 @@ margin-bottom: 20px;
   font-size: 16px;
   padding: 12px 25px;
 }
-<<<<<<<<< Temporary merge branch 1
->>>>>>>>> Temporary merge branch 2
-=========
->>>>>>>>> Temporary merge branch 2
+
 }
 
 
