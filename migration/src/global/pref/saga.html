@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>佐賀県の魅力</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<!-- imageMapResizer の CDN -->
+<script src="https://unpkg.com/image-map-resizer@1.0.10/js/imageMapResizer.min.js"></script>
+<script>
+  // ページ読み込み後に、すべての <map> を自動リサイズ
+  window.addEventListener('load', () => {
+    imageMapResize(); 
+  });
+  </script>  
+<body>
+  <!-- ヘッダー（共通ナビなど） -->
+  <header>
+    <!-- 必要であれば共通ナビをinclude-->
+    <div class="logo">
+
+        <img src="../image copy 8.png" alt="イジュカツ">
+      </div>
+      <nav>
+        <ul>
+            <li><a href="../index.html">私たちについて</a></li>
+            <li><a href="../index.html">チャットボット</a></li>
+            <li><a href="../search.html">地域マッチング</a></li>
+            <li><a href="../faq.html">よくあるご質問</a></li>
+            <li><a href="../form.html">お問い合わせ</a></li>  
+        </ul>
+      </nav>
+  </header>
+
+  <main>
+    <!-- ヒーローセクション -->
+    <section class="hero">
+        <div class="hero__inner">
+          <h1 class="hero__title">佐賀県の魅力</h1>
+          <p class="hero__lead">
+            佐賀県は日本三大松原の虹の松原や七ツ釜、御船山楽園などの絶景、吉野ヶ里遺跡や唐津城、有田・伊万里焼といった歴史文化、唐津くんちや伊万里トンテントン祭りなど伝統行事も豊富です。呼子のイカや佐賀牛など地元グルメも充実し、温泉や自然、人の温かさ、西九州新幹線など交通アクセスの良さが住みやすさを支えています
+          </p>
+          <a href="#overview" class="hero__button">詳しく見る</a>
+        </div>
+      </section>
+    
+      <!-- ② 県概要セクション -->
+      <section id="overview" class="overview">
+        <h2 class="overview__heading">佐賀県の概要</h2>
+        <div class="overview__grid">
+          <div class="overview__box">
+            <h3>地形・気候</h3>
+            <ul>
+                <li>位置・面積：九州地方／約2,440平方km</li>
+                <li>主な地形：脊振山地、佐賀平野、有明海・玄界灘に面した海岸線、干潟や棚田も点在</li>
+                <li>気候区分：日本海側気候（冬は曇天・雨が多い）、一部太平洋側気候の影響も受ける</li>
+                <li>平均気温・降水量：春（15℃・130mm）、夏（27℃・290mm）、秋（19℃・120mm）、冬（7℃・55mm）※佐賀市の都市部目安</li>
+              </ul>
+          </div>
+          <div class="overview__box">
+            <h3>人口・中心都市</h3>
+            <ul>
+                <li>総人口：約803,000人（2025年推計）</li>
+                <li>人口密度：約329人／km²</li>
+                <li>中心都市：佐賀市（人口約230,000人、県庁所在地で行政・経済の中心、佐賀城やバルーンフェスタ、温泉や文化施設も豊富）</li>
+              </ul>
+          </div>
+        </div>
+      </section>    
+
+    <!-- 市区町村マップ -->
+    <section id="municipal-map">
+      <h2>市区町村マップ</h2>
+        <!-- ★ここからドロップダウンを追加 -->
+  <div id="municipality-select">
+    <label for="muni">市区町村を選択：</label>
+    <select id="muni">
+      <option value="">— 選んでください —</option>
+      <!-- 佐賀県 市区町村リスト -->
+<option value="https://www.city.saga.lg.jp/">佐賀市</option>
+<option value="https://www.city.karatsu.lg.jp/">唐津市</option>
+<option value="https://www.city.tosu.lg.jp/">鳥栖市</option>
+<option value="https://www.city.takeo.lg.jp/">武雄市</option>
+<option value="https://www.city.imari.saga.jp/">伊万里市</option>
+<option value="https://www.city.kashima.saga.jp/">鹿島市</option>
+<option value="https://www.city.oureshi.lg.jp/">小城市</option>
+<option value="https://www.city.ureshino.lg.jp/">嬉野市</option>
+<option value="https://www.city.kanzaki.saga.jp/">神埼市</option>
+<option value="https://www.city.taku.lg.jp/">多久市</option>
+<option value="https://www.town.yoshinogari.lg.jp/">吉野ヶ里町</option>
+<option value="https://www.town.kamimine.lg.jp/">上峰町</option>
+<option value="https://www.town.kiyama.lg.jp/">基山町</option>
+<option value="https://www.town.miyaki.lg.jp/">みやき町</option>
+<option value="https://www.town.tara.lg.jp/">太良町</option>
+<option value="https://www.town.omachi.saga.jp/">大町町</option>
+<option value="https://www.town.kouhoku.saga.jp/">江北町</option>
+<option value="https://www.town.shiroishi.lg.jp/">白石町</option>
+<option value="https://www.town.arita.lg.jp/">有田町</option>
+<option value="https://www.town.genkai.lg.jp/">玄海町</option>
+
+      <!-- 以降、必要な市区町村を順次追加 -->
+    </select>
+    <button id="go" type="button">公式サイトへ</button>
+  </div>
+  <!-- ★ドロップダウンここまで -->
+      <!-- ここから次のステップ -->
+      <img
+      src="../img/saga.png"
+      alt="佐賀県市区町村マップ"
+      usemap="#sagamap"
+      style="max-width:100%;height:auto;display:block;"
+    />
+    <map name="sagamap">
+      <!-- <area> は次ステップで追加 -->
+      <area target="" alt="蘂取村" title="" href="https://itchao.jp/hokkaido/shibetoromura" coords="4507,2661,4184,2356" shape="rect">
+    </map>
+    
+    </section>
+
+    <!-- 以下、他のセクション… -->
+    <script>
+        document.getElementById('go').addEventListener('click', ()=>{
+          const url = document.getElementById('muni').value;
+          if (url){
+            window.open(url, '_blank');
+          } else {
+            alert('市区町村を選択してください');
+          }
+        });
+      </script>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 地方移住者サイト | すべての権利を保有</p>
+</footer>
+</body>
+</html>

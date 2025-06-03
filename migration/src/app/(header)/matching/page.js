@@ -3,564 +3,504 @@ import { useState } from 'react'
 import styles from './matching.module.css'
 
 export default function MatchingPage() {
-  // 状态管理
+  // 表单状态管理
   const [formData, setFormData] = useState({
-    age: '30',
-    familyStructure: '双子持ち',
-    livingCost: '40',
-    security: 'good',
-    facilities: 'スーパー、病院',
-    transportation: '最寄駅まで徒歩10分',
-    commute: '徒歩圏内',
-    publicTransport: 'easy',
-    community: '祭り、アートイベント',
-    nature: 'forest',
-    education: '10',
-    schoolType: 'public',
-    schoolDistance: '徒歩圏内',
-    hospitalDistance: '子供が病気になった時にすぐに病院に行ける',
-    careFacility: 'yes',
-    preferredRegions: [] // 添加优先地域
+    name: '',
+    nameFurigana: '',
+    age: '',
+    familyStructure: '',
+    contact: '',
+    livingCost: '', // 单选
+    security: '',   // 单选
+    facilities: [],
+    car: '',        // 单选
+    publicTransport: [],
+    schoolType: [],
+    eduSupport: [],
+    medical: []
   });
 
-  const [results, setResults] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  // 处理表单输入变化
-  const handleInputChange = (e) => {
-    const { name, value, type } = e.target;
-    // 将带连字符的name转换为驼峰式
-    const formattedName = name.replace(/-([a-z])/g, g => g[1].toUpperCase());
-    
-    // 根据输入类型处理值
-    let processedValue = value;
-    if (type === 'number') {
-      // 如果是数字类型的输入，但输入为空，保持空字符串
-      processedValue = value === '' ? '' : value;
-    }
-
-    setFormData(prev => ({
-      ...prev,
-      [formattedName]: processedValue
-    }));
-  };
+  // 搜索结果状态
+  const [searchResults, setSearchResults] = useState(null);
+  const [showResults, setShowResults] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // 处理表单提交
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-
+    setIsLoading(true);
+    setError(null);
+    
+    // 转换表单数据为所需的格式
+    const userProfile = convertFormDataToUserProfile(formData);
+    
     try {
-      // 构造user_profile对象
-      const userProfile = {
-        "性別": "その他", // 这里可以添加性别选择
-        "年齢": Number(formData.age),
-        "婚姻状況": formData.familyStructure,
-        "希望条件": {
-          "生活費": {
-            "月額上限": Number(formData.livingCost)
-          },
-          "生活環境": {
-            "治安": formData.security === 'good' ? '良い' : '不安',
-            "近隣施設": formData.facilities,
-            "交通アクセス": formData.transportation
-          },
-          "交通": {
-            "最寄駅距離": formData.commute,
-            "公共交通機関": formData.publicTransport === 'easy' ? '便利' : '不便'
-          },
-          "文化活動": formData.community,
-          "自然環境": {
-            "type": formData.nature
-          },
-          "教育": {
-            "子供年齢": Number(formData.education),
-            "学校種類": formData.schoolType,
-            "通学距離": formData.schoolDistance
-          },
-          "医療福祉": {
-            "病院距離": formData.hospitalDistance,
-            "介護施設": formData.careFacility === 'yes' ? 'あり' : 'なし'
-          }
-        },
-        "優先地域": formData.preferredRegions,
-      };
-
-      // console.log('Sending request with profile:', userProfile); // 调试日志
-
-      const response = await fetch('/api/migration/search', {
+      // 发送数据到后端API
+      const response = await fetch('http://localhost:8000/api/migration/search', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ user_profile: userProfile })
+        body: JSON.stringify({ user_profile: userProfile }),
       });
-
-      console.log('Response status:', response.status); // 调试日志
-
+      
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || '検索に失敗しました');
+        throw new Error(`APIリクエストに失敗しました: ${response.status}`);
       }
-
-      const data = await response.json();
-      console.log('Received data:', data); // 调试日志
-
-      setResults({
-        recommendedLocations: data.recommended_locations,
-        lifePlan: data.life_plan,
-        search_top_results: data.search_top_results || {} // 添加搜索结果
-      });
+      
+      const result = await response.json();
+      setSearchResults(result);
+      setShowResults(true);
     } catch (error) {
-      console.error('Error:', error);
-      alert('エラーが発生しました: ' + error.message);
+      console.error('エラーが発生しました:', error);
+      setError(error.message || 'エラーが発生しました。後でもう一度お試しください。');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  // 結果表示コンポーネント
-  const ResultsSection = ({ results }) => {
-    if (!results) return null;
-    
-    return (
-      <div className={styles.results}>
-        <h2>マッチング結果</h2>
-        
-        {/* 推奨地域 */}
-        {results.recommendedLocations?.locations?.map((location, index) => (
-          <div key={index} className={styles.locationCard}>
-            <h3>{location.name}</h3>
-            
-            <h4>推奨理由：</h4>
-            <ul>
-              {location.reasons?.map((reason, i) => (
-                <li key={i}>{reason}</li>
-              ))}
-            </ul>
+  // 转换表单数据为用户资料格式
+  const convertFormDataToUserProfile = (formData) => {
+    // 转换生活费选项为具体数值
+    const livingCostMap = {
+      'under-50k': '5万円未満',
+      '50k-100k': '5〜10万円',
+      '100k-150k': '10万円～15万円',
+      'over-150k': '15万円以上'
+    };
 
-            <h4>地域の特徴：</h4>
-            <ul>
-              {location.features?.map((feature, i) => (
-                <li key={i}>{feature}</li>
-              ))}
-            </ul>
+    // 转换治安选项为具体数值
+    const securityMap = {
+      'under-0.2k': '200件未満',
+      '0.2k-0.3k': '200件~300件',
+      '0.3k': '300件以上'
+    };
 
-            <h4>支援政策：</h4>
-            <ul>
-              {location.policies?.map((policy, i) => (
-                <li key={i}>{policy}</li>
-              ))}
-            </ul>
-            
-            {/* 検索結果を追加 */}
-            <h4>検索結果：</h4>
-            {results.search_top_results && Object.keys(results.search_top_results).length > 0 ? (
-              <ul>
-                {Object.entries(results.search_top_results).map(([question, titleUrlPairs], i) => (
-                  <li key={i}>
-                    <strong>{question}：</strong>
-                    {titleUrlPairs && titleUrlPairs.length > 0 ? (
-                      <ul>
-                        {titleUrlPairs.map((item, j) => (
-                          <li key={j}>
-                            {item.title && item.link ? (
-                              <a href={item.link} target="_blank" rel="noopener noreferrer" 
-                                style={{ color: '#0066cc', textDecoration: 'underline' }}>
-                                {item.title}
-                              </a>
-                            ) : (
-                              <span>情報が見つかりません</span>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p>検索結果はありません。</p>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>検索結果はありません。</p>
-            )}
-          </div>
-        ))}
+    // 转换设施选项为具体名称
+    const facilitiesMap = {
+      'supermarket': 'スーパーマーケット',
+      'shopping-mall': 'ショッピングモール',
+      'government-office': '役所',
+      'library': '図書館'
+    };
 
-        {/* 生活プラン */}
-        {results.lifePlan && (
-          <div className={styles.lifePlanSection}>
-            <h3>生活プラン</h3>
-            
-            <div className={styles.planPhase}>
-              <h4>準備期間 ({results.lifePlan.preparation?.period})</h4>
-              <ul>
-                {results.lifePlan.preparation?.steps?.map((step, i) => (
-                  <li key={i}>{step}</li>
-                ))}
-              </ul>
-            </div>
+    // 转换交通选项为具体名称
+    const transportMap = {
+      'subway': '電車',
+      'bus': 'バス',
+      'bullet-train': '新幹線',
+      'airport': '空港'
+    };
 
-            <div className={styles.planPhase}>
-              <h4>初期適応期間 ({results.lifePlan.initial?.period})</h4>
-              <ul>
-                {results.lifePlan.initial?.steps?.map((step, i) => (
-                  <li key={i}>{step}</li>
-                ))}
-              </ul>
-            </div>
+    // 转换学校类型为具体名称
+    const schoolTypeMap = {
+      'ele-school': '保育園',
+      'kindergarden': '幼稚園',
+      'pri-school': '小学校',
+      'jh-school': '中学校',
+      'h-school': '高校'
+    };
 
-            <div className={styles.planPhase}>
-              <h4>定着期間 ({results.lifePlan.settlement?.period})</h4>
-              <ul>
-                {results.lifePlan.settlement?.steps?.map((step, i) => (
-                  <li key={i}>{step}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        )}
-      </div>
-    );
+    // 转换教育支援为具体名称
+    const eduSupportMap = {
+      'free': '学費無償制度',
+      'scholarship': '奨学金',
+      'int-edu': '国際教育'
+    };
+
+    // 转换医疗设施为具体名称
+    const medicalMap = {
+      'hospital': '総合病院',
+      'clinic': 'クリニック',
+      'nursing-facility': '介護施設',
+      'nursing-station': '訪問看護ステーション'
+    };
+
+    return {
+      "基本情報": {
+        "年齢": formData.age,
+        "家族構成": formData.familyStructure,
+      },
+      "希望条件": {
+        "生活費": livingCostMap[formData.livingCost],
+        "治安": securityMap[formData.security],
+        "近隣施設": formData.facilities.map(fac => facilitiesMap[fac]),
+        "交通アクセス": {
+          "車の有無": formData.car === 'yes' ? "車を持っている" : formData.car === 'no' ? "車を持っていない" : '',
+          "公共交通機関": formData.publicTransport.map(trans => transportMap[trans])
+        },
+        "教育環境": {
+          "学校の区分": formData.schoolType.map(school => schoolTypeMap[school]),
+          "教育支援制度": formData.eduSupport.map(edu => eduSupportMap[edu])
+        },
+        "医療・福祉": formData.medical.map(med => medicalMap[med])
+      }
+    };
+  };
+
+  // 处理复选框变化
+  const handleCheckboxChange = (category, value) => {
+    setFormData(prev => {
+      const currentValues = prev[category] || [];
+      const newValues = currentValues.includes(value)
+        ? currentValues.filter(v => v !== value)
+        : [...currentValues, value];
+      return { ...prev, [category]: newValues };
+    });
+  };
+
+  // 处理输入框变化
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   return (
     <div className={styles.container}>
-      <h1>地域移住者向けマッチング検索</h1>
+      <h1 className={styles.h1Color}>地域移住者向けマッチング検索</h1>
       
-      <form id="migration-form" onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         {/* 必須情報 */}
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>必須情報</legend>
-          <div className={styles.formGroup}>
-            <label htmlFor="age">年齢:</label>
-            <input 
-              type="number" 
-              id="age" 
-              name="age" 
-              value={formData.age}
-              onChange={handleInputChange}
-              required 
-              min="18" 
-              max="100" 
-            />
-          </div>
+        <fieldset>
+          <legend>必須情報</legend>
+          <label htmlFor="name">氏名（漢字）:</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+            required
+          />
 
-          <div className={styles.formGroup}>
-            <label htmlFor="family-structure">家族構成:</label>
-            <input 
-              type="text" 
-              id="family-structure" 
-              name="familyStructure"
-              value={formData.familyStructure}
-              onChange={handleInputChange}
-              required 
-            />
-          </div>
+          <label htmlFor="nameFurigana">フリガナ:</label>
+          <input
+            type="text"
+            id="nameFurigana"
+            name="nameFurigana"
+            value={formData.nameFurigana}
+            onChange={handleInputChange}
+            required
+          />
+
+          <label htmlFor="age">年齢:</label>
+          <input
+            type="number"
+            id="age"
+            name="age"
+            value={formData.age}
+            onChange={handleInputChange}
+            required
+            min="18"
+            max="100"
+          />
+
+          <label htmlFor="familyStructure">家族構成:</label>
+          <input
+            type="text"
+            id="familyStructure"
+            name="familyStructure"
+            value={formData.familyStructure}
+            onChange={handleInputChange}
+            required
+          />
+
+          <label htmlFor="contact">連絡先:</label>
+          <input
+            type="tel"
+            id="contact"
+            name="contact"
+            value={formData.contact}
+            onChange={handleInputChange}
+            required
+          />
         </fieldset>
 
         {/* 希望条件 */}
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>希望条件</legend>
-          
+        <fieldset>
+          <legend>希望条件</legend>
+
           {/* 生活費 */}
-          <fieldset className={styles.fieldset}>
-            <legend className={styles.legend}>生活費</legend>
-            <div className={styles.formGroup}>
-              <label htmlFor="living-cost">生活費上限（月額・万円）:</label>
-              <input 
-                type="number" 
-                id="living-cost" 
-                name="livingCost"
-                value={formData.livingCost}
-                onChange={handleInputChange}
-                required 
-                min="0" 
-              />
+          <fieldset>
+            <legend>生活費上限（月額）:</legend>
+            <div className={styles.radioGroup}>
+              {['under-50k', '50k-100k', '100k-150k', 'over-150k'].map(value => (
+                <label key={value}>
+                  <input
+                    type="radio"
+                    name="livingCost"
+                    value={value}
+                    checked={formData.livingCost === value}
+                    onChange={() => setFormData(prev => ({ ...prev, livingCost: value }))}
+                  />
+                  {value === 'under-50k' ? '5万円未満' :
+                   value === '50k-100k' ? '5〜10万円' :
+                   value === '100k-150k' ? '10万円～15万円' : '15万円以上'}
+                </label>
+              ))}
             </div>
           </fieldset>
 
           {/* 生活環境 */}
-          <fieldset className={styles.fieldset}>
-            <legend className={styles.legend}>生活環境</legend>
-            <div className={styles.formGroup}>
-              <label htmlFor="security">治安の良さ:</label>
-              <select 
-                id="security" 
-                name="security"
-                value={formData.security}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="good">良い</option>
-                <option value="bad">不安</option>
-              </select>
+          <fieldset>
+            <legend>生活環境</legend>
+            <label>治安の良さ:</label>
+            <div className={styles.radioGroup}>
+              {['under-0.2k', '0.2k-0.3k', '0.3k'].map(value => (
+                <label key={value}>
+                  <input
+                    type="radio"
+                    name="security"
+                    value={value}
+                    checked={formData.security === value}
+                    onChange={() => setFormData(prev => ({ ...prev, security: value }))}
+                  />
+                  {value === 'under-0.2k' ? '200件未満' :
+                   value === '0.2k-0.3k' ? '200件~300件' : '300件以上'}
+                </label>
+              ))}
             </div>
 
-            <div className={styles.formGroup}>
-              <label htmlFor="facilities">近隣施設:</label>
-              <input 
-                type="text" 
-                id="facilities" 
-                name="facilities"
-                value={formData.facilities}
-                onChange={handleInputChange}
-                placeholder="例: スーパー、病院" 
-                required 
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <label htmlFor="transportation">交通アクセス:</label>
-              <input 
-                type="text" 
-                id="transportation" 
-                name="transportation"
-                value={formData.transportation}
-                onChange={handleInputChange}
-                placeholder="例: 最寄駅まで徒歩10分" 
-                required 
-              />
+            <label>近隣施設:</label>
+            <div className="checkbox-group">
+              {['supermarket', 'shopping-mall', 'government-office', 'library'].map(value => (
+                <label key={value}>
+                  <input
+                    type="checkbox"
+                    name="facilities"
+                    value={value}
+                    checked={formData.facilities.includes(value)}
+                    onChange={() => handleCheckboxChange('facilities', value)}
+                  />
+                  {value === 'supermarket' ? 'スーパーマーケット' :
+                   value === 'shopping-mall' ? 'ショッピングモール' :
+                   value === 'government-office' ? '役所' : '図書館'}
+                </label>
+              ))}
             </div>
           </fieldset>
 
           {/* 交通アクセス */}
-          <fieldset className={styles.fieldset}>
-            <legend className={styles.legend}>交通アクセス</legend>
-            <div className={styles.formGroup}>
-              <label htmlFor="commute">最寄駅までの距離:</label>
-              <input 
-                type="text" 
-                id="commute" 
-                name="commute"
-                value={formData.commute}
-                onChange={handleInputChange}
-                placeholder="徒歩圏内" 
-                required 
-              />
+          <fieldset>
+            <legend>交通アクセス</legend>
+            <label>車の有無:</label>
+            <div className={styles.radioGroup}>
+              {['yes', 'no'].map(value => (
+                <label key={value}>
+                  <input
+                    type="radio"
+                    name="car"
+                    value={value}
+                    checked={formData.car === value}
+                    onChange={() => setFormData(prev => ({ ...prev, car: value }))}
+                  />
+                  {value === 'yes' ? '車を持っている' : '車を持っていない'}
+                </label>
+              ))}
             </div>
 
-            <div className={styles.formGroup}>
-              <label htmlFor="public-transport">公共交通機関の利便性:</label>
-              <select 
-                id="public-transport" 
-                name="publicTransport"
-                value={formData.publicTransport}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="easy">便利</option>
-                <option value="hard">不便</option>
-              </select>
-            </div>
-          </fieldset>
-
-          {/* 文化・社会活動 */}
-          <fieldset className={styles.fieldset}>
-            <legend className={styles.legend}>文化・社会活動</legend>
-            <div className={styles.formGroup}>
-              <label htmlFor="community">地域の文化活動:</label>
-              <input 
-                type="text" 
-                id="community" 
-                name="community"
-                value={formData.community}
-                onChange={handleInputChange}
-                placeholder="祭り、アートイベント" 
-                required 
-              />
-            </div>
-          </fieldset>
-
-          {/* レジャー・自然環境 */}
-          <fieldset className={styles.fieldset}>
-            <legend className={styles.legend}>レジャー・自然環境</legend>
-            <div className={styles.formGroup}>
-              <label htmlFor="nature">自然環境:</label>
-              <select 
-                id="nature" 
-                name="nature"
-                value={formData.nature}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="forest">森林</option>
-                <option value="beach">海</option>
-                <option value="mountain">山</option>
-                <option value="none">特に希望なし</option>
-              </select>
+            <label>公共交通機関:</label>
+            <div className="checkbox-group">
+              {['subway', 'bus', 'bullet-train', 'airport'].map(value => (
+                <label key={value}>
+                  <input
+                    type="checkbox"
+                    name="publicTransport"
+                    value={value}
+                    checked={formData.publicTransport.includes(value)}
+                    onChange={() => handleCheckboxChange('publicTransport', value)}
+                  />
+                  {value === 'subway' ? '電車' :
+                   value === 'bus' ? 'バス' :
+                   value === 'bullet-train' ? '新幹線' : '空港'}
+                </label>
+              ))}
             </div>
           </fieldset>
 
           {/* 教育環境 */}
-          <fieldset className={styles.fieldset}>
-            <legend className={styles.legend}>教育環境</legend>
-            <div className={styles.formGroup}>
-              <label htmlFor="education">お子様の年齢:</label>
-              <input 
-                type="number" 
-                id="education" 
-                name="education"
-                value={formData.education}
-                onChange={handleInputChange}
-                min="0" 
-                max="18" 
-                required 
-              />
+          <fieldset>
+            <legend>教育環境</legend>
+            <label>学校の区分:</label>
+            <div className="checkbox-group">
+              {['ele-school', 'kindergarden', 'pri-school', 'jh-school', 'h-school'].map(value => (
+                <label key={value}>
+                  <input
+                    type="checkbox"
+                    name="schoolType"
+                    value={value}
+                    checked={formData.schoolType.includes(value)}
+                    onChange={() => handleCheckboxChange('schoolType', value)}
+                  />
+                  {value === 'ele-school' ? '保育園' :
+                   value === 'kindergarden' ? '幼稚園' :
+                   value === 'pri-school' ? '小学校' :
+                   value === 'jh-school' ? '中学校' : '高校'}
+                </label>
+              ))}
             </div>
 
-            <div className={styles.formGroup}>
-              <label htmlFor="school-type">学校の種類:</label>
-              <select 
-                id="school-type" 
-                name="schoolType"
-                value={formData.schoolType}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="public">公立</option>
-                <option value="private">私立</option>
-                <option value="international">インターナショナル</option>
-              </select>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label htmlFor="school-distance">通学の距離:</label>
-              <input 
-                type="text" 
-                id="school-distance" 
-                name="schoolDistance"
-                value={formData.schoolDistance}
-                onChange={handleInputChange}
-                placeholder="徒歩圏内" 
-                required 
-              />
+            <label>教育支援制度:</label>
+            <div className="checkbox-group">
+              {['free', 'scholarship', 'int-edu'].map(value => (
+                <label key={value}>
+                  <input
+                    type="checkbox"
+                    name="eduSupport"
+                    value={value}
+                    checked={formData.eduSupport.includes(value)}
+                    onChange={() => handleCheckboxChange('eduSupport', value)}
+                  />
+                  {value === 'free' ? '学費無償制度' :
+                   value === 'scholarship' ? '奨学金' : '国際教育'}
+                </label>
+              ))}
             </div>
           </fieldset>
 
           {/* 医療・福祉 */}
-          <fieldset className={styles.fieldset}>
-            <legend className={styles.legend}>医療・福祉</legend>
-            <div className={styles.formGroup}>
-              <label htmlFor="hospital-distance">病院の距離:</label>
-              <input 
-                type="text" 
-                id="hospital-distance" 
-                name="hospitalDistance"
-                value={formData.hospitalDistance}
-                onChange={handleInputChange}
-                placeholder="近くに病院が欲しい" 
-                required 
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <label htmlFor="care-facility">介護施設の有無:</label>
-              <select 
-                id="care-facility" 
-                name="careFacility"
-                value={formData.careFacility}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="yes">あり</option>
-                <option value="no">なし</option>
-              </select>
-            </div>
-          </fieldset>
-
-          {/* 優先地域 */}
-          <fieldset className={styles.fieldset}>
-            <legend className={styles.legend}>優先地域</legend>
-            <div className={styles.formGroup}>
-              <label htmlFor="preferred-regions">希望する地域:</label>
-              <select 
-                id="preferred-regions" 
-                name="preferredRegions"
-                value={formData.preferredRegions}
-                onChange={(e) => {
-                  const options = e.target.options;
-                  const value = [];
-                  for (let i = 0; i < options.length; i++) {
-                    if (options[i].selected) {
-                      value.push(options[i].value);
-                    }
-                  }
-                  setFormData(prev => ({
-                    ...prev,
-                    preferredRegions: value
-                  }));
-                }}
-                multiple
-                required
-              >
-                {/* 日本の都道府県リスト */}
-                <option value="北海道">北海道</option>
-                <option value="青森県">青森県</option>
-                <option value="岩手県">岩手県</option>
-                <option value="宮城県">宮城県</option>
-                <option value="秋田県">秋田県</option>
-                <option value="山形県">山形県</option>
-                <option value="福島県">福島県</option>
-                <option value="茨城県">茨城県</option>
-                <option value="栃木県">栃木県</option>
-                <option value="群馬県">群馬県</option>
-                <option value="埼玉県">埼玉県</option>
-                <option value="千葉県">千葉県</option>
-                <option value="東京都">東京都</option>
-                <option value="神奈川県">神奈川県</option>
-                <option value="新潟県">新潟県</option>
-                <option value="富山県">富山県</option>
-                <option value="石川県">石川県</option>
-                <option value="福井県">福井県</option>
-                <option value="山梨県">山梨県</option>
-                <option value="長野県">長野県</option>
-                <option value="岐阜県">岐阜県</option>
-                <option value="静岡県">静岡県</option>
-                <option value="愛知県">愛知県</option>
-                <option value="三重県">三重県</option>
-                <option value="滋賀県">滋賀県</option>
-                <option value="京都府">京都府</option>
-                <option value="大阪府">大阪府</option>
-                <option value="兵庫県">兵庫県</option>
-                <option value="奈良県">奈良県</option>
-                <option value="和歌山県">和歌山県</option>
-                <option value="鳥取県">鳥取県</option>
-                <option value="島根県">島根県</option>
-                <option value="岡山県">岡山県</option>
-                <option value="広島県">広島県</option>
-                <option value="山口県">山口県</option>
-                <option value="徳島県">徳島県</option>
-                <option value="香川県">香川県</option>
-                <option value="愛媛県">愛媛県</option>
-                <option value="高知県">高知県</option>
-                <option value="福岡県">福岡県</option>
-                <option value="佐賀県">佐賀県</option>
-                <option value="長崎県">長崎県</option>
-                <option value="熊本県">熊本県</option>
-                <option value="大分県">大分県</option>
-                <option value="宮崎県">宮崎県</option>
-                <option value="鹿児島県">鹿児島県</option>
-                <option value="沖縄県">沖縄県</option>
-              </select>
+          <fieldset>
+            <legend>医療・福祉</legend>
+            <div className="checkbox-group">
+              {['hospital', 'clinic', 'nursing-facility', 'nursing-station'].map(value => (
+                <label key={value}>
+                  <input
+                    type="checkbox"
+                    name="medical"
+                    value={value}
+                    checked={formData.medical.includes(value)}
+                    onChange={() => handleCheckboxChange('medical', value)}
+                  />
+                  {value === 'hospital' ? '総合病院' :
+                   value === 'clinic' ? 'クリニック' :
+                   value === 'nursing-facility' ? '介護施設' : '訪問看護ステーション'}
+                </label>
+              ))}
             </div>
           </fieldset>
         </fieldset>
 
-        <button 
-          className={styles.submitButton} 
-          type="submit"
-          disabled={loading}
-        >
-          {loading ? '検索中...' : 'マッチング結果を検索'}
-        </button>
+        <div className={styles.buttonWrapper}>
+          <button type="submit" disabled={isLoading} className={styles.submitButton}>
+            {isLoading ? '検索中...' : 'マッチング結果を検索'}
+          </button>
+        </div>
       </form>
 
-      {loading ? (
-        <div className={styles.loading}>検索中...</div>
-      ) : (
-        <ResultsSection results={results} />
+      {/* エラーメッセージ */}
+      {error && (
+        <div className={styles.errorMessage}>
+          <p>{error}</p>
+        </div>
+      )}
+
+      {/* マッチング結果 */}
+      {showResults && searchResults && (
+        <div className={styles.results}>
+          <h2>マッチング結果</h2>
+          <div className={styles.resultsContainer}>
+            {/* 推荐地点展示 */}
+            {searchResults.recommended_locations && (
+              <div className={styles.locationsSection}>
+                <h3>おすすめの地域</h3>
+                <div className={styles.locationsGrid}>
+                  {searchResults.recommended_locations.locations.map((location, index) => (
+                    <div key={index} className={styles.locationCard}>
+                      <h4>{location.name}</h4>
+                      <div className={styles.locationDetails}>
+                        <div className={styles.detailSection}>
+                          <h5>推奨理由</h5>
+                          <ul>
+                            {location.reasons.map((reason, i) => (
+                              <li key={i}>{reason}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className={styles.detailSection}>
+                          <h5>特徴</h5>
+                          <ul>
+                            {location.features.map((feature, i) => (
+                              <li key={i}>{feature}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className={styles.detailSection}>
+                          <h5>支援政策</h5>
+                          <ul>
+                            {location.policies.map((policy, i) => (
+                              <li key={i}>{policy}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 生活计划展示 */}
+            {searchResults.life_plan && (
+              <div className={styles.lifePlanSection}>
+                <h3>移住計画</h3>
+                <div className={styles.planTimeline}>
+                  {/* 准备阶段 */}
+                  <div className={styles.planPhase}>
+                    <h4>{searchResults.life_plan.preparation.period}</h4>
+                    <ul>
+                      {searchResults.life_plan.preparation.steps.map((step, index) => (
+                        <li key={index}>{step}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  {/* 初期阶段 */}
+                  <div className={styles.planPhase}>
+                    <h4>{searchResults.life_plan.initial.period}</h4>
+                    <ul>
+                      {searchResults.life_plan.initial.steps.map((step, index) => (
+                        <li key={index}>{step}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  {/* 定居阶段 */}
+                  <div className={styles.planPhase}>
+                    <h4>{searchResults.life_plan.settlement.period}</h4>
+                    <ul>
+                      {searchResults.life_plan.settlement.steps.map((step, index) => (
+                        <li key={index}>{step}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 搜索结果展示 */}
+            {searchResults.search_top_results && (
+              <div className={styles.searchResultsSection}>
+                <h3>関連情報</h3>
+                <div className={styles.searchResultsGrid}>
+                  {Object.entries(searchResults.search_top_results).map(([question, results], index) => (
+                    <div key={index} className={styles.searchResultCard}>
+                      <h4>{question}</h4>
+                      <ul>
+                        {results.map((result, i) => (
+                          <li key={i}>
+                            <a href={result.link} target="_blank" rel="noopener noreferrer">
+                              {result.title}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </div>
-  )
+  );
 }

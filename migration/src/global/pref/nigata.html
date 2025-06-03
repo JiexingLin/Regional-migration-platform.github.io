@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>新潟県の魅力</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<!-- imageMapResizer の CDN -->
+<script src="https://unpkg.com/image-map-resizer@1.0.10/js/imageMapResizer.min.js"></script>
+<script>
+  // ページ読み込み後に、すべての <map> を自動リサイズ
+  window.addEventListener('load', () => {
+    imageMapResize(); 
+  });
+  </script>  
+<body>
+  <!-- ヘッダー（共通ナビなど） -->
+  <header>
+    <!-- 必要であれば共通ナビをinclude-->
+    <div class="logo">
+
+        <img src="../image copy 8.png" alt="イジュカツ">
+      </div>
+      <nav>
+        <ul>
+            <li><a href="../index.html">私たちについて</a></li>
+            <li><a href="../index.html">チャットボット</a></li>
+            <li><a href="../search.html">地域マッチング</a></li>
+            <li><a href="../faq.html">よくあるご質問</a></li>
+            <li><a href="../form.html">お問い合わせ</a></li>  
+        </ul>
+      </nav>
+  </header>
+
+  <main>
+    <!-- ヒーローセクション -->
+    <section class="hero">
+        <div class="hero__inner">
+          <h1 class="hero__title">新潟県の魅力</h1>
+          <p class="hero__lead">
+            新潟県は弥彦山や佐渡島、清津峡など四季折々の絶景や名所が豊富で、花の公園や伝統的な祭りも多彩です。米どころならではの地酒やタレかつ丼、海鮮などグルメも充実し、温泉や自然、人の温かさ、鉄道・車ともにアクセスしやすい住環境が魅力です
+          </p>
+          <a href="#overview" class="hero__button">詳しく見る</a>
+        </div>
+      </section>
+    
+      <!-- ② 県概要セクション -->
+      <section id="overview" class="overview">
+        <h2 class="overview__heading">北海道の概要</h2>
+        <div class="overview__grid">
+          <div class="overview__box">
+            <h3>地形・気候</h3>
+            <ul>
+                <li>位置・面積：中部地方／約12,584平方km</li>
+                <li>主な地形：越後山脈や飯豊山地などの山地、越後平野、日本海に面した長い海岸線、佐渡島などの離島</li>
+                <li>気候区分：日本海側気候（冬は雪が多い）、一部内陸性気候</li>
+                <li>平均気温・降水量：春（11℃・120mm）、夏（25℃・170mm）、秋（16℃・180mm）、冬（2℃・210mm）※新潟市の都市部目安</li>
+              </ul>
+          </div>
+          <div class="overview__box">
+            <h3>人口・中心都市</h3>
+            <ul>
+                <li>総人口：約2,120,000人（2025年推計）</li>
+                <li>人口密度：約168人／km²</li>
+                <li>中心都市：新潟市（人口約780,000人、県庁所在地で行政・経済・文化の中心、信濃川や日本海に面し、地酒やグルメ、観光資源が豊富）</li>
+              </ul>
+          </div>
+        </div>
+      </section>    
+
+    <!-- 市区町村マップ -->
+    <section id="municipal-map">
+      <h2>市区町村マップ</h2>
+        <!-- ★ここからドロップダウンを追加 -->
+  <div id="municipality-select">
+    <label for="muni">市区町村を選択：</label>
+    <select id="muni">
+      <option value="">— 選んでください —</option>
+      <!-- 新潟県 市区町村リスト -->
+<option value="https://www.city.niigata.lg.jp/">新潟市</option>
+<option value="https://www.city.nagaoka.niigata.jp/">長岡市</option>
+<option value="https://www.city.sanjo.niigata.jp/">三条市</option>
+<option value="https://www.city.shibata.lg.jp/">新発田市</option>
+<option value="https://www.city.kashiwazaki.lg.jp/">柏崎市</option>
+<option value="https://www.city.ojiyama.niigata.jp/">小千谷市</option>
+<option value="https://www.city.kamo.niigata.jp/">加茂市</option>
+<option value="https://www.city.tokamachi.lg.jp/">十日町市</option>
+<option value="https://www.city.mitsuke.niigata.jp/">見附市</option>
+<option value="https://www.city.murakami.lg.jp/">村上市</option>
+<option value="https://www.city.tsubame.niigata.jp/">燕市</option>
+<option value="https://www.city.itoigawa.lg.jp/">糸魚川市</option>
+<option value="https://www.city.gosen.lg.jp/">五泉市</option>
+<option value="https://www.city.uonuma.niigata.jp/">魚沼市</option>
+<option value="https://www.city.minamiuonuma.niigata.jp/">南魚沼市</option>
+<option value="https://www.city.seiro.niigata.jp/">胎内市</option>
+<option value="https://www.city.aga.niigata.jp/">阿賀野市</option>
+<option value="https://www.city.sado.niigata.lg.jp/">佐渡市</option>
+<option value="https://www.city.tainai.niigata.jp/">胎内市</option>
+<option value="https://www.city.myoko.niigata.jp/">妙高市</option>
+<option value="https://www.town.seiro.niigata.jp/">聖籠町</option>
+<option value="https://www.town.yahiko.niigata.jp/">弥彦村</option>
+<option value="https://www.town.tagami.niigata.jp/">田上町</option>
+<option value="https://www.town.aga.niigata.jp/">阿賀町</option>
+<option value="https://www.town.tsubame.niigata.jp/">関川村</option>
+<option value="https://www.town.sekikawa.niigata.jp/">関川村</option>
+<option value="https://www.town.awashimaura.niigata.jp/">粟島浦村</option>
+<option value="https://www.town.yuzawa.niigata.jp/">湯沢町</option>
+<option value="https://www.town.tsunan.niigata.jp/">津南町</option>
+<option value="https://www.town.minamiuonuma.niigata.jp/">湯沢町</option>
+
+      <!-- 以降、必要な市区町村を順次追加 -->
+    </select>
+    <button id="go" type="button">公式サイトへ</button>
+  </div>
+  <!-- ★ドロップダウンここまで -->
+      <!-- ここから次のステップ -->
+      <img
+      src="../img/nigata.png"
+      alt="新潟県市区町村マップ"
+      usemap="#nigatamap"
+      style="max-width:100%;height:auto;display:block;"
+    />
+    <map name="nigatamap">
+      <!-- <area> は次ステップで追加 -->
+      <area target="" alt="蘂取村" title="" href="https://itchao.jp/hokkaido/shibetoromura" coords="4507,2661,4184,2356" shape="rect">
+    </map>
+    
+    </section>
+
+    <!-- 以下、他のセクション… -->
+    <script>
+        document.getElementById('go').addEventListener('click', ()=>{
+          const url = document.getElementById('muni').value;
+          if (url){
+            window.open(url, '_blank');
+          } else {
+            alert('市区町村を選択してください');
+          }
+        });
+      </script>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 地方移住者サイト | すべての権利を保有</p>
+</footer>
+</body>
+</html>

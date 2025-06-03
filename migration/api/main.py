@@ -5,8 +5,6 @@ from typing import Dict, Any
 import sys
 import os
 
-# 添加local_migration_json目录到Python路径
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../local_migration_json'))
 
 from local_migration import JapaneseMigrationAgent
 

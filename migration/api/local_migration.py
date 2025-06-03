@@ -49,7 +49,7 @@ class JapaneseMigrationAgent:
         self.profile_analysis_prompt = PromptTemplate(
             input_variables=['user_profile'],
             template="""
-            専門の日本地方移住コンサルタントとして、以下のユーザー情報に基づき、移住ニーズを3-4つの具体的なサブ質問に分解してください。地方の定義は、人口30万人以下の地域を「地方」、人口10万人以下の地域を「地方」とし、大都市圏は除外します。：
+            専門の日本地方移住コンサルタントとして、以下のユーザー情報に基づき、移住ニーズを3-4つの具体的なサブ質問に分解してください。地方の定義は、人口30万人以下の地域を「地方」、人口10万人以下の地域を「地方」とし、大都市圏は除外します。
 
             ユーザー情報：
             {user_profile}
@@ -65,36 +65,32 @@ class JapaneseMigrationAgent:
         self.location_recommendation_prompt = PromptTemplate(
             input_variables=['user_profile', 'search_results'],
             template="""
-            あなたは地方移住コンサルタントとして、以下のユーザー情報と検索結果に基づいて、制約に従って回答してください：
+            あなたは地方移住コンサルタントとして、以下のユーザー情報と検索結果に基づいて、制約に従って回答してください。
+
             ユーザー情報：
             {user_profile}
 
             検索結果：
             {search_results}
+
             制約：
             - 人口30万人以下の地域を「地方」、人口10万人以下の地域を「特に地方」とする
             - 大都市圏は除外する
             - 提案は具体的な市町村レベルまで三つを特定する
-            - 提案する地域はユーザーの優先地域の中から選ぶ
+            - 提案する地域はユーザーの希望条件に最も合致する地域を選ぶ
             - 各地域について3つの観点（推奨理由、特徴、支援政策）で説明する
             - 各説明は200文字以内で簡潔に記述する
-            - 必ず以下のJSON形式だけで出力してください,JSON以外の出力は絶対不要：
+            - 必ず以下のJSON形式だけで出力してください。JSON以外の出力は絶対不要です。
+            - 余分な空白や改行は含めないでください。
+            - 必ず"locations"キーを含めてください。
+
             {{
                 "locations": [
                     {{
                         "name": "地域名",
-                        "reasons": [
-                            "理由1",
-                            "理由2"
-                        ],
-                        "features": [
-                            "特徴1",
-                            "特徴2"
-                        ],
-                        "policies": [
-                            "政策1",
-                            "政策2"
-                        ]
+                        "reasons": ["理由1", "理由2"],
+                        "features": ["特徴1", "特徴2"],
+                        "policies": ["政策1", "政策2"]
                     }}
                 ]
             }}
@@ -105,44 +101,36 @@ class JapaneseMigrationAgent:
         self.life_plan_prompt = PromptTemplate(
             input_variables=['user_profile', 'recommended_locations'],
             template="""
-            あなたは地方移住コンサルタントとして、以下のユーザー情報と検索結果に基づいて、制約に従って移住計画を提案してください：
+            あなたは地方移住コンサルタントとして、以下のユーザー情報と推奨地域に基づいて、制約に従って移住計画を提案してください。
+
             ユーザー情報：
             {user_profile}
 
             推奨地域：
             {recommended_locations}
+
             制約：
             - 各フェーズの計画は具体的で実行可能な内容にする
             - 各ステップは150文字以内で簡潔に記述する
-            - ユーザーの職業と家族構成を考慮する
+            - ユーザーの家族構成と希望条件を考慮する
             - 地域特性を活かした提案をする
             - 時系列に沿って段階的に計画を立てる
-            - 必ず以下のJSON形式で出力してください,JSON以外の出力は絶対不要：
+            - 必ず以下のJSON形式で出力してください。JSON以外の出力は絶対不要です。
+            - 余分な空白や改行は含めないでください。
+            - 必ず"preparation"、"initial"、"settlement"の3つのキーを含めてください。
 
-            
-
-            以下のJSON形式で出力してください：
             {{
                 "preparation": {{
                     "period": "6ヶ月前～移住1ヶ月前",
-                    "steps": [
-                        "ステップ1",
-                        "ステップ2"
-                    ]
+                    "steps": ["ステップ1", "ステップ2"]
                 }},
                 "initial": {{
                     "period": "移住後3ヶ月",
-                    "steps": [
-                        "ステップ1",
-                        "ステップ2"
-                    ]
+                    "steps": ["ステップ1", "ステップ2"]
                 }},
                 "settlement": {{
                     "period": "移住後1年後～",
-                    "steps": [
-                        "ステップ1",
-                        "ステップ2"
-                    ]
+                    "steps": ["ステップ1", "ステップ2"]
                 }}
             }}
             """
@@ -225,63 +213,94 @@ class JapaneseMigrationAgent:
         """
         生成推荐地点，并返回搜索结果
         """
-        profile_str = "\n".join([f"{k}: {str(v)}" for k, v in user_profile.items()])
-        
-        # 搜索相关资源
-        search_results = {}
-        search_top_results = {}  # 存储每个问题的前两条搜索结果
-        
-        # 分析用户资料，生成问题
-        questions_text = self.profile_analysis_chain.run(user_profile=profile_str)
-        questions = [q.strip() for q in questions_text.split('\n') if q.strip()]
-        
-        for question in questions:
-            if question.startswith(('1.', '2.', '3.', '4.')):
-                # 去掉问题前面的序号
-                clean_question = question[2:].strip()
-            else:
-                clean_question = question
-                
-            # 执行搜索并获取完整结果和前两条结果
-            full_result, top_two = await self.search_with_serpapi(clean_question)
-            search_results[clean_question] = full_result
-            search_top_results[clean_question] = top_two
-        
-        # 生成推荐地点
-        response = self.location_recommendation_chain.run(
-            user_profile=profile_str,
-            search_results=str(search_results)
-        )
-        # 清理响应中的markdown标记
-        response = response.replace('```json\n', '').replace('\n```', '').strip()
-        
         try:
-            # 验证JSON格式
-            json.loads(response)
-            return response, search_top_results
-        except json.JSONDecodeError as e:
-            print(f"JSON解析にエラーが発生しました: {e}")
+            profile_str = "\n".join([f"{k}: {str(v)}" for k, v in user_profile.items()])
+            
+            # 搜索相关资源
+            search_results = {}
+            search_top_results = {}  # 存储每个问题的前两条搜索结果
+            
+            # 分析用户资料，生成问题
+            questions_response = self.profile_analysis_chain.invoke({"user_profile": profile_str})
+            # 从响应中提取文本内容
+            questions_text = questions_response.get('text', '') if isinstance(questions_response, dict) else str(questions_response)
+            questions = [q.strip() for q in questions_text.split('\n') if q.strip()]
+            
+            for question in questions:
+                if question.startswith(('1.', '2.', '3.', '4.')):
+                    # 去掉问题前面的序号
+                    clean_question = question[2:].strip()
+                else:
+                    clean_question = question
+                    
+                # 执行搜索并获取完整结果和前两条结果
+                full_result, top_three = await self.search_with_serpapi(clean_question)
+                search_results[clean_question] = full_result
+                search_top_results[clean_question] = top_three
+            
+            # 生成推荐地点
+            response = self.location_recommendation_chain.invoke({
+                "user_profile": profile_str,
+                "search_results": str(search_results)
+            })
+            
+            # 从响应中提取文本内容
+            response_text = response.get('text', '') if isinstance(response, dict) else str(response)
+            
+            # 清理响应中的markdown标记和多余的空格
+            response_text = response_text.replace('```json\n', '').replace('\n```', '').strip()
+            response_text = re.sub(r'\n\s+', ' ', response_text)  # 移除多余的空格和换行
+            
+            try:
+                # 验证JSON格式
+                json_data = json.loads(response_text)
+                if not isinstance(json_data, dict) or 'locations' not in json_data:
+                    raise ValueError("Invalid JSON format: missing 'locations' key")
+                return response_text, search_top_results
+            except json.JSONDecodeError as e:
+                print(f"JSON解析にエラーが発生しました: {e}")
+                print(f"問題のあるレスポンス: {response_text}")
+                raise
+                
+        except Exception as e:
+            print(f"処理中にエラーが発生しました: {str(e)}")
             raise
 
     async def generate_life_plan(self, user_profile: Dict, recommended_locations: str) -> str:
         """
         生成生活规划
         """
-        profile_str = "\n".join([f"{k}: {str(v)}" for k, v in user_profile.items()])
-        
-        response = self.life_plan_chain.run(
-            user_profile=profile_str,
-            recommended_locations=recommended_locations
-        )
-        response = response.replace('```json\n', '').replace('\n```', '').strip()
-        
         try:
-            json.loads(response)
-            return response
-        except json.JSONDecodeError as e:
-            print(f"JSON解析にエラーが発生しました: {e}")
-            raise 
-    
+            profile_str = "\n".join([f"{k}: {str(v)}" for k, v in user_profile.items()])
+            
+            response = self.life_plan_chain.invoke({
+                "user_profile": profile_str,
+                "recommended_locations": recommended_locations
+            })
+            
+            # 从响应中提取文本内容
+            response_text = response.get('text', '') if isinstance(response, dict) else str(response)
+            
+            # 清理响应中的markdown标记和多余的空格
+            response_text = response_text.replace('```json\n', '').replace('\n```', '').strip()
+            response_text = re.sub(r'\n\s+', ' ', response_text)  # 移除多余的空格和换行
+            
+            try:
+                # 验证JSON格式
+                json_data = json.loads(response_text)
+                required_keys = ['preparation', 'initial', 'settlement']
+                if not all(key in json_data for key in required_keys):
+                    raise ValueError("Invalid JSON format: missing required keys")
+                return response_text
+            except json.JSONDecodeError as e:
+                print(f"JSON解析にエラーが発生しました: {e}")
+                print(f"問題のあるレスポンス: {response_text}")
+                raise
+                
+        except Exception as e:
+            print(f"処理中にエラーが発生しました: {str(e)}")
+            raise
+
     async def process_migration_consultation(self, user_profile: Dict) -> Dict:
         """
         执行完整的移居咨询流程
@@ -297,11 +316,11 @@ class JapaneseMigrationAgent:
                 "user_profile": user_profile,
                 "recommended_locations": json.loads(recommended_locations),
                 "life_plan": json.loads(life_plan),
-                "search_top_results": search_top_results  # 添加前两条搜索结果到返回数据中
+                "search_top_results": search_top_results
             }
             
         except Exception as e:
-            print(f"処理中にエラーが発生しました: {e}")
+            print(f"処理中にエラーが発生しました: {str(e)}")
             raise
 
 def main():
