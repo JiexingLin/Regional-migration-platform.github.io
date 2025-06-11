@@ -399,8 +399,8 @@ img[usemap] {
 }
 
 .advantage__header > h2 span {
-  background: url("@/global/img/image.png") repeat-x 0 100%;
-  padding-bottom:11px
+  /* background: url("@/global/img/image.png") repeat-x 0 100%; */
+  padding-bottom:11px;
 }
 
 .advantage__header p {
@@ -808,4 +808,55 @@ header.scrolled {
 
 header.scrolled .logo img {
   max-height: 40px;
+}
+
+/* 区域移住表单全局样式迁移自matching.module.css，仅在style.css中维护 */
+form {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+fieldset {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  background: #f8f3ea;
+}
+
+legend {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #7a4b22;
+  font-size: 1.1em;
+}
+
+label {
+  display: block;
+  margin: 10px 0 5px;
+  color: #333;
+  font-size: 1em;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  background: #eaf2ff;
+  box-sizing: border-box;
+}
+
+input[type="checkbox"] {
+  width: auto;
+  margin-right: 6px;
+  accent-color: #4CAF50;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: white;
 }
