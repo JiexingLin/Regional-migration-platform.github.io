@@ -5,19 +5,44 @@ import styles from './matching.module.css'
 export default function MatchingPage() {
   // 表单状态管理
   const [formData, setFormData] = useState({
+    // 第1部：基本情報
     name: '',
-    nameFurigana: '',
-    age: '',
+    ageGroup: '',
+    currentLocation: '',
     familyStructure: '',
-    contact: '',
-    livingCost: '', // 单选
-    security: '',   // 单选
-    facilities: [],
-    car: '',        // 单选
-    publicTransport: [],
-    schoolType: [],
-    eduSupport: [],
-    medical: []
+    familyStructureOther: '',
+    migrationReason: '',
+    
+    // 第2部：移住先での暮らしのご希望
+    // 1. ライフスタイル・環境
+    lifestylePreferences: [],
+    snowTolerance: '',
+    insectTolerance: '',
+    drivingStatus: '',
+    preferredTransportation: '',
+    
+    // 2. 仕事・キャリア
+    workStyle: [],
+    workRequirements: '',
+    
+    // 3. 住まい
+    housingType: [],
+    rentBudget: '',
+    purchaseBudget: '',
+    housingRequirements: [],
+    
+    // 4. 家族・教育
+    educationPreferences: [],
+    childRearingPreferences: [],
+    
+    // 第3部：移住に関する不安や懸念
+    concerns: [],
+    otherConcerns: '',
+    
+    // 第4部：移住計画
+    migrationTimeline: '',
+    interestedAreas: '',
+    previousExperience: ''
   });
 
   // 搜索结果状态
@@ -62,79 +87,54 @@ export default function MatchingPage() {
 
   // 转换表单数据为用户资料格式
   const convertFormDataToUserProfile = (formData) => {
-    // 转换生活费选项为具体数值
-    const livingCostMap = {
-      'under-50k': '5万円未満',
-      '50k-100k': '5〜10万円',
-      '100k-150k': '10万円～15万円',
-      'over-150k': '15万円以上'
-    };
-
-    // 转换治安选项为具体数值
-    const securityMap = {
-      'under-0.2k': '200件未満',
-      '0.2k-0.3k': '200件~300件',
-      '0.3k': '300件以上'
-    };
-
-    // 转换设施选项为具体名称
-    const facilitiesMap = {
-      'supermarket': 'スーパーマーケット',
-      'shopping-mall': 'ショッピングモール',
-      'government-office': '役所',
-      'library': '図書館'
-    };
-
-    // 转换交通选项为具体名称
-    const transportMap = {
-      'subway': '電車',
-      'bus': 'バス',
-      'bullet-train': '新幹線',
-      'airport': '空港'
-    };
-
-    // 转换学校类型为具体名称
-    const schoolTypeMap = {
-      'ele-school': '保育園',
-      'kindergarden': '幼稚園',
-      'pri-school': '小学校',
-      'jh-school': '中学校',
-      'h-school': '高校'
-    };
-
-    // 转换教育支援为具体名称
-    const eduSupportMap = {
-      'free': '学費無償制度',
-      'scholarship': '奨学金',
-      'int-edu': '国際教育'
-    };
-
-    // 转换医疗设施为具体名称
-    const medicalMap = {
-      'hospital': '総合病院',
-      'clinic': 'クリニック',
-      'nursing-facility': '介護施設',
-      'nursing-station': '訪問看護ステーション'
-    };
-
     return {
       "基本情報": {
-        "年齢": formData.age,
-        "家族構成": formData.familyStructure,
+        "年代": formData.ageGroup,
+        "現在の居住地": formData.currentLocation,
+        "家族構成": {
+          "構成": formData.familyStructure,
+          "その他": formData.familyStructureOther,
+          "お子様の年齢": formData.childAge
+        },
+        "移住理由": formData.migrationReason
       },
       "希望条件": {
-        "生活費": livingCostMap[formData.livingCost],
-        "治安": securityMap[formData.security],
-        "近隣施設": formData.facilities.map(fac => facilitiesMap[fac]),
-        "交通アクセス": {
-          "車の有無": formData.car === 'yes' ? "車を持っている" : formData.car === 'no' ? "車を持っていない" : '',
-          "公共交通機関": formData.publicTransport.map(trans => transportMap[trans])
+        "ライフスタイル": {
+          "希望する暮らし": formData.lifestylePreferences,
+          "自然環境": {
+            "雪国での暮らし": formData.snowTolerance,
+            "虫への許容度": formData.insectTolerance
+          },
+          "交通手段": {
+            "車の運転": formData.drivingStatus,
+            "主な移動手段": formData.preferredTransportation
+          }
         },
-        "教育環境": {
-          "学校の区分": formData.schoolType.map(school => schoolTypeMap[school]),
-          "教育支援制度": formData.eduSupport.map(edu => eduSupportMap[edu])
+        "仕事・キャリア": {
+          "働き方": formData.workStyle,
+          "希望条件": formData.workRequirements
         },
-        "医療・福祉": formData.medical.map(med => medicalMap[med])
+        "住まい": {
+          "希望する住居タイプ": formData.housingType,
+          "予算": {
+            "家賃": formData.rentBudget,
+            "購入": formData.purchaseBudget
+          },
+          "必須条件": formData.housingRequirements
+        },
+        "教育・子育て": {
+          "教育環境": formData.educationPreferences,
+          "子育て支援": formData.childRearingPreferences
+        }
+      },
+      "不安・懸念": {
+        "主な不安": formData.concerns,
+        "その他の不安": formData.otherConcerns
+      },
+      "移住計画": {
+        "希望時期": formData.migrationTimeline,
+        "興味のある地域": formData.interestedAreas,
+        "これまでの経験": formData.previousExperience
       }
     };
   };
@@ -161,10 +161,11 @@ export default function MatchingPage() {
       <h1 className={styles.h1Color}>地域移住者向けマッチング検索</h1>
       
       <form onSubmit={handleSubmit}>
-        {/* 必須情報 */}
+        {/* 第1部：基本情報 */}
         <fieldset>
-          <legend>必須情報</legend>
-          <label htmlFor="name">氏名（漢字）:</label>
+          <legend>第1部：基本情報について</legend>
+          
+          <label htmlFor="name">お名前:</label>
           <input
             type="text"
             id="name"
@@ -172,213 +173,456 @@ export default function MatchingPage() {
             value={formData.name}
             onChange={handleInputChange}
             required
+            className={styles.inputStyled}
           />
 
-          <label htmlFor="nameFurigana">フリガナ:</label>
+          <fieldset>
+            <legend>年代:</legend>
+            <div className={styles.radioGroup}>
+              {['10代', '20代', '30代', '40代', '50代', '60代以上'].map(value => (
+                <label key={value}>
+                  <input
+                    type="radio"
+                    name="ageGroup"
+                    value={value}
+                    checked={formData.ageGroup === value}
+                    onChange={() => setFormData(prev => ({ ...prev, ageGroup: value }))}
+                  />
+                  {value}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <label htmlFor="currentLocation">現在の居住地（都道府県・市区町村）:</label>
           <input
             type="text"
-            id="nameFurigana"
-            name="nameFurigana"
-            value={formData.nameFurigana}
+            id="currentLocation"
+            name="currentLocation"
+            value={formData.currentLocation}
             onChange={handleInputChange}
             required
+            className={styles.inputStyled}
           />
 
-          <label htmlFor="age">年齢:</label>
-          <input
-            type="number"
-            id="age"
-            name="age"
-            value={formData.age}
-            onChange={handleInputChange}
-            required
-            min="18"
-            max="100"
-          />
+          <fieldset>
+            <legend>家族構成について:</legend>
+            <div className={styles.radioGroup}>
+              {[
+                '単身',
+                'パートナー・配偶者のみ',
+                'お子様あり',
+                'ご両親や親族と同居予定',
+                'その他'
+              ].map(value => (
+                <label key={value}>
+                  <input
+                    type="radio"
+                    name="familyStructure"
+                    value={value}
+                    checked={formData.familyStructure === value}
+                    onChange={() => setFormData(prev => ({ ...prev, familyStructure: value }))}
+                  />
+                  {value}
+                </label>
+              ))}
+            </div>
+            {formData.familyStructure === 'お子様あり' && (
+              <div>
+                <label htmlFor="childAge">お子様の年齢:</label>
+                <input
+                  type="number"
+                  id="childAge"
+                  name="childAge"
+                  value={formData.childAge}
+                  onChange={handleInputChange}
+                  className={styles.inputStyled}
+                />
+              </div>
+            )}
+            {formData.familyStructure === 'その他' && (
+              <div>
+                <label htmlFor="familyStructureOther">具体的に:</label>
+                <input
+                  type="text"
+                  id="familyStructureOther"
+                  name="familyStructureOther"
+                  value={formData.familyStructureOther}
+                  onChange={handleInputChange}
+                  className={styles.inputStyled}
+                />
+              </div>
+            )}
+          </fieldset>
 
-          <label htmlFor="familyStructure">家族構成:</label>
-          <input
-            type="text"
-            id="familyStructure"
-            name="familyStructure"
-            value={formData.familyStructure}
+          <label htmlFor="migrationReason">移住を考え始めたきっかけ・理由:</label>
+          <textarea
+            id="migrationReason"
+            name="migrationReason"
+            value={formData.migrationReason}
             onChange={handleInputChange}
+            placeholder="例：都会の満員電車が辛い、自然の中で子育てがしたい、新しい挑戦として農業を始めたい、趣味の時間を大切にしたい、など"
             required
-          />
-
-          <label htmlFor="contact">連絡先:</label>
-          <input
-            type="tel"
-            id="contact"
-            name="contact"
-            value={formData.contact}
-            onChange={handleInputChange}
-            required
+            className={styles.textareaStyled}
           />
         </fieldset>
 
-        {/* 希望条件 */}
+        {/* 第2部：移住先での暮らしのご希望 */}
         <fieldset>
-          <legend>希望条件</legend>
+          <legend>第2部：移住先での暮らしのご希望について</legend>
 
-          {/* 生活費 */}
+          {/* 1. ライフスタイル・環境 */}
           <fieldset>
-            <legend>生活費上限（月額）:</legend>
-            <div className={styles.radioGroup}>
-              {['under-50k', '50k-100k', '100k-150k', 'over-150k'].map(value => (
+            <legend>1. ライフスタイル・環境</legend>
+            
+            <label>希望する暮らしのイメージ（複数選択可）:</label>
+            <div className={styles.checkboxGroup}>
+              {[
+                '山や川など、豊かな自然に囲まれた暮らし',
+                '海の近くで、釣りやマリンスポーツを楽しめる暮らし',
+                '田園風景が広がる、のどかな暮らし',
+                'ある程度の商業施設や交通の便が揃った地方都市での暮らし',
+                '歴史的な街並みや文化が感じられる暮らし',
+                '地域コミュニティと積極的に関わる暮らし',
+                '人間関係は最低限で、プライバシーを重視した静かな暮らし'
+              ].map(value => (
                 <label key={value}>
                   <input
-                    type="radio"
-                    name="livingCost"
+                    type="checkbox"
+                    name="lifestylePreferences"
                     value={value}
-                    checked={formData.livingCost === value}
-                    onChange={() => setFormData(prev => ({ ...prev, livingCost: value }))}
+                    checked={formData.lifestylePreferences.includes(value)}
+                    onChange={() => handleCheckboxChange('lifestylePreferences', value)}
                   />
-                  {value === 'under-50k' ? '5万円未満' :
-                   value === '50k-100k' ? '5〜10万円' :
-                   value === '100k-150k' ? '10万円～15万円' : '15万円以上'}
+                  {value}
+                </label>
+              ))}
+            </div>
+
+            <fieldset>
+              <legend>自然環境に関する許容度:</legend>
+              <div>
+                <label>雪国での暮らしは:</label>
+                <div className={styles.radioGroup}>
+                  {['問題ない', 'できれば避けたい', '絶対に避けたい'].map(value => (
+                    <label key={value}>
+                      <input
+                        type="radio"
+                        name="snowTolerance"
+                        value={value}
+                        checked={formData.snowTolerance === value}
+                        onChange={() => setFormData(prev => ({ ...prev, snowTolerance: value }))}
+                      />
+                      {value}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label>虫（特に大型の昆虫や害虫）は:</label>
+                <div className={styles.radioGroup}>
+                  {['気にならない', '少し苦手', 'かなり苦手'].map(value => (
+                    <label key={value}>
+                      <input
+                        type="radio"
+                        name="insectTolerance"
+                        value={value}
+                        checked={formData.insectTolerance === value}
+                        onChange={() => setFormData(prev => ({ ...prev, insectTolerance: value }))}
+                      />
+                      {value}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>交通手段について:</legend>
+              <div>
+                <label>車の運転は:</label>
+                <div className={styles.radioGroup}>
+                  {['日常的に運転する', 'ペーパードライバー', 'できない・したくない'].map(value => (
+                    <label key={value}>
+                      <input
+                        type="radio"
+                        name="drivingStatus"
+                        value={value}
+                        checked={formData.drivingStatus === value}
+                        onChange={() => setFormData(prev => ({ ...prev, drivingStatus: value }))}
+                      />
+                      {value}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label>移住後の主な移動手段の希望:</label>
+                <div className={styles.radioGroup}>
+                  {['自家用車中心', '公共交通機関（電車・バス）も重視', '自転車や徒歩'].map(value => (
+                    <label key={value}>
+                      <input
+                        type="radio"
+                        name="preferredTransportation"
+                        value={value}
+                        checked={formData.preferredTransportation === value}
+                        onChange={() => setFormData(prev => ({ ...prev, preferredTransportation: value }))}
+                      />
+                      {value}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </fieldset>
+          </fieldset>
+
+          {/* 2. 仕事・キャリア */}
+          <fieldset>
+            <legend>2. 仕事・キャリア</legend>
+            
+            <label>移住先での働き方（複数選択可）:</label>
+            <div className={styles.checkboxGroup}>
+              {[
+                '現在の仕事をリモートワークで継続',
+                '移住先で新しい仕事を探す（転職）',
+                '農業・林業・漁業などに従事したい（就農など）',
+                '自分で事業を始める（起業・独立開業）',
+                '地域おこし協力隊など、自治体の制度を活用したい',
+                '未定・これから考える'
+              ].map(value => (
+                <label key={value}>
+                  <input
+                    type="checkbox"
+                    name="workStyle"
+                    value={value}
+                    checked={formData.workStyle.includes(value)}
+                    onChange={() => handleCheckboxChange('workStyle', value)}
+                  />
+                  {value}
+                </label>
+              ))}
+            </div>
+
+            <label htmlFor="workRequirements">仕事に関する希望条件（もしあれば）:</label>
+            <textarea
+              id="workRequirements"
+              name="workRequirements"
+              value={formData.workRequirements}
+              onChange={handleInputChange}
+              placeholder="例：希望職種、最低希望年収、通勤時間の許容範囲、副業の可否など"
+              className={styles.textareaStyled}
+            />
+          </fieldset>
+
+          {/* 3. 住まい */}
+          <fieldset>
+            <legend>3. 住まい</legend>
+            
+            <label>希望する住居のタイプ（複数選択可）:</label>
+            <div className={styles.checkboxGroup}>
+              {[
+                'アパート・マンション（賃貸）',
+                '一戸建て（賃貸）',
+                '一戸建て（新築・購入）',
+                '中古住宅・古民家（購入・リノベーション）',
+                '自治体が提供する移住者向け住宅'
+              ].map(value => (
+                <label key={value}>
+                  <input
+                    type="checkbox"
+                    name="housingType"
+                    value={value}
+                    checked={formData.housingType.includes(value)}
+                    onChange={() => handleCheckboxChange('housingType', value)}
+                  />
+                  {value}
+                </label>
+              ))}
+            </div>
+
+            <div>
+              <label htmlFor="rentBudget">家賃の場合：月額</label>
+              <input
+                type="number"
+                id="rentBudget"
+                name="rentBudget"
+                value={formData.rentBudget}
+                onChange={handleInputChange}
+                placeholder="円まで"
+                className={styles.inputStyled}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="purchaseBudget">購入の場合：総額</label>
+              <input
+                type="number"
+                id="purchaseBudget"
+                name="purchaseBudget"
+                value={formData.purchaseBudget}
+                onChange={handleInputChange}
+                placeholder="円まで"
+                className={styles.inputStyled}
+              />
+            </div>
+
+            <label>住まいの必須条件・希望条件（複数選択可）:</label>
+            <div className={styles.checkboxGroup}>
+              {[
+                '庭・家庭菜園スペース',
+                '駐車場',
+                '日当たり良好',
+                'インターネット光回線',
+                'スーパー・コンビニが近い',
+                '駅から近い'
+              ].map(value => (
+                <label key={value}>
+                  <input
+                    type="checkbox"
+                    name="housingRequirements"
+                    value={value}
+                    checked={formData.housingRequirements.includes(value)}
+                    onChange={() => handleCheckboxChange('housingRequirements', value)}
+                  />
+                  {value}
                 </label>
               ))}
             </div>
           </fieldset>
 
-          {/* 生活環境 */}
+          {/* 4. 家族・教育 */}
           <fieldset>
-            <legend>生活環境</legend>
-            <label>治安の良さ:</label>
-            <div className={styles.radioGroup}>
-              {['under-0.2k', '0.2k-0.3k', '0.3k'].map(value => (
+            <legend>4. 家族・教育（お子様がいらっしゃる場合）</legend>
+            
+            <label>重視する教育環境（複数選択可）:</label>
+            <div className={styles.checkboxGroup}>
+              {[
+                '待機児童が少ない・保育園に入りやすい',
+                '少人数教育で、一人ひとりに目が行き届く',
+                '自然体験や地域学習が充実している',
+                '国際教育や特色ある教育（プログラミング、アートなど）に力を入れている',
+                '高校・大学への進学の選択肢'
+              ].map(value => (
                 <label key={value}>
                   <input
-                    type="radio"
-                    name="security"
+                    type="checkbox"
+                    name="educationPreferences"
                     value={value}
-                    checked={formData.security === value}
-                    onChange={() => setFormData(prev => ({ ...prev, security: value }))}
+                    checked={formData.educationPreferences.includes(value)}
+                    onChange={() => handleCheckboxChange('educationPreferences', value)}
                   />
-                  {value === 'under-0.2k' ? '200件未満' :
-                   value === '0.2k-0.3k' ? '200件~300件' : '300件以上'}
+                  {value}
                 </label>
               ))}
             </div>
 
-            <label>近隣施設:</label>
-            <div className="checkbox-group">
-              {['supermarket', 'shopping-mall', 'government-office', 'library'].map(value => (
+            <label>子育てに関する希望（複数選択可）:</label>
+            <div className={styles.checkboxGroup}>
+              {[
+                '公園や子供が遊べる安全な場所が多い',
+                '子育て世代のコミュニティがある',
+                '医療費助成など、自治体の子育て支援制度が手厚い',
+                '小児科や救急対応可能な病院へのアクセスが良い'
+              ].map(value => (
                 <label key={value}>
                   <input
                     type="checkbox"
-                    name="facilities"
+                    name="childRearingPreferences"
                     value={value}
-                    checked={formData.facilities.includes(value)}
-                    onChange={() => handleCheckboxChange('facilities', value)}
+                    checked={formData.childRearingPreferences.includes(value)}
+                    onChange={() => handleCheckboxChange('childRearingPreferences', value)}
                   />
-                  {value === 'supermarket' ? 'スーパーマーケット' :
-                   value === 'shopping-mall' ? 'ショッピングモール' :
-                   value === 'government-office' ? '役所' : '図書館'}
+                  {value}
                 </label>
               ))}
             </div>
           </fieldset>
+        </fieldset>
 
-          {/* 交通アクセス */}
-          <fieldset>
-            <legend>交通アクセス</legend>
-            <label>車の有無:</label>
-            <div className={styles.radioGroup}>
-              {['yes', 'no'].map(value => (
-                <label key={value}>
-                  <input
-                    type="radio"
-                    name="car"
-                    value={value}
-                    checked={formData.car === value}
-                    onChange={() => setFormData(prev => ({ ...prev, car: value }))}
-                  />
-                  {value === 'yes' ? '車を持っている' : '車を持っていない'}
-                </label>
-              ))}
-            </div>
+        {/* 第3部：移住に関する不安や懸念 */}
+        <fieldset>
+          <legend>第3部：移住に関する不安や懸念について</legend>
+          
+          <label>現在、最も不安に感じていることは何ですか？（複数選択可）</label>
+          <div className={styles.checkboxGroup}>
+            {[
+              '仕事が見つかるか、収入が維持できるか',
+              '地域コミュニティに馴染めるか、人間関係',
+              '医療体制（病院の数、専門医の有無）',
+              '買い物や公共交通機関など、生活の利便性',
+              '子供の教育環境や転校への適応',
+              '想定外の費用がかかること',
+              'その他'
+            ].map(value => (
+              <label key={value}>
+                <input
+                  type="checkbox"
+                  name="concerns"
+                  value={value}
+                  checked={formData.concerns.includes(value)}
+                  onChange={() => handleCheckboxChange('concerns', value)}
+                />
+                {value}
+              </label>
+            ))}
+          </div>
 
-            <label>公共交通機関:</label>
-            <div className="checkbox-group">
-              {['subway', 'bus', 'bullet-train', 'airport'].map(value => (
-                <label key={value}>
-                  <input
-                    type="checkbox"
-                    name="publicTransport"
-                    value={value}
-                    checked={formData.publicTransport.includes(value)}
-                    onChange={() => handleCheckboxChange('publicTransport', value)}
-                  />
-                  {value === 'subway' ? '電車' :
-                   value === 'bus' ? 'バス' :
-                   value === 'bullet-train' ? '新幹線' : '空港'}
-                </label>
-              ))}
+          {formData.concerns.includes('その他') && (
+            <div>
+              <label htmlFor="otherConcerns">具体的に:</label>
+              <input
+                type="text"
+                id="otherConcerns"
+                name="otherConcerns"
+                value={formData.otherConcerns}
+                onChange={handleInputChange}
+                className={styles.inputStyled}
+              />
             </div>
-          </fieldset>
+          )}
+        </fieldset>
 
-          {/* 教育環境 */}
-          <fieldset>
-            <legend>教育環境</legend>
-            <label>学校の区分:</label>
-            <div className="checkbox-group">
-              {['ele-school', 'kindergarden', 'pri-school', 'jh-school', 'h-school'].map(value => (
-                <label key={value}>
-                  <input
-                    type="checkbox"
-                    name="schoolType"
-                    value={value}
-                    checked={formData.schoolType.includes(value)}
-                    onChange={() => handleCheckboxChange('schoolType', value)}
-                  />
-                  {value === 'ele-school' ? '保育園' :
-                   value === 'kindergarden' ? '幼稚園' :
-                   value === 'pri-school' ? '小学校' :
-                   value === 'jh-school' ? '中学校' : '高校'}
-                </label>
-              ))}
-            </div>
+        {/* 第4部：移住計画 */}
+        <fieldset>
+          <legend>第4部：移住計画について</legend>
+          
+          <label>移住を希望する時期:</label>
+          <div className={styles.radioGroup}>
+            {['半年以内', '1年以内', '2〜3年以内', '時期は未定'].map(value => (
+              <label key={value}>
+                <input
+                  type="radio"
+                  name="migrationTimeline"
+                  value={value}
+                  checked={formData.migrationTimeline === value}
+                  onChange={() => setFormData(prev => ({ ...prev, migrationTimeline: value }))}
+                />
+                {value}
+              </label>
+            ))}
+          </div>
 
-            <label>教育支援制度:</label>
-            <div className="checkbox-group">
-              {['free', 'scholarship', 'int-edu'].map(value => (
-                <label key={value}>
-                  <input
-                    type="checkbox"
-                    name="eduSupport"
-                    value={value}
-                    checked={formData.eduSupport.includes(value)}
-                    onChange={() => handleCheckboxChange('eduSupport', value)}
-                  />
-                  {value === 'free' ? '学費無償制度' :
-                   value === 'scholarship' ? '奨学金' : '国際教育'}
-                </label>
-              ))}
-            </div>
-          </fieldset>
+          <label htmlFor="interestedAreas">興味のある都道府県や市町村はありますか？（もしあれば）:</label>
+          <input
+            type="text"
+            id="interestedAreas"
+            name="interestedAreas"
+            value={formData.interestedAreas}
+            onChange={handleInputChange}
+            className={styles.inputStyled}
+          />
 
-          {/* 医療・福祉 */}
-          <fieldset>
-            <legend>医療・福祉</legend>
-            <div className="checkbox-group">
-              {['hospital', 'clinic', 'nursing-facility', 'nursing-station'].map(value => (
-                <label key={value}>
-                  <input
-                    type="checkbox"
-                    name="medical"
-                    value={value}
-                    checked={formData.medical.includes(value)}
-                    onChange={() => handleCheckboxChange('medical', value)}
-                  />
-                  {value === 'hospital' ? '総合病院' :
-                   value === 'clinic' ? 'クリニック' :
-                   value === 'nursing-facility' ? '介護施設' : '訪問看護ステーション'}
-                </label>
-              ))}
-            </div>
-          </fieldset>
+          <label htmlFor="previousExperience">これまでに、移住のための情報収集や現地訪問などをした経験はありますか？</label>
+          <textarea
+            id="previousExperience"
+            name="previousExperience"
+            value={formData.previousExperience}
+            onChange={handleInputChange}
+            placeholder="例：移住フェアに参加した、〇〇市に旅行で訪れたことがある、など"
+            className={styles.textareaStyled}
+          />
         </fieldset>
 
         <div className={styles.buttonWrapper}>

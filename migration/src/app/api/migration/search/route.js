@@ -1,5 +1,3 @@
-// 删除不需要的导入
-// import { JapaneseMigrationAgent } from '@/lib/migration';
 
 export async function POST(request) {
   try {

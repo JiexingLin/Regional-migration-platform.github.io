@@ -290,4 +290,49 @@
   accent-color: #4CAF50;
   width: 18px;
   height: 18px;
+}
+
+.inputStyled {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #cfd8dc;
+  font-size: 1rem;
+  margin-top: 6px;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+  background: #eef6ff;
+  transition: border 0.2s;
+}
+
+.inputStyled:focus {
+  border: 1.5px solid #90caf9;
+  outline: none;
+  background: #e3f2fd;
+}
+
+.textareaStyled {
+  width: 100%;
+  min-height: 60px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #cfd8dc;
+  font-size: 1rem;
+  margin-top: 6px;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+  resize: vertical;
+  background: #eef6ff;
+  transition: border 0.2s;
+}
+
+.textareaStyled:focus {
+  border: 1.5px solid #90caf9;
+  outline: none;
+  background: #e3f2fd;
+}
+
+.textareaStyled::placeholder {
+  color: #b0b0b0;
+  font-size: 0.95em;
 } 

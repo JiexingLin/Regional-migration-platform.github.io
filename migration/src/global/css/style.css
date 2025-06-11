@@ -38,11 +38,7 @@ header {
   position: fixed;
   top: 0;
   left: 0;
-  background: linear-gradient(
-        to bottom,
-        rgb(81, 178, 239) 10%,
-        rgba(230, 229, 229, 0.5) 100%
-    );
+  background: url('@/global/img/image.png') center/cover no-repeat;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   z-index: 1000;
