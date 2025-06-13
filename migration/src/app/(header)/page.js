@@ -21,6 +21,7 @@ export default function HomePage() {
 
   // 添加状态来管理地图容器的宽度
   const [mapContainerWidth, setMapContainerWidth] = useState(800);
+  const [imageNaturalWidth] = useState(2000); // 原始图片宽度
 
   // 日本地图区域配置 - 使用官方格式
   const japanMapAreas = [
@@ -73,6 +74,15 @@ export default function HomePage() {
     { name: "okinawa", shape: "rect", coords: [1075,1658,1386,1884], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" }
   ];
 
+  // 计算缩放比例并调整坐标
+  const getScaledAreas = () => {
+    const scale = mapContainerWidth / imageNaturalWidth;
+    return japanMapAreas.map(area => ({
+      ...area,
+      coords: area.coords.map(coord => Math.round(coord * scale))
+    }));
+  };
+
   useEffect(() => {
     // 添加滚动动画
     const els = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right');
@@ -92,8 +102,26 @@ export default function HomePage() {
       try {
         const mapBorder = document.querySelector('.map-border');
         if (mapBorder) {
-          const width = mapBorder.offsetWidth - 60; // 减去padding
-          setMapContainerWidth(Math.max(300, Math.min(width, 800))); // 最小300px，最大800px
+          // 获取容器的真实内容区域宽度（排除padding和border）
+          const style = window.getComputedStyle(mapBorder);
+          const paddingLeft = parseFloat(style.paddingLeft) || 0;
+          const paddingRight = parseFloat(style.paddingRight) || 0;
+          const borderLeft = parseFloat(style.borderLeftWidth) || 0;
+          const borderRight = parseFloat(style.borderRightWidth) || 0;
+          
+          const totalPadding = paddingLeft + paddingRight + borderLeft + borderRight;
+          const contentWidth = mapBorder.offsetWidth - totalPadding;
+          
+          // 确保宽度在合理范围内，并使用整数避免像素舍入问题
+          const newWidth = Math.floor(Math.max(300, contentWidth));
+          setMapContainerWidth(newWidth);
+          
+          console.log('Map container updated:', {
+            containerWidth: mapBorder.offsetWidth,
+            totalPadding,
+            contentWidth,
+            newWidth
+          });
         }
       } catch (error) {
         console.log('Map width update error:', error);
@@ -102,11 +130,28 @@ export default function HomePage() {
     };
 
     // 延迟执行，确保DOM已加载
-    setTimeout(updateMapWidth, 100);
+    setTimeout(updateMapWidth, 200);
     window.addEventListener('resize', updateMapWidth);
+
+    // 监听图片加载完成事件，重新计算尺寸
+    const handleImageLoad = () => {
+      setTimeout(updateMapWidth, 100);
+    };
+
+    const mapImages = document.querySelectorAll('.map-border img');
+    mapImages.forEach(img => {
+      if (img.complete) {
+        handleImageLoad();
+      } else {
+        img.addEventListener('load', handleImageLoad);
+      }
+    });
 
     return () => {
       window.removeEventListener('resize', updateMapWidth);
+      mapImages.forEach(img => {
+        img.removeEventListener('load', handleImageLoad);
+      });
     };
   }, []);
 
@@ -122,13 +167,32 @@ export default function HomePage() {
   };
 
   // 处理地图区域点击
-  const handleMapClick = (area) => {
+  const handleMapClick = (area, index, event) => {
     console.log('点击了地区:', area.name); // 调试信息
+    console.log('区域信息:', {
+      name: area.name,
+      coords: area.coords,
+      shape: area.shape,
+      clickEvent: event
+    });
+    
+    // 如果有event，记录点击位置用于调试
+    if (event) {
+      const rect = event.target.getBoundingClientRect();
+      console.log('点击位置:', {
+        clientX: event.clientX,
+        clientY: event.clientY,
+        relativeX: event.clientX - rect.left,
+        relativeY: event.clientY - rect.top,
+        targetRect: rect
+      });
+    }
+    
     router.push(`/pref/${area.name}`);
   };
 
   // 处理鼠标悬停
-  const handleMapHover = (area) => {
+  const handleMapHover = (area, index, event) => {
     console.log('鼠标悬停:', area.name); // 调试信息
   };
 
@@ -315,11 +379,11 @@ export default function HomePage() {
           <ImageMapper
             src="/global/img/nihonchizu-color-todofuken.png"
             name="japan-map"
-            areas={japanMapAreas}
+            areas={getScaledAreas()}
             onClick={handleMapClick}
             onMouseEnter={handleMapHover}
-            responsive={true}
-            parentWidth={mapContainerWidth}
+            width={mapContainerWidth}
+            height={Math.floor(mapContainerWidth * 1.047)}
           />
         </div>
       </section>

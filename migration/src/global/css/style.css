@@ -250,10 +250,11 @@ nav ul li a.active {
   -webkit-backdrop-filter: blur(10px);
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  max-width: 900px;
   position: relative;
   min-height: 400px;
   box-sizing: border-box;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 /* 基本的ImageMapper样式 */
@@ -261,6 +262,9 @@ nav ul li a.active {
   width: 100% !important;
   position: relative !important;
   display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 0;
 }
 
 .map-border img {
@@ -269,6 +273,11 @@ nav ul li a.active {
   height: auto !important;
   display: block !important;
   margin: 0 auto !important;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  vertical-align: top;
+  border: none;
+  outline: none;
 }
 
 .map-border svg {
@@ -278,6 +287,10 @@ nav ul li a.active {
   width: 100% !important;
   height: 100% !important;
   pointer-events: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  outline: none !important;
 }
 
 /* 响应式设计 - 移动端优化 */
