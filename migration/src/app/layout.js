@@ -1,5 +1,6 @@
 import '@/global/css/style.css'
 import React from "react";
+import StagewiseWrapper from '@/components/StagewiseToolbar';
 
 export const metadata = {
   title: '地方移住者サイト',
@@ -13,6 +14,7 @@ export default function RootLayout({
     <html lang="ja">
       <body>
         {children}
+        <StagewiseWrapper />
       </body>
     </html>
   );

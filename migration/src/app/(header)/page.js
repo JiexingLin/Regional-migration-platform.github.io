@@ -1,9 +1,9 @@
 // app/page.js
 "use client"
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import Script from 'next/script';
+import ImageMapper from 'react-img-mapper';
 
 // 导入图片
 import image1 from '@/global/img/point1.png';
@@ -19,6 +19,60 @@ export default function HomePage() {
   const pathname = usePathname();
   const router = useRouter();
 
+  // 添加状态来管理地图容器的宽度
+  const [mapContainerWidth, setMapContainerWidth] = useState(800);
+
+  // 日本地图区域配置 - 使用官方格式
+  const japanMapAreas = [
+    { name: "hokkaido", shape: "rect", coords: [1111,36,1974,595], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "aomori", shape: "rect", coords: [1199,601,1353,729], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "iwate", shape: "rect", coords: [1280,729,1409,930], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "akita", shape: "rect", coords: [1177,718,1294,915], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "yamagata", shape: "rect", coords: [1163,893,1258,1058], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "miyagi", shape: "rect", coords: [1255,912,1360,1050], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "hukushima", shape: "rect", coords: [1137,1036,1316,1175], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "nigata", shape: "rect", coords: [970,947,1179,1157], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "nagano", shape: "rect", coords: [976,1186,1046,1343], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "yamanashi", shape: "rect", coords: [1046,1292,1101,1365], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "sizuoka", shape: "rect", coords: [987,1350,1122,1449], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "toyama", shape: "rect", coords: [896,1168,995,1226], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "gihu", shape: "rect", coords: [867,1235,983,1365], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "aichi", shape: "rect", coords: [884,1357,987,1439], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "ishikawa", shape: "rect", coords: [845,1091,930,1263], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "hukui", shape: "rect", coords: [775,1248,878,1336], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "tochigi", shape: "rect", coords: [1145,1145,1248,1233], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "gunma", shape: "rect", coords: [1059,1174,1162,1262], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "ibaraki", shape: "rect", coords: [1202,1168,1290,1285], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "tiba", shape: "rect", coords: [1198,1282,1286,1399], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "saitama", shape: "rect", coords: [1093,1246,1210,1292], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "tokyo", shape: "rect", coords: [1115,1285,1210,1321], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "kanagawa", shape: "rect", coords: [1107,1321,1199,1376], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "siga", shape: "rect", coords: [783,1321,867,1424], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "mie", shape: "rect", coords: [825,1377,888,1555], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "nara", shape: "rect", coords: [774,1442,815,1537], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "wakayama", shape: "rect", coords: [726,1478,797,1599], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "osaka", shape: "rect", coords: [750,1400,779,1486], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "kyoto", shape: "rect", coords: [717,1328,793,1405], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "hyogo", shape: "rect", coords: [649,1312,746,1497], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "tottori", shape: "rect", coords: [551,1317,657,1357], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "simane", shape: "rect", coords: [373,1347,519,1410], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "yamaguchi", shape: "rect", coords: [284,1440,430,1503], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "hiroshima", shape: "rect", coords: [416,1409,567,1463], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "okayama", shape: "rect", coords: [541,1358,644,1446], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "kagawa", shape: "rect", coords: [548,1467,665,1500], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "tokushima", shape: "rect", coords: [578,1497,673,1562], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "kouchi", shape: "rect", coords: [474,1540,636,1654], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "ehime", shape: "rect", coords: [439,1486,505,1610], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "oita", shape: "rect", coords: [296,1532,383,1654], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "fukuoka", shape: "rect", coords: [238,1497,285,1606], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "saga", shape: "rect", coords: [186,1552,249,1614], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "nagasaki", shape: "rect", coords: [22,1574,219,1723], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "kumamoto", shape: "rect", coords: [234,1610,303,1723], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "miyazaki", shape: "rect", coords: [285,1640,399,1797], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "kagoshima", shape: "rect", coords: [183,1730,291,1957], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" },
+    { name: "okinawa", shape: "rect", coords: [1075,1658,1386,1884], preFillColor: "rgba(255, 255, 255, 0.1)", fillColor: "rgba(255, 0, 0, 0.3)" }
+  ];
+
   useEffect(() => {
     // 添加滚动动画
     const els = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right');
@@ -32,6 +86,28 @@ export default function HomePage() {
     }, { threshold: 0.1 });
   
     els.forEach(el => obs.observe(el));
+
+    // 监听窗口大小变化，更新地图容器宽度
+    const updateMapWidth = () => {
+      try {
+        const mapBorder = document.querySelector('.map-border');
+        if (mapBorder) {
+          const width = mapBorder.offsetWidth - 60; // 减去padding
+          setMapContainerWidth(Math.max(300, Math.min(width, 800))); // 最小300px，最大800px
+        }
+      } catch (error) {
+        console.log('Map width update error:', error);
+        setMapContainerWidth(800); // 出错时使用默认值
+      }
+    };
+
+    // 延迟执行，确保DOM已加载
+    setTimeout(updateMapWidth, 100);
+    window.addEventListener('resize', updateMapWidth);
+
+    return () => {
+      window.removeEventListener('resize', updateMapWidth);
+    };
   }, []);
 
   const handleMatchingClick = () => {
@@ -43,6 +119,17 @@ export default function HomePage() {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  // 处理地图区域点击
+  const handleMapClick = (area) => {
+    console.log('点击了地区:', area.name); // 调试信息
+    router.push(`/pref/${area.name}`);
+  };
+
+  // 处理鼠标悬停
+  const handleMapHover = (area) => {
+    console.log('鼠标悬停:', area.name); // 调试信息
   };
 
   return (
@@ -221,64 +308,21 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 日本地図 */}
-      <p className="map-title fade-in">地図から気に入る地方を探す</p>
-      <div className="map-border fade-in">
-        <img
-          src="/global/img/nihonchizu-color-todofuken.png"
-          alt="日本地図"
-          useMap="#japanmap"
-        />
-        <map name="japanmap">
-          <area alt="北海道" title="" href="/pref/hokkaido" coords="1111,595,1974,36" shape="rect" />
-          <area alt="青森県" title="" href="/pref/aomori" coords="1199,729,1353,601" shape="rect" />
-          <area alt="岩手県" title="" href="/pref/iwate" coords="1280,930,1409,729" shape="rect" />
-          <area alt="秋田県" title="" href="/pref/akita" coords="1177,915,1294,718" shape="rect" />
-          <area alt="山形県" title="" href="/pref/yamagata" coords="1163,1058,1258,893" shape="rect" />
-          <area alt="宮城県" title="" href="/pref/miyagi" coords="1255,1050,1360,912" shape="rect" />
-          <area alt="福島県" title="" href="/pref/hukushima" coords="1316,1036,1137,1175" shape="rect" />
-          <area alt="新潟県" title="" href="/pref/nigata" coords="1179,947,970,1157" shape="rect" />
-          <area alt="長野県" title="" href="/pref/nagano" coords="1046,1186,976,1343" shape="rect" />
-          <area alt="山梨県" title="" href="/pref/yamanashi" coords="1101,1292,1046,1365" shape="rect" />
-          <area alt="静岡県" title="" href="/pref/sizuoka" coords="1122,1350,987,1449" shape="rect" />
-          <area alt="富山県" title="" href="/pref/toyama" coords="995,1168,896,1226" shape="rect" />
-          <area alt="岐阜県" title="" href="/pref/gihu" coords="983,1235,867,1365" shape="rect" />
-          <area alt="愛知県" title="" href="/pref/aichi" coords="987,1357,884,1439" shape="rect" />
-          <area alt="石川県" title="" href="/pref/ishikawa" coords="930,1091,845,1263" shape="rect" />
-          <area alt="福井県" title="" href="/pref/hukui" coords="878,1248,775,1336" shape="rect" />
-          <area alt="栃木県" title="" href="/pref/tochigi" coords="1248,1145,1145,1233" shape="rect" />
-          <area alt="群馬県" title="" href="/pref/gunma" coords="1162,1174,1059,1262" shape="rect" />
-          <area alt="茨城県" title="" href="/pref/ibaraki" coords="1290,1168,1202,1285" shape="rect" />
-          <area alt="千葉県" title="" href="/pref/tiba" coords="1286,1282,1198,1399" shape="rect" />
-          <area alt="埼玉県" title="" href="/pref/saitama" coords="1210,1246,1093,1292" shape="rect" />
-          <area alt="東京都" title="" href="/pref/tokyo" coords="1210,1285,1115,1321" shape="rect" />
-          <area alt="神奈川県" title="" href="/pref/kanagawa" coords="1199,1376,1107,1321" shape="rect" />
-          <area alt="滋賀県" title="" href="/pref/siga" coords="867,1424,783,1321" shape="rect" />
-          <area alt="三重県" title="" href="/pref/mie" coords="888,1555,825,1377" shape="rect" />
-          <area alt="奈良県" title="" href="/pref/nara" coords="815,1537,774,1442" shape="rect" />
-          <area alt="和歌山県" title="" href="/pref/wakayama" coords="797,1599,726,1478" shape="rect" />
-          <area alt="大阪府" title="" href="/pref/osaka" coords="779,1486,750,1400" shape="rect" />
-          <area alt="京都府" title="" href="/pref/kyoto" coords="793,1405,717,1328" shape="rect" />
-          <area alt="兵庫県" title="" href="/pref/hyogo" coords="746,1497,649,1312" shape="rect" />
-          <area alt="鳥取県" title="" href="/pref/tottori" coords="657,1357,551,1317" shape="rect" />
-          <area alt="島根県" title="" href="/pref/simane" coords="519,1347,373,1410" shape="rect" />
-          <area alt="山口県" title="" href="/pref/yamaguchi" coords="430,1440,284,1503" shape="rect" />
-          <area alt="広島県" title="" href="/pref/hiroshima" coords="567,1409,416,1463" shape="rect" />
-          <area alt="岡山県" title="" href="/pref/okayama" coords="644,1358,541,1446" shape="rect" />
-          <area alt="香川県" title="" href="/pref/kagawa" coords="665,1467,548,1500" shape="rect" />
-          <area alt="徳島県" title="" href="/pref/tokushima" coords="673,1497,578,1562" shape="rect" />
-          <area alt="高知県" title="" href="/pref/kouchi" coords="636,1540,474,1654" shape="rect" />
-          <area alt="愛媛県" title="" href="/pref/ehime" coords="505,1486,439,1610" shape="rect" />
-          <area alt="大分県" title="" href="/pref/oita" coords="383,1532,296,1654" shape="rect" />
-          <area alt="福岡県" title="" href="/pref/fukuoka" coords="285,1497,238,1606" shape="rect" />
-          <area alt="佐賀県" title="" href="/pref/saga" coords="249,1552,186,1614" shape="rect" />
-          <area alt="長崎県" title="" href="/pref/nagasaki" coords="219,1574,22,1723" shape="rect" />
-          <area alt="熊本県" title="" href="/pref/kumamoto" coords="303,1610,234,1723" shape="rect" />
-          <area alt="宮崎県" title="" href="/pref/miyazaki" coords="399,1640,285,1797" shape="rect" />
-          <area alt="鹿児島県" title="" href="/pref/kagoshima" coords="291,1730,183,1957" shape="rect" />
-          <area alt="沖縄県" title="" href="/pref/okinawa" coords="1386,1658,1075,1884" shape="rect" />
-        </map>
-      </div>
+      {/* 日本地图 */}
+      <section className="map-section">
+        <p className="map-title fade-in">地图から気に入る地方を探す</p>
+        <div className="map-border fade-in">
+          <ImageMapper
+            src="/global/img/nihonchizu-color-todofuken.png"
+            name="japan-map"
+            areas={japanMapAreas}
+            onClick={handleMapClick}
+            onMouseEnter={handleMapHover}
+            responsive={true}
+            parentWidth={mapContainerWidth}
+          />
+        </div>
+      </section>
 
       {/* 地域マッチング */}
       <section className="matching" id="matching">
@@ -314,15 +358,6 @@ export default function HomePage() {
       <div id="back-to-top-button">
         <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>⇧</button>
       </div>
-
-      <Script src="https://unpkg.com/image-map-resizer@1.0.10/js/imageMapResizer.min.js" strategy="afterInteractive" />
-      <Script id="image-map-resizer">
-        {`
-          window.addEventListener('load', () => {
-            imageMapResize();
-          });
-        `}
-      </Script>
     </div>
   );
 }
