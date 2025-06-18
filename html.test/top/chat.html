@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>地方移住チャットボット</title>
+  <link rel="stylesheet" href="css/chat.css">
+</head>
+<body>
+    <!-- ① 共通ナビゲーション -->
+  <header class="site-header">
+    <nav>
+      <ul>
+        <li><a href="index.html#section1">私たちについて</a></li>
+        <li><a href="chat.html">チャットボット</a></li>
+        <li><a href="search.html">地域マッチング</a></li>
+        <li><a href="faq.html">よくあるご質問</a></li>
+        <li><a href="form.html">お問い合わせ</a></li>
+      </ul>
+    </nav>
+  </header>
+  <!-- ② チャット本体。ヘッダー分だけ上に余白をとる -->
+  <main class="chat-page">
+    <div class="chat-container">
+      <div id="messages" class="messages"></div>
+      <div class="input-area">
+        <input id="prompt" type="text" placeholder="質問を入力…" />
+        <button id="send">送信</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const messagesEl = document.getElementById("messages");
+    const promptEl   = document.getElementById("prompt");
+    const sendBtn    = document.getElementById("send");
+
+    async function sendMessage() {
+      const text = promptEl.value.trim();
+      if (!text) return;
+
+      // ユーザー吹き出し（右寄せ・テキストのみ）
+      messagesEl.insertAdjacentHTML("beforeend", `
+        <div class="msg user">
+          <div class="text">${text}</div>
+        </div>
+      `);
+      promptEl.value = "";
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+
+      try {
+        const res = await fetch("http://127.0.0.1:5000/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ city_name:"", prompt:text })
+        });
+        if (!res.ok) throw new Error(res.status);
+
+        const { answer } = await res.json();
+
+        // AI吹き出し（左寄せ・アバター＋テキスト）
+        messagesEl.insertAdjacentHTML("beforeend", `
+          <div class="msg ai">
+            <div class="avatar">
+              <img src="img/character.png" alt="チャット坊や">
+            </div>
+            <div class="text">${answer.replace(/\n/g,"<br>")}</div>
+          </div>
+        `);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+
+      } catch (err) {
+        console.error(err);
+        messagesEl.insertAdjacentHTML("beforeend", `
+          <div class="msg ai error">
+            <div class="avatar">
+              <img src="img/character.png" alt="チャット坊や">
+            </div>
+            <div class="text">エラーが発生しました</div>
+          </div>
+        `);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+    promptEl.addEventListener("keypress", e => {
+      if (e.key === "Enter") sendMessage();
+    });
+  </script>
+</body>
+</html>
