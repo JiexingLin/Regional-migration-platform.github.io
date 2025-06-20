@@ -244,7 +244,7 @@ nav ul li a.active {
   width: 85%;
   margin: 0 auto;
   padding: 30px;
-  border: 1px solid transparent;
+  border: none !important;
   background: rgba(255, 255, 255, 0.35);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -276,8 +276,8 @@ nav ul li a.active {
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
   vertical-align: top;
-  border: none;
-  outline: none;
+  border: none !important;
+  outline: none !important;
 }
 
 .map-border svg {
@@ -293,6 +293,62 @@ nav ul li a.active {
   outline: none !important;
 }
 
+/* 地图区域悬停效果 - 只显示手型指针，完全去除边框 */
+.map-border area {
+  cursor: pointer !important;
+  outline: none !important;
+  border: none !important;
+}
+
+.map-border map area {
+  cursor: pointer !important;
+  outline: none !important;
+  border: none !important;
+}
+
+/* 确保所有地图相关元素都显示手型指针，无边框 */
+.map-border svg * {
+  cursor: pointer !important;
+  outline: none !important;
+  border: none !important;
+}
+
+/* 针对ImageMapper生成的具体元素去掉边框 */
+.map-border img[usemap] {
+  outline: none !important;
+  border: none !important;
+}
+
+.map-border map {
+  outline: none !important;
+  border: none !important;
+}
+
+/* 针对所有可能的area相关元素 */
+area, map area, [usemap] + map area {
+  outline: none !important;
+  border: none !important;
+  cursor: pointer !important;
+}
+
+/* ImageMapper组件的容器和所有子元素 */
+#img-mapper, #img-mapper *, 
+.img-mapper-img,
+.img-mapper-container,
+.img-mapper-map {
+  outline: none !important;
+  border: none !important;
+}
+
+/* 额外的全局覆盖，确保所有地图相关元素无边框 */
+*[name="japan-map"],
+*[name="japan-map"] *,
+canvas[name="japan-map"],
+svg[name="japan-map"] {
+  outline: none !important;
+  border: none !important;
+}
+
 /* 响应式设计 - 移动端优化 */
 @media (max-width: 768px) {
   .map-border {
@@ -300,6 +356,7 @@ nav ul li a.active {
     padding: 15px;
     margin: 0 auto 50px auto;
     min-height: 300px;
+    border: none !important;
   }
   
   .map-title {
@@ -319,6 +376,7 @@ nav ul li a.active {
     padding: 10px;
     margin: 0 auto 40px auto;
     min-height: 250px;
+    border: none !important;
   }
   
   .map-title {
@@ -339,6 +397,7 @@ nav ul li a.active {
     max-width: 900px;
     margin: 0 auto 80px auto;
     min-height: 500px;
+    border: none !important;
   }
   
   .map-section {
