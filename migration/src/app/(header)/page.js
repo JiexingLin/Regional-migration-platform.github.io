@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import ImageMapper from 'react-img-mapper';
 
 // 导入图片
 import image1 from '@/global/img/point1.png';
@@ -18,10 +17,6 @@ import topImage from '@/global/img/top.png';
 export default function HomePage() {
   const pathname = usePathname();
   const router = useRouter();
-
-  // 添加状态来管理地图容器的宽度
-  const [mapContainerWidth, setMapContainerWidth] = useState(800);
-  const [imageNaturalWidth] = useState(2000); // 原始图片宽度
 
   // 日本地图区域配置 - 使用官方格式
   const japanMapAreas = [
@@ -74,16 +69,96 @@ export default function HomePage() {
     { name: "okinawa", shape: "rect", coords: [1075,1658,1386,1884], preFillColor: "transparent", fillColor: "transparent", strokeColor: "transparent", lineWidth: 0 }
   ];
 
-  // 计算缩放比例并调整坐标
-  const getScaledAreas = () => {
-    const scale = mapContainerWidth / imageNaturalWidth;
-    return japanMapAreas.map(area => ({
-      ...area,
-      coords: area.coords.map(coord => Math.round(coord * scale))
-    }));
-  };
-
   useEffect(() => {
+    // 动态加载 image-map-resizer 库
+    const loadImageMapResizer = () => {
+      return new Promise((resolve, reject) => {
+        // 检查是否已经加载
+        if (window.imageMapResize) {
+          resolve();
+          return;
+        }
+
+        const script = document.createElement('script');
+        script.src = 'https://unpkg.com/image-map-resizer@1.0.10/js/imageMapResizer.min.js';
+        script.onload = () => {
+          console.log('Image Map Resizer 库加载成功');
+          resolve();
+        };
+        script.onerror = (error) => {
+          console.error('Image Map Resizer 库加载失败:', error);
+          reject(error);
+        };
+        document.head.appendChild(script);
+      });
+    };
+
+    // 初始化地图和动画
+    const initializeMap = async () => {
+      try {
+        // 加载库
+        await loadImageMapResizer();
+        
+        // 等待图片加载完成
+        const mapImg = document.getElementById('japan-map-img');
+        if (mapImg && mapImg.complete) {
+          // 图片已加载，直接初始化
+          setTimeout(() => {
+            if (window.imageMapResize) {
+              window.imageMapResize();
+              console.log('地图初始化完成');
+            }
+          }, 100);
+        } else if (mapImg) {
+          // 等待图片加载
+          mapImg.addEventListener('load', () => {
+            setTimeout(() => {
+              if (window.imageMapResize) {
+                window.imageMapResize();
+                console.log('地图初始化完成');
+              }
+            }, 100);
+          });
+        }
+
+        // 添加地图区域点击事件
+        const areas = document.querySelectorAll('area[data-pref]');
+        areas.forEach(area => {
+          area.addEventListener('click', (e) => {
+            e.preventDefault(); // 阻止默认跳转
+            const prefName = area.getAttribute('data-pref');
+            const prefTitle = area.getAttribute('title');
+            
+            console.log('点击了地区:', prefTitle, '(' + prefName + ')');
+            router.push(`/pref/${prefName}`);
+          });
+
+          // 鼠标悬停效果
+          area.addEventListener('mouseenter', () => {
+            const prefTitle = area.getAttribute('title');
+            console.log('鼠标悬停:', prefTitle);
+          });
+        });
+
+        // 窗口大小改变时重新调整地图
+        const handleResize = () => {
+          if (window.imageMapResize) {
+            window.imageMapResize();
+          }
+        };
+        
+        window.addEventListener('resize', handleResize);
+
+        // 清理函数
+        return () => {
+          window.removeEventListener('resize', handleResize);
+        };
+
+      } catch (error) {
+        console.error('地图初始化失败:', error);
+      }
+    };
+
     // 添加滚动动画
     const els = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right');
     const obs = new IntersectionObserver((entries, observer) => {
@@ -92,68 +167,13 @@ export default function HomePage() {
           entry.target.classList.add('visible');
           observer.unobserve(entry.target);
         }
-      });
-    }, { threshold: 0.1 });
+      });    }, { threshold: 0.1 });
   
     els.forEach(el => obs.observe(el));
 
-    // 监听窗口大小变化，更新地图容器宽度
-    const updateMapWidth = () => {
-      try {
-        const mapBorder = document.querySelector('.map-border');
-        if (mapBorder) {
-          // 获取容器的真实内容区域宽度（排除padding和border）
-          const style = window.getComputedStyle(mapBorder);
-          const paddingLeft = parseFloat(style.paddingLeft) || 0;
-          const paddingRight = parseFloat(style.paddingRight) || 0;
-          const borderLeft = parseFloat(style.borderLeftWidth) || 0;
-          const borderRight = parseFloat(style.borderRightWidth) || 0;
-          
-          const totalPadding = paddingLeft + paddingRight + borderLeft + borderRight;
-          const contentWidth = mapBorder.offsetWidth - totalPadding;
-          
-          // 确保宽度在合理范围内，并使用整数避免像素舍入问题
-          const newWidth = Math.floor(Math.max(300, contentWidth));
-          setMapContainerWidth(newWidth);
-          
-          console.log('Map container updated:', {
-            containerWidth: mapBorder.offsetWidth,
-            totalPadding,
-            contentWidth,
-            newWidth
-          });
-        }
-      } catch (error) {
-        console.log('Map width update error:', error);
-        setMapContainerWidth(800); // 出错时使用默认值
-      }
-    };
-
-    // 延迟执行，确保DOM已加载
-    setTimeout(updateMapWidth, 200);
-    window.addEventListener('resize', updateMapWidth);
-
-    // 监听图片加载完成事件，重新计算尺寸
-    const handleImageLoad = () => {
-      setTimeout(updateMapWidth, 100);
-    };
-
-    const mapImages = document.querySelectorAll('.map-border img');
-    mapImages.forEach(img => {
-      if (img.complete) {
-        handleImageLoad();
-      } else {
-        img.addEventListener('load', handleImageLoad);
-      }
-    });
-
-    return () => {
-      window.removeEventListener('resize', updateMapWidth);
-      mapImages.forEach(img => {
-        img.removeEventListener('load', handleImageLoad);
-      });
-    };
-  }, []);
+    // 初始化地图
+    initializeMap();
+  }, [router]);
 
   const handleMatchingClick = () => {
     router.push('/matching');
@@ -164,36 +184,6 @@ export default function HomePage() {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
-  };
-
-  // 处理地图区域点击
-  const handleMapClick = (area, index, event) => {
-    console.log('点击了地区:', area.name); // 调试信息
-    console.log('区域信息:', {
-      name: area.name,
-      coords: area.coords,
-      shape: area.shape,
-      clickEvent: event
-    });
-    
-    // 如果有event，记录点击位置用于调试
-    if (event) {
-      const rect = event.target.getBoundingClientRect();
-      console.log('点击位置:', {
-        clientX: event.clientX,
-        clientY: event.clientY,
-        relativeX: event.clientX - rect.left,
-        relativeY: event.clientY - rect.top,
-        targetRect: rect
-      });
-    }
-    
-    router.push(`/pref/${area.name}`);
-  };
-
-  // 处理鼠标悬停
-  const handleMapHover = (area, index, event) => {
-    console.log('鼠标悬停:', area.name); // 调试信息
   };
 
   return (
@@ -376,18 +366,156 @@ export default function HomePage() {
       <section className="map-section">
         <p className="map-title fade-in">地图から気に入る地方を探す</p>
         <div className="map-border fade-in">
-          <ImageMapper
+          {/* HTML原生Image Map */}
+          <img 
             src="/global/img/nihonchizu-color-todofuken.png"
-            name="japan-map"
-            areas={getScaledAreas()}
-            onClick={handleMapClick}
-            onMouseEnter={handleMapHover}
-            width={mapContainerWidth}
-            height={Math.floor(mapContainerWidth * 1.047)}
-            strokeColor="transparent"
-            lineWidth={0}
-            fillColor="transparent"
+            alt="日本地図"
+            id="japan-map-img"
+            useMap="#japan-map"
+            style={{ width: '100%', height: 'auto', display: 'block' }}
           />
+          <map name="japan-map" id="japan-map">
+            {/* 北海道 */}
+            <area shape="rect" coords="1111,36,1974,595" data-pref="hokkaido" title="北海道" alt="北海道" />
+            
+            {/* 青森県 */}
+            <area shape="rect" coords="1199,601,1353,729" data-pref="aomori" title="青森県" alt="青森県" />
+            
+            {/* 岩手県 */}
+            <area shape="rect" coords="1280,729,1409,930" data-pref="iwate" title="岩手県" alt="岩手県" />
+            
+            {/* 秋田県 */}
+            <area shape="rect" coords="1177,718,1294,915" data-pref="akita" title="秋田県" alt="秋田県" />
+            
+            {/* 山形県 */}
+            <area shape="rect" coords="1163,893,1258,1058" data-pref="yamagata" title="山形県" alt="山形県" />
+            
+            {/* 宮城県 */}
+            <area shape="rect" coords="1255,912,1360,1050" data-pref="miyagi" title="宮城県" alt="宮城県" />
+            
+            {/* 福島県 */}
+            <area shape="rect" coords="1137,1036,1316,1175" data-pref="hukushima" title="福島県" alt="福島県" />
+            
+            {/* 新潟県 */}
+            <area shape="rect" coords="970,947,1179,1157" data-pref="nigata" title="新潟県" alt="新潟県" />
+            
+            {/* 長野県 */}
+            <area shape="rect" coords="976,1186,1046,1343" data-pref="nagano" title="長野県" alt="長野県" />
+            
+            {/* 山梨県 */}
+            <area shape="rect" coords="1046,1292,1101,1365" data-pref="yamanashi" title="山梨県" alt="山梨県" />
+            
+            {/* 静岡県 */}
+            <area shape="rect" coords="987,1350,1122,1449" data-pref="sizuoka" title="静岡県" alt="静岡県" />
+            
+            {/* 富山県 */}
+            <area shape="rect" coords="896,1168,995,1226" data-pref="toyama" title="富山県" alt="富山県" />
+            
+            {/* 岐阜県 */}
+            <area shape="rect" coords="867,1235,983,1365" data-pref="gihu" title="岐阜県" alt="岐阜県" />
+            
+            {/* 愛知県 */}
+            <area shape="rect" coords="884,1357,987,1439" data-pref="aichi" title="愛知県" alt="愛知県" />
+            
+            {/* 石川県 */}
+            <area shape="rect" coords="845,1091,930,1263" data-pref="ishikawa" title="石川県" alt="石川県" />
+            
+            {/* 福井県 */}
+            <area shape="rect" coords="775,1248,878,1336" data-pref="hukui" title="福井県" alt="福井県" />
+            
+            {/* 栃木県 */}
+            <area shape="rect" coords="1145,1145,1248,1233" data-pref="tochigi" title="栃木県" alt="栃木県" />
+            
+            {/* 群馬県 */}
+            <area shape="rect" coords="1059,1174,1162,1262" data-pref="gunma" title="群馬県" alt="群馬県" />
+            
+            {/* 茨城県 */}
+            <area shape="rect" coords="1202,1168,1290,1285" data-pref="ibaraki" title="茨城県" alt="茨城県" />
+            
+            {/* 千葉県 */}
+            <area shape="rect" coords="1198,1282,1286,1399" data-pref="tiba" title="千葉県" alt="千葉県" />
+            
+            {/* 埼玉県 */}
+            <area shape="rect" coords="1093,1246,1210,1292" data-pref="saitama" title="埼玉県" alt="埼玉県" />
+            
+            {/* 東京都 */}
+            <area shape="rect" coords="1115,1285,1210,1321" data-pref="tokyo" title="東京都" alt="東京都" />
+            
+            {/* 神奈川県 */}
+            <area shape="rect" coords="1107,1321,1199,1376" data-pref="kanagawa" title="神奈川県" alt="神奈川県" />
+            
+            {/* 滋賀県 */}
+            <area shape="rect" coords="783,1321,867,1424" data-pref="siga" title="滋賀県" alt="滋賀県" />
+            
+            {/* 三重県 */}
+            <area shape="rect" coords="825,1377,888,1555" data-pref="mie" title="三重県" alt="三重県" />
+            
+            {/* 奈良県 */}
+            <area shape="rect" coords="774,1442,815,1537" data-pref="nara" title="奈良県" alt="奈良県" />
+            
+            {/* 和歌山県 */}
+            <area shape="rect" coords="726,1478,797,1599" data-pref="wakayama" title="和歌山県" alt="和歌山県" />
+            
+            {/* 大阪府 */}
+            <area shape="rect" coords="750,1400,779,1486" data-pref="osaka" title="大阪府" alt="大阪府" />
+            
+            {/* 京都府 */}
+            <area shape="rect" coords="717,1328,793,1405" data-pref="kyoto" title="京都府" alt="京都府" />
+            
+            {/* 兵庫県 */}
+            <area shape="rect" coords="649,1312,746,1497" data-pref="hyogo" title="兵庫県" alt="兵庫県" />
+            
+            {/* 鳥取県 */}
+            <area shape="rect" coords="551,1317,657,1357" data-pref="tottori" title="鳥取県" alt="鳥取県" />
+            
+            {/* 島根県 */}
+            <area shape="rect" coords="373,1347,519,1410" data-pref="simane" title="島根県" alt="島根県" />
+            
+            {/* 山口県 */}
+            <area shape="rect" coords="284,1440,430,1503" data-pref="yamaguchi" title="山口県" alt="山口県" />
+            
+            {/* 広島県 */}
+            <area shape="rect" coords="416,1409,567,1463" data-pref="hiroshima" title="広島県" alt="広島県" />
+            
+            {/* 岡山県 */}
+            <area shape="rect" coords="541,1358,644,1446" data-pref="okayama" title="岡山県" alt="岡山県" />
+            
+            {/* 香川県 */}
+            <area shape="rect" coords="548,1467,665,1500" data-pref="kagawa" title="香川県" alt="香川県" />
+            
+            {/* 徳島県 */}
+            <area shape="rect" coords="578,1497,673,1562" data-pref="tokushima" title="徳島県" alt="徳島県" />
+            
+            {/* 高知県 */}
+            <area shape="rect" coords="474,1540,636,1654" data-pref="kouchi" title="高知県" alt="高知県" />
+            
+            {/* 愛媛県 */}
+            <area shape="rect" coords="439,1486,505,1610" data-pref="ehime" title="愛媛県" alt="愛媛県" />
+            
+            {/* 大分県 */}
+            <area shape="rect" coords="296,1532,383,1654" data-pref="oita" title="大分県" alt="大分県" />
+            
+            {/* 福岡県 */}
+            <area shape="rect" coords="238,1497,285,1606" data-pref="fukuoka" title="福岡県" alt="福岡県" />
+            
+            {/* 佐賀県 */}
+            <area shape="rect" coords="186,1552,249,1614" data-pref="saga" title="佐賀県" alt="佐賀県" />
+            
+            {/* 長崎県 */}
+            <area shape="rect" coords="22,1574,219,1723" data-pref="nagasaki" title="長崎県" alt="長崎県" />
+            
+            {/* 熊本県 */}
+            <area shape="rect" coords="234,1610,303,1723" data-pref="kumamoto" title="熊本県" alt="熊本県" />
+            
+            {/* 宮崎県 */}
+            <area shape="rect" coords="285,1640,399,1797" data-pref="miyazaki" title="宮崎県" alt="宮崎県" />
+            
+            {/* 鹿児島県 */}
+            <area shape="rect" coords="183,1730,291,1957" data-pref="kagoshima" title="鹿児島県" alt="鹿児島県" />
+            
+            {/* 沖縄県 */}
+            <area shape="rect" coords="1075,1658,1386,1884" data-pref="okinawa" title="沖縄県" alt="沖縄県" />
+          </map>
         </div>
       </section>
 

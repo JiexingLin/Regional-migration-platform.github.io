@@ -49,7 +49,7 @@ class JapaneseMigrationAgent:
             input_variables=['user_profile'],
             template="""
             あなたは、日本の「地方移住」希望者のための優秀なアシスタントAIです。
-            ユーザーから提供される以下の「ユーザー情報」を注意深く分析し、そのユーザーが地方移住を検討する上で**最も重要視している、あるいは最も解決したいと考えているであろう「3つの主要な疑問点または関心事」**を抽出してください。
+            ユーザーから提供される<user_profile>と</user_profile>の間の「ユーザー情報」を注意深く分析し、そのユーザーが地方移住を検討する上で**最も重要視している、あるいは最も解決したいと考えているであろう「3つの主要な疑問点または関心事」**を抽出してください。
 
             これらの疑問点・関心事は、後ほどSerpAPIなどの検索エンジンAPIを利用して関連情報を検索するための基礎となります。そのため、具体的かつ検索に適した形で記述することが望ましいです。ユーザーが直接的に質問していなくても、その記述内容から推測される潜在的なニーズや不安を的確に捉えてください。
             出力例：
@@ -58,9 +58,10 @@ class JapaneseMigrationAgent:
             ３、家族で週末に楽しめるレジャースポットが近くにある移住先はどこか？
             
             以下は、ユーザー情報です。
-            「ユーザー情報」：
+            <user_profile>
             {user_profile}
-
+            </user_profile>
+            
             """
         )
         
@@ -69,7 +70,7 @@ class JapaneseMigrationAgent:
             input_variables=['user_profile', 'search_results'],
             template="""
             あなたは、日本の「地方移住」希望者のための高度な提案を行うAIアシスタントです。
-            提供される「ユーザー情報」と「検索結果」を詳細に分析してください。
+            提供される<user_profile>と</user_profile>の間の「ユーザー情報」と<search_results>と</search_results>の間の「検索結果」を詳細に分析してください。
 
             その分析に基づき、ユーザーの希望や条件に最も合致すると考えられる具体的な移住先候補の「市」または「町」レベルの地域を3つ提案してください。
             重要な注意点:
@@ -105,12 +106,13 @@ class JapaneseMigrationAgent:
             }}
 
             以下は、ユーザー情報と検索結果です。
-            「ユーザー情報」：
+            <user_profile>
             {user_profile}
+            </user_profile>
 
-            「検索結果」：
+            <search_results>
             {search_results}
-
+            </search_results>
             """
         )
         
@@ -119,7 +121,7 @@ class JapaneseMigrationAgent:
             input_variables=['user_profile', 'recommended_locations'],
             template="""
             あなたは、日本の「地方移住」を成功させるためのパーソナルプランナーAIです。
-            提供される「ユーザー情報」と、「選択された移住先情報」を分析してください。
+            提供される<user_profile>と</user_profile>の間の「ユーザー情報」と<recommended_locations>と</recommended_locations>の間の「選択された移住先情報」を分析してください。
 
             これらの情報に基づき、ユーザーのための具体的な移住計画を策定してください。
             計画は「準備段階 (preparation)」「初期段階 (initial)」「定着段階 (settlement)」の3つの主要フェーズで構成してください。
@@ -152,12 +154,13 @@ class JapaneseMigrationAgent:
             }}
             
             以下は、ユーザー情報と推奨地域です。
-            「ユーザー情報」：
+            <user_profile>
             {user_profile}
+            </user_profile>
 
-            「推奨地域」：
+            <recommended_locations>
             {recommended_locations}
-            
+            </recommended_locations>
             """
         )
         

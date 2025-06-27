@@ -1,10 +1,158 @@
-import React from "react";
-export default function Nigata() {
+import React, { useEffect } from "react";
+import "../../global/css/todofuken.css";
+import nigata from "@/global/img/nigata.png";
+
+export default function Aichi() {
+  // 页面加载后处理图片地图调整大小的功能
+  useEffect(() => {
+    // 页面加载时滚动到顶部
+    window.scrollTo(0, 0);
+    
+    // 动态加载 imageMapResizer 库
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/image-map-resizer@1.0.10/js/imageMapResizer.min.js';
+    script.onload = () => {
+      // 库加载完成后，初始化图片地图调整大小功能
+      if (window.imageMapResize) {
+        window.imageMapResize();
+      }
+    };
+    document.head.appendChild(script);
+
+    // 处理下拉菜单功能
+    const handleGoButtonClick = () => {
+      const selectElement = document.getElementById('muni');
+      const url = selectElement?.value;
+      if (url) {
+        window.open(url, '_blank');
+      } else {
+        alert('市区町村を選択してください');
+      }
+    };
+
+    // 添加事件监听器
+    const goButton = document.getElementById('go');
+    if (goButton) {
+      goButton.addEventListener('click', handleGoButtonClick);
+    }
+
+    // 清理函数
+    return () => {
+      if (goButton) {
+        goButton.removeEventListener('click', handleGoButtonClick);
+      }
+      // 移除脚本标签
+      const existingScript = document.querySelector('script[src*="imageMapResizer"]');
+      if (existingScript) {
+        document.head.removeChild(existingScript);
+      }
+    };
+  }, []);
+
   return (
     <div>
       <main>
-        <h1>新潟県の内容</h1>
+        {/* ヒーローセクション */}
+        <section className="hero">
+        <div className="hero__inner">
+          <h1 className="hero__title">新潟県の魅力</h1>
+          <p className="hero__lead">
+            新潟県は弥彦山や佐渡島、清津峡など四季折々の絶景や名所が豊富で、花の公園や伝統的な祭りも多彩です。米どころならではの地酒やタレかつ丼、海鮮などグルメも充実し、温泉や自然、人の温かさ、鉄道・車ともにアクセスしやすい住環境が魅力です
+          </p>
+          <a href="#overview" className="hero__button">詳しく見る</a>
+        </div>
+        </section>
+
+        {/* 県概要セクション */}
+        <section id="overview" className="overview">
+        <h2 className="overview__heading">北海道の概要</h2>
+        <div className="overview__grid">
+          <div className="overview__box">
+            <h3>地形・気候</h3>
+            <ul>
+                <li>位置・面積：中部地方／約12,584平方km</li>
+                <li>主な地形：越後山脈や飯豊山地などの山地、越後平野、日本海に面した長い海岸線、佐渡島などの離島</li>
+                <li>気候区分：日本海側気候（冬は雪が多い）、一部内陸性気候</li>
+                <li>平均気温・降水量：春（11℃・120mm）、夏（25℃・170mm）、秋（16℃・180mm）、冬（2℃・210mm）※新潟市の都市部目安</li>
+              </ul>
+          </div>
+          <div className="overview__box">
+            <h3>人口・中心都市</h3>
+            <ul>
+                <li>総人口：約2,120,000人（2025年推計）</li>
+                <li>人口密度：約168人／km²</li>
+                <li>中心都市：新潟市（人口約780,000人、県庁所在地で行政・経済・文化の中心、信濃川や日本海に面し、地酒やグルメ、観光資源が豊富）</li>
+              </ul>
+          </div>
+        </div>
+      </section>    
+
+        {/* 市区町村マップ */}
+        <section id="municipal-map">
+          <h2>市区町村マップ</h2>
+          
+          {/* ドロップダウンメニュー */}
+          <div id="municipality-select">
+            <label htmlFor="muni">市区町村を選択：</label>
+            <select id="muni">
+              <option value="">— 選んでください —</option>
+              <option value="https://www.city.niigata.lg.jp/">新潟市</option>
+<option value="https://www.city.nagaoka.niigata.jp/">長岡市</option>
+<option value="https://www.city.sanjo.niigata.jp/">三条市</option>
+<option value="https://www.city.shibata.lg.jp/">新発田市</option>
+<option value="https://www.city.kashiwazaki.lg.jp/">柏崎市</option>
+<option value="https://www.city.ojiyama.niigata.jp/">小千谷市</option>
+<option value="https://www.city.kamo.niigata.jp/">加茂市</option>
+<option value="https://www.city.tokamachi.lg.jp/">十日町市</option>
+<option value="https://www.city.mitsuke.niigata.jp/">見附市</option>
+<option value="https://www.city.murakami.lg.jp/">村上市</option>
+<option value="https://www.city.tsubame.niigata.jp/">燕市</option>
+<option value="https://www.city.itoigawa.lg.jp/">糸魚川市</option>
+<option value="https://www.city.gosen.lg.jp/">五泉市</option>
+<option value="https://www.city.uonuma.niigata.jp/">魚沼市</option>
+<option value="https://www.city.minamiuonuma.niigata.jp/">南魚沼市</option>
+<option value="https://www.city.seiro.niigata.jp/">胎内市</option>
+<option value="https://www.city.aga.niigata.jp/">阿賀野市</option>
+<option value="https://www.city.sado.niigata.lg.jp/">佐渡市</option>
+<option value="https://www.city.tainai.niigata.jp/">胎内市</option>
+<option value="https://www.city.myoko.niigata.jp/">妙高市</option>
+<option value="https://www.town.seiro.niigata.jp/">聖籠町</option>
+<option value="https://www.town.yahiko.niigata.jp/">弥彦村</option>
+<option value="https://www.town.tagami.niigata.jp/">田上町</option>
+<option value="https://www.town.aga.niigata.jp/">阿賀町</option>
+<option value="https://www.town.tsubame.niigata.jp/">関川村</option>
+<option value="https://www.town.sekikawa.niigata.jp/">関川村</option>
+<option value="https://www.town.awashimaura.niigata.jp/">粟島浦村</option>
+<option value="https://www.town.yuzawa.niigata.jp/">湯沢町</option>
+<option value="https://www.town.tsunan.niigata.jp/">津南町</option>
+<option value="https://www.town.minamiuonuma.niigata.jp/">湯沢町</option>
+            </select>
+            <button id="go" type="button">公式サイトへ</button>
+          </div>
+
+          {/* 地図画像 */}
+          <div className="map-container">
+            <img
+              src={nigata.src}
+              alt="新潟県市区町村マップ"
+              useMap="#nigatamap"
+              style={{ maxWidth: '100%', height: 'auto', display: 'block' }}
+            />
+            <map name="nigatamap">
+              {/* 地图区域可以在这里添加 <area> 标签 */}
+              <area 
+                target="" 
+                alt="蘂取村" 
+                title="" 
+                href="https://itchao.jp/hokkaido/shibetoromura" 
+                coords="4507,2661,4184,2356" 
+                shape="rect"
+              />
+            </map>
+          </div>
+        </section>
       </main>
+
       <footer>
         <p>&copy; 2025 地方移住者サイト | すべての権利を保有</p>
       </footer>

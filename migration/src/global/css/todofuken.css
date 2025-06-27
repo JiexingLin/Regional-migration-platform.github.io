@@ -1,0 +1,304 @@
+/* 都道府県ページのスタイル */
+
+/* ヒーローセクション */
+.hero {
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('../img/hokkaido-hero.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: white;
+  padding: 80px 0;
+  text-align: center;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero__inner {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+  color: white !important;
+}
+
+.hero__inner * {
+  color: white !important;
+}
+
+.hero__title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero__lead {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  opacity: 0.9;
+}
+
+.hero__button {
+  display: inline-block;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 15px 30px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 2px solid transparent;
+}
+
+.hero__button:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* 概要セクション */
+.overview {
+  padding: 80px 0;
+  background-color: transparent;
+}
+
+.overview__heading {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 50px;
+  color: #333;
+  position: relative;
+  padding-bottom: 20px;
+}
+
+.overview__heading::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: #8b4513;
+  border-radius: 2px;
+}
+
+.overview__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.overview__box {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.overview__box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.overview__box h3 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #8b4513;
+}
+
+.overview__box ul {
+  list-style: none;
+  padding: 0;
+}
+
+.overview__box li {
+  padding: 8px 0;
+  color: #555;
+  line-height: 1.6;
+  border-bottom: 1px solid #eee;
+}
+
+.overview__box li:last-child {
+  border-bottom: none;
+}
+
+.overview__box li::before {
+  content: '•';
+  color: #8b4513;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+/* 市区町村マップセクション */
+#municipal-map {
+  padding: 80px 0;
+  background: transparent;
+}
+
+#municipal-map h2 {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 50px;
+  color: #333;
+  position: relative;
+  padding-bottom: 20px;
+}
+
+#municipal-map h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: #8b4513;
+  border-radius: 2px;
+}
+
+/* ドロップダウンセクション */
+#municipality-select {
+  width: 100%;
+  margin: 0 auto 40px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+}
+
+#municipality-select label {
+  font-weight: bold;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+#municipality-select select {
+  padding: 12px 15px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: white;
+  color: #333;
+  min-width: 200px;
+  transition: border-color 0.3s ease;
+}
+
+#municipality-select select:focus {
+  outline: none;
+  border-color: #8b4513;
+  box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+}
+
+#municipality-select button {
+  background: #8b4513;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+#municipality-select button:hover {
+  background: #a0522d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+#municipality-select button:active {
+  transform: translateY(0);
+}
+
+/* 地図画像 */
+.map-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.map-container img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.map-container img:hover {
+  transform: scale(1.02);
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+  .hero__title {
+    font-size: 2rem;
+  }
+  
+  .hero__lead {
+    font-size: 1rem;
+  }
+  
+  .overview__grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0 15px;
+  }
+  
+  .overview__box {
+    padding: 20px;
+  }
+  
+  #municipality-select {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  #municipality-select select {
+    min-width: 250px;
+  }
+  
+  .overview__heading,
+  #municipal-map h2 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 60px 0;
+  }
+  
+  .hero__title {
+    font-size: 1.8rem;
+  }
+  
+  .overview,
+  #municipal-map {
+    padding: 60px 0;
+  }
+  
+  .overview__heading,
+  #municipal-map h2 {
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+  }
+}
