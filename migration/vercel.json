@@ -1,14 +1,19 @@
 {
   "functions": {
     "api/**/*.py": {
-      "runtime": "python@3.9",
-      "maxDuration": 30
+      "runtime": "python3.11",
+      "maxDuration": 30,
+      "memory": 1024
     }
   },
   "build": {
     "env": {
-      "PYTHON_VERSION": "3.9"
+      "PYTHON_VERSION": "3.11",
+      "NODE_ENV": "production"
     }
+  },
+  "env": {
+    "USE_PYTHON_BACKEND": "true"
   },
   "rewrites": [
     {
