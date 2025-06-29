@@ -1,0 +1,19 @@
+{
+  "functions": {
+    "api/**/*.py": {
+      "runtime": "python3.9",
+      "maxDuration": 30
+    }
+  },
+  "build": {
+    "env": {
+      "PYTHON_VERSION": "3.9"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/migration/(.*)",
+      "destination": "/api/$1"
+    }
+  ]
+} 

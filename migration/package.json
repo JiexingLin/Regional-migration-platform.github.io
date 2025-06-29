@@ -3,15 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "python:install": "cd api && pip install -r requirements.txt",
-    "python:start": "cd api && python start.py",
-    "python:dev": "cd api && python main.py",
-    "dev:full": "concurrently \"npm run python:start\" \"npm run dev\"",
-    "postinstall": "echo '🔧 前端依赖安装完成。请运行 npm run python:install 安装Python依赖'"
+    "lint": "next lint"
   },
   "dependencies": {
     "@stagewise-plugins/react": "^0.4.7",
@@ -23,8 +18,6 @@
     "react-img-mapper": "^2.0.0"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "concurrently": "^8.2.2",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
     "postcss": "^8.5.4",

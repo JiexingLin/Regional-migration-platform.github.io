@@ -2,19 +2,10 @@ import os
 import json
 import asyncio
 from typing import Dict, List, Optional
-# from langchain.chat_models import ChatOpenAI
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
-# from langchain.agents import initialize_agent, Tool, AgentType
-# from langchain.utilities import SerpAPIWrapper
-from langchain.memory import ConversationBufferMemory
-from langchain_google_genai import ChatGoogleGenerativeAI
-#import pandas as pd
+import google.generativeai as genai
 from datetime import datetime
 import re
 from serpapi import GoogleSearch
-
-
 
 
 class JapaneseMigrationAgent:
@@ -27,177 +18,155 @@ class JapaneseMigrationAgent:
         google_api_key = google_api_key or os.getenv('GOOGLE_API_KEY')
         serpapi_key = serpapi_key or os.getenv('SERPAPI_API_KEY')
 
-        # 初始化大语言模型
+        # 初始化 Google Generative AI
         try:
-            self.llm = ChatGoogleGenerativeAI(
-                model="gemini-2.0-flash",
-                google_api_key=google_api_key
-            )
+            genai.configure(api_key=google_api_key)
+            self.model = genai.GenerativeModel('gemini-2.0-flash-exp')
         except Exception as e:
             raise RuntimeError("モデルの初期化に失敗しました: {}".format(e))
+            
         # 初始化搜索工具
         self.serpapi_key = serpapi_key
         
-        # 对话记忆
-        self.memory = ConversationBufferMemory(
-            memory_key="chat_history", 
-            return_messages=True
-        )
+        # 对话历史
+        self.chat_history = []
         
-        # 创建专业分析提示模板
-        self.profile_analysis_prompt = PromptTemplate(
-            input_variables=['user_profile'],
-            template="""
-            あなたは、日本の「地方移住」希望者のための優秀なアシスタントAIです。
-            ユーザーから提供される<user_profile>と</user_profile>の間の「ユーザー情報」を注意深く分析し、そのユーザーが地方移住を検討する上で**最も重要視している、あるいは最も解決したいと考えているであろう「3つの主要な疑問点または関心事」**を抽出してください。
+    async def _generate_content(self, prompt: str) -> str:
+        """
+        使用 Google Generative AI 生成内容
+        """
+        try:
+            response = await asyncio.to_thread(self.model.generate_content, prompt)
+            return response.text
+        except Exception as e:
+            print(f"内容生成中にエラーが発生しました: {e}")
+            raise
 
-            これらの疑問点・関心事は、後ほどSerpAPIなどの検索エンジンAPIを利用して関連情報を検索するための基礎となります。そのため、具体的かつ検索に適した形で記述することが望ましいです。ユーザーが直接的に質問していなくても、その記述内容から推測される潜在的なニーズや不安を的確に捉えてください。
-            出力例：
-            １、子供たちがのびのび暮らせる自然環境と、子育て支援制度が充実している移住先はどこか？
-            ２、リモートワークをしながら地域コミュニティにも参加しやすい移住先と、その方法は？
-            ３、家族で週末に楽しめるレジャースポットが近くにある移住先はどこか？
-            
-            以下は、ユーザー情報です。
-            <user_profile>
-            {user_profile}
-            </user_profile>
-            
-            """
-        )
+    async def _analyze_user_profile(self, user_profile: str) -> str:
+        """
+        分析用户档案，生成关键问题
+        """
+        prompt = f"""
+        あなたは、日本の「地方移住」希望者のための優秀なアシスタントAIです。
+        ユーザーから提供される<user_profile>と</user_profile>の間の「ユーザー情報」を注意深く分析し、そのユーザーが地方移住を検討する上で**最も重要視している、あるいは最も解決したいと考えているであろう「3つの主要な疑問点または関心事」**を抽出してください。
+
+        これらの疑問点・関心事は、後ほどSerpAPIなどの検索エンジンAPIを利用して関連情報を検索するための基礎となります。そのため、具体的かつ検索に適した形で記述することが望ましいです。ユーザーが直接的に質問していなくても、その記述内容から推測される潜在的なニーズや不安を的確に捉えてください。
+        出力例：
+        １、子供たちがのびのび暮らせる自然環境と、子育て支援制度が充実している移住先はどこか？
+        ２、リモートワークをしながら地域コミュニティにも参加しやすい移住先と、その方法は？
+        ３、家族で週末に楽しめるレジャースポットが近くにある移住先はどこか？
         
-        # 创建地点推荐提示模板
-        self.location_recommendation_prompt = PromptTemplate(
-            input_variables=['user_profile', 'search_results'],
-            template="""
-            あなたは、日本の「地方移住」希望者のための高度な提案を行うAIアシスタントです。
-            提供される<user_profile>と</user_profile>の間の「ユーザー情報」と<search_results>と</search_results>の間の「検索結果」を詳細に分析してください。
-
-            その分析に基づき、ユーザーの希望や条件に最も合致すると考えられる具体的な移住先候補の「市」または「町」レベルの地域を3つ提案してください。
-            重要な注意点:
-            提案するすべての情報（特に「推奨理由」「特徴」「支援政策」の内容）は、必ず提供された「ユーザー情報」および「検索結果」の記述内容に厳密に基づいていなければなりません。
-            検索結果に明示的に記載されていない情報や、ユーザー情報から論理的に導き出せない情報を独自に創作したり、推測で補ったりすることは絶対に避けてください。事実に基づいた正確な情報提供を最優先としてください。
-
-            各提案地域について、以下の情報を簡潔にまとめてください。
-            推奨理由 (reasons): ユーザーの個別のニーズ（JSON情報から読み取れる希望、ライフスタイル、懸念事項など）と、検索結果で見つかった情報を踏まえ、なぜその地域がユーザーにとって最適と考えられるかを具体的に記述します。複数記述可能です。
-            特徴 (features): その地域の自然環境、生活環境、主要産業、アクセスの良さ、文化、コミュニティの雰囲気など、移住を検討する上で魅力となる特筆すべき点を記述します。複数記述可能です。
-            支援政策 (policies): 検索結果から見つかった、国、都道府県、または市町村が提供する移住者支援金、住宅支援、子育て支援、就職・起業支援など、ユーザーに関連性の高い公的な支援策を記述します。複数記述可能です。
-            出力は、以下の指定されたJSON形式のみで行い、他のテキスト（挨拶、前置き、後書きなど）は一切含めないでください。 locations 配列には必ず3つの地域情報オブジェクトを含めてください。
-            {{
-                "locations": [
-                    {{
-                        "name": "地域名1",
-                        "reasons": ["理由1", "理由2",...],
-                        "features": ["特徴1", "特徴2",...],
-                        "policies": ["政策1", "政策2",...]
-                    }},
-                    {{
-                        "name": "地域名2",
-                        "reasons": ["理由1", "理由2",...],
-                        "features": ["特徴1", "特徴2",...],
-                        "policies": ["政策1", "政策2",...]
-                    }},
-                    {{
-                        "name": "地域名3",
-                        "reasons": ["理由1", "理由2",...],
-                        "features": ["特徴1", "特徴2",...],
-                        "policies": ["政策1", "政策2",...]
-                    }}
-                ]
-            }}
-
-            以下は、ユーザー情報と検索結果です。
-            <user_profile>
-            {user_profile}
-            </user_profile>
-
-            <search_results>
-            {search_results}
-            </search_results>
-            """
-        )
+        以下は、ユーザー情報です。
+        <user_profile>
+        {user_profile}
+        </user_profile>
+        """
         
-        # 创建生活规划提示模板
-        self.life_plan_prompt = PromptTemplate(
-            input_variables=['user_profile', 'recommended_locations'],
-            template="""
-            あなたは、日本の「地方移住」を成功させるためのパーソナルプランナーAIです。
-            提供される<user_profile>と</user_profile>の間の「ユーザー情報」と<recommended_locations>と</recommended_locations>の間の「選択された移住先情報」を分析してください。
+        return await self._generate_content(prompt)
 
-            これらの情報に基づき、ユーザーのための具体的な移住計画を策定してください。
-            計画は「準備段階 (preparation)」「初期段階 (initial)」「定着段階 (settlement)」の3つの主要フェーズで構成してください。
+    async def _generate_location_recommendations(self, user_profile: str, search_results: str) -> str:
+        """
+        生成地点推荐
+        """
+        prompt = f"""
+        あなたは、日本の「地方移住」希望者のための高度な提案を行うAIアシスタントです。
+        提供される<user_profile>と</user_profile>の間の「ユーザー情報」と<search_results>と</search_results>の間の「検索結果」を詳細に分析してください。
 
-            計画作成の指針:
-            １、具体的かつ実行可能: 各フェーズの計画は、ユーザーが実際に行動に移せるような具体的なステップを含めてください。
-            ２、簡潔な記述: 各ステップは簡潔かつ明確に記述してください。
-            ３、ユーザー条件の考慮: ユーザーの家族構成（例：子供の年齢、学校の手続きの必要性）、仕事の状況（例：リモートワークか現地就職か）、移住に関する希望条件（「ユーザー情報」を参照）を計画全体に反映させてください。
-            ４、地域特性の活用: 移住先の地域特性（「推奨地域」の「特徴」や「支援政策」を参照）を活かした、その地域ならではのステップや活動（例：地域のイベント参加、支援制度の申請タイミング）を提案に含めてください。
-            ５、時系列と段階的進行: 時間の経過に沿って、無理なく進められるよう段階的に計画を構成してください。各フェーズの期間（period）も適切に設定してください。
-            重要な注意点:
-            提案する計画の全てのステップは、提供された「ユーザー情報」と「推奨地域」に明確に基づいている必要があります。提供された情報から逸脱した内容や、根拠のない憶測に基づく提案を含めないでください。事実とユーザーの状況に即した、実現可能な計画作成を最優先としてください。
-            
-            出力形式:
-            以下の指定されたJSON形式のみで出力し、他のテキスト（挨拶、前置き、後書きなど）は一切含めないでください。余分な空白や改行は含めないでください。
-            必ず"preparation"、"initial"、"settlement"の3つのキーを含めてください。
-            {{
-                "preparation": {{
-                    "period": "6ヶ月前～移住1ヶ月前",
-                    "steps": ["ステップ1", "ステップ2"]
+        その分析に基づき、ユーザーの希望や条件に最も合致すると考えられる具体的な移住先候補の「市」または「町」レベルの地域を3つ提案してください。
+        重要な注意点:
+        提案するすべての情報（特に「推奨理由」「特徴」「支援政策」の内容）は、必ず提供された「ユーザー情報」および「検索結果」の記述内容に厳密に基づいていなければなりません。
+        検索結果に明示的に記載されていない情報や、ユーザー情報から論理的に導き出せない情報を独自に創作したり、推測で補ったりすることは絶対に避けてください。事実に基づいた正確な情報提供を最優先としてください。
+
+        各提案地域について、以下の情報を簡潔にまとめてください。
+        推奨理由 (reasons): ユーザーの個別のニーズ（JSON情報から読み取れる希望、ライフスタイル、懸念事項など）と、検索結果で見つかった情報を踏まえ、なぜその地域がユーザーにとって最適と考えられるかを具体的に記述します。複数記述可能です。
+        特徴 (features): その地域の自然環境、生活環境、主要産業、アクセスの良さ、文化、コミュニティの雰囲気など、移住を検討する上で魅力となる特筆すべき点を記述します。複数記述可能です。
+        支援政策 (policies): 検索結果から見つかった、国、都道府県、または市町村が提供する移住者支援金、住宅支援、子育て支援、就職・起業支援など、ユーザーに関連性の高い公的な支援策を記述します。複数記述可能です。
+        出力は、以下の指定されたJSON形式のみで行い、他のテキスト（挨拶、前置き、後書きなど）は一切含めないでください。 locations 配列には必ず3つの地域情報オブジェクトを含めてください。
+        {{
+            "locations": [
+                {{
+                    "name": "地域名1",
+                    "reasons": ["理由1", "理由2",...],
+                    "features": ["特徴1", "特徴2",...],
+                    "policies": ["政策1", "政策2",...]
                 }},
-                "initial": {{
-                    "period": "移住後3ヶ月",
-                    "steps": ["ステップ1", "ステップ2"]
+                {{
+                    "name": "地域名2",
+                    "reasons": ["理由1", "理由2",...],
+                    "features": ["特徴1", "特徴2",...],
+                    "policies": ["政策1", "政策2",...]
                 }},
-                "settlement": {{
-                    "period": "移住後1年後～",
-                    "steps": ["ステップ1", "ステップ2"]
+                {{
+                    "name": "地域名3",
+                    "reasons": ["理由1", "理由2",...],
+                    "features": ["特徴1", "特徴2",...],
+                    "policies": ["政策1", "政策2",...]
                 }}
-            }}
-            
-            以下は、ユーザー情報と推奨地域です。
-            <user_profile>
-            {user_profile}
-            </user_profile>
+            ]
+        }}
 
-            <recommended_locations>
-            {recommended_locations}
-            </recommended_locations>
-            """
-        )
+        以下は、ユーザー情報と検索結果です。
+        <user_profile>
+        {user_profile}
+        </user_profile>
+
+        <search_results>
+        {search_results}
+        </search_results>
+        """
         
-        # 创建链
-        self.profile_analysis_chain = LLMChain(
-            llm=self.llm, 
-            prompt=self.profile_analysis_prompt
-        )
+        return await self._generate_content(prompt)
+
+    async def _generate_life_plan(self, user_profile: str, recommended_locations: str) -> str:
+        """
+        生成生活规划
+        """
+        prompt = f"""
+        あなたは、日本の「地方移住」を成功させるためのパーソナルプランナーAIです。
+        提供される<user_profile>と</user_profile>の間の「ユーザー情報」と<recommended_locations>と</recommended_locations>の間の「選択された移住先情報」を分析してください。
+
+        これらの情報に基づき、ユーザーのための具体的な移住計画を策定してください。
+        計画は「準備段階 (preparation)」「初期段階 (initial)」「定着段階 (settlement)」の3つの主要フェーズで構成してください。
+
+        計画作成の指針:
+        １、具体的かつ実行可能: 各フェーズの計画は、ユーザーが実際に行動に移せるような具体的なステップを含めてください。
+        ２、簡潔な記述: 各ステップは簡潔かつ明確に記述してください。
+        ３、ユーザー条件の考慮: ユーザーの家族構成（例：子供の年齢、学校の手続きの必要性）、仕事の状況（例：リモートワークか現地就職か）、移住に関する希望条件（「ユーザー情報」を参照）を計画全体に反映させてください。
+        ４、地域特性の活用: 移住先の地域特性（「推奨地域」の「特徴」や「支援政策」を参照）を活かした、その地域ならではのステップや活動（例：地域のイベント参加、支援制度の申請タイミング）を提案に含めてください。
+        ５、時系列と段階的進行: 時間の経過に沿って、無理なく進められるよう段階的に計画を構成してください。各フェーズの期間（period）も適切に設定してください。
+        重要な注意点:
+        提案する計画の全てのステップは、提供された「ユーザー情報」と「推奨地域」に明確に基づいている必要があります。提供された情報から逸脱した内容や、根拠のない憶測に基づく提案を含めないでください。事実とユーザーの状況に即した、実現可能な計画作成を最優先としてください。
         
-        self.location_recommendation_chain = LLMChain(
-            llm=self.llm, 
-            prompt=self.location_recommendation_prompt
-        )
+        出力形式:
+        以下の指定されたJSON形式のみで出力し、他のテキスト（挨拶、前置き、後書きなど）は一切含めないでください。余分な空白や改行は含めないでください。
+        必ず"preparation"、"initial"、"settlement"の3つのキーを含めてください。
+        {{
+            "preparation": {{
+                "period": "6ヶ月前～移住1ヶ月前",
+                "steps": ["ステップ1", "ステップ2"]
+            }},
+            "initial": {{
+                "period": "移住後3ヶ月",
+                "steps": ["ステップ1", "ステップ2"]
+            }},
+            "settlement": {{
+                "period": "移住後1年後～",
+                "steps": ["ステップ1", "ステップ2"]
+            }}
+        }}
         
-        self.life_plan_chain = LLMChain(
-            llm=self.llm, 
-            prompt=self.life_plan_prompt
-        )
+        以下は、ユーザー情報と推奨地域です。
+        <user_profile>
+        {user_profile}
+        </user_profile>
+
+        <recommended_locations>
+        {recommended_locations}
+        </recommended_locations>
+        """
         
-        # # 创建工具列表
-        # self.tools = [
-        #     Tool(
-        #         name="日本の地方政策検索",
-        #         func=self.search.run,
-        #         description="日本各地域の政策、補助金、生活情報を検索"
-        #     )
-        # ]
-        
-        # # 初始化Agent
-        # self.agent = initialize_agent(
-        #     tools=self.tools,
-        #     llm=self.llm,
-        #     agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,
-        #     memory=self.memory,
-        #     verbose=True
-        # )
-    
+        return await self._generate_content(prompt)
+
     async def search_with_serpapi(self, query: str) -> tuple:
         """
         使用SerpAPI进行搜索并返回完整结果和前两条结果的标题与URL
@@ -249,9 +218,7 @@ class JapaneseMigrationAgent:
             search_top_results = {}  # 存储每个问题的前两条搜索结果
             
             # 分析用户资料，生成问题
-            questions_response = self.profile_analysis_chain.invoke({"user_profile": profile_str})
-            # 从响应中提取文本内容
-            questions_text = questions_response.get('text', '') if isinstance(questions_response, dict) else str(questions_response)
+            questions_text = await self._analyze_user_profile(profile_str)
             questions = [q.strip() for q in questions_text.split('\n') if q.strip()]
             
             for question in questions:
@@ -267,13 +234,7 @@ class JapaneseMigrationAgent:
                 search_top_results[clean_question] = top_three
             
             # 生成推荐地点
-            response = self.location_recommendation_chain.invoke({
-                "user_profile": profile_str,
-                "search_results": str(search_results)
-            })
-            
-            # 从响应中提取文本内容
-            response_text = response.get('text', '') if isinstance(response, dict) else str(response)
+            response_text = await self._generate_location_recommendations(profile_str, str(search_results))
             
             # 清理响应中的markdown标记和多余的空格
             response_text = response_text.replace('```json\n', '').replace('\n```', '').strip()
@@ -301,13 +262,7 @@ class JapaneseMigrationAgent:
         try:
             profile_str = "\n".join([f"{k}: {str(v)}" for k, v in user_profile.items()])
             
-            response = self.life_plan_chain.invoke({
-                "user_profile": profile_str,
-                "recommended_locations": recommended_locations
-            })
-            
-            # 从响应中提取文本内容
-            response_text = response.get('text', '') if isinstance(response, dict) else str(response)
+            response_text = await self._generate_life_plan(profile_str, recommended_locations)
             
             # 清理响应中的markdown标记和多余的空格
             response_text = response_text.replace('```json\n', '').replace('\n```', '').strip()

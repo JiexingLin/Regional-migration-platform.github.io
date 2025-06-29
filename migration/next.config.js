@@ -1,5 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
+  experimental: {
+    serverComponentsExternalPackages: ['python-shell']
+  },
+  webpack: (config, { isServer }) => {
+    // 优化 bundle 大小
+    if (isServer) {
+      config.externals.push('canvas', 'jsdom')
+    }
+    return config
+  },
   async rewrites() {
     return [
       {

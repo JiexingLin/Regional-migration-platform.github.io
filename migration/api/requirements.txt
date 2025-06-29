@@ -1,11 +1,21 @@
-fastapi
-uvicorn
-python-multipart
-langchain==0.3.0
-langchain-core==0.3.0
-langchain-google-genai==2.0.0
-google-generativeai>=0.7.0,<0.8.0
-google-api-python-client
-google-search-results
-pydantic>=2.7.4,<3.0.0
-aiofiles
+# 核心 API 框架
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# 文件处理
+python-multipart==0.0.6
+aiofiles==23.2.1
+
+# Google AI (使用更轻量级的配置)
+google-generativeai==0.7.2
+
+# 搜索功能
+google-search-results==2.4.2
+
+# 数据处理
+pydantic==2.7.4
+
+# 基础依赖
+python-dotenv==1.0.0
+httpx==0.25.2
+aiohttp==3.9.1
