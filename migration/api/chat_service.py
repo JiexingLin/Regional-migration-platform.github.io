@@ -5,12 +5,10 @@ import asyncio
 from typing import List, Dict, Any, AsyncGenerator
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
-from langchain_core.output_parsers import StrOutputParser
-from dotenv import load_dotenv
+
 import logging
 
-# 加载环境变量
-load_dotenv()
+
 
 # 配置日志
 logging.basicConfig(level=logging.INFO)

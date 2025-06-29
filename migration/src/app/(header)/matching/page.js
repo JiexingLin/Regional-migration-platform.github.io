@@ -94,7 +94,7 @@ export default function MatchingPage() {
         "家族構成": {
           "構成": formData.familyStructure,
           "その他": formData.familyStructureOther,
-          "お子様の年齢": formData.childAge
+          "お子様の年齢": formData.childAge ? `${formData.childAge}歳` : ''
         },
         "移住理由": formData.migrationReason
       },
@@ -117,8 +117,8 @@ export default function MatchingPage() {
         "住まい": {
           "希望する住居タイプ": formData.housingType,
           "予算": {
-            "家賃": formData.rentBudget,
-            "購入": formData.purchaseBudget
+            "家賃": formData.rentBudget ? `${formData.rentBudget}万円` : '',
+            "購入": formData.purchaseBudget ? `${formData.purchaseBudget}万円` : ''
           },
           "必須条件": formData.housingRequirements
         },
@@ -229,15 +229,21 @@ export default function MatchingPage() {
             </div>
             {formData.familyStructure === 'お子様あり' && (
               <div>
-                <label htmlFor="childAge">お子様の年齢:</label>
-                <input
-                  type="number"
-                  id="childAge"
-                  name="childAge"
-                  value={formData.childAge}
-                  onChange={handleInputChange}
-                  className={styles.inputStyled}
-                />
+                <label htmlFor="childAge">お子様の年齢（歳）:</label>
+                <div className={styles.inputWithUnit}>
+                  <input
+                    type="number"
+                    id="childAge"
+                    name="childAge"
+                    value={formData.childAge}
+                    placeholder="例：10"
+                    min="1"
+                    step="1"
+                    onChange={handleInputChange}
+                    className={styles.inputStyled}
+                  />
+                  <span className={styles.unit}>歳</span>
+                </div>
               </div>
             )}
             {formData.familyStructure === 'その他' && (
@@ -443,29 +449,39 @@ export default function MatchingPage() {
             </div>
 
             <div>
-              <label htmlFor="rentBudget">家賃の場合：月額</label>
-              <input
-                type="number"
-                id="rentBudget"
-                name="rentBudget"
-                value={formData.rentBudget}
-                onChange={handleInputChange}
-                placeholder="円まで"
-                className={styles.inputStyled}
-              />
+              <label htmlFor="rentBudget">家賃の場合：月額（万円まで）</label>
+              <div className={styles.inputWithUnit}>
+                <input
+                  type="number"
+                  id="rentBudget"
+                  name="rentBudget"
+                  value={formData.rentBudget}
+                  onChange={handleInputChange}
+                  placeholder="例：10"
+                  min="1"
+                  step="1"
+                  className={styles.inputStyled}
+                />
+                <span className={styles.unit}>万円</span>
+              </div>
             </div>
 
             <div>
-              <label htmlFor="purchaseBudget">購入の場合：総額</label>
-              <input
-                type="number"
-                id="purchaseBudget"
-                name="purchaseBudget"
-                value={formData.purchaseBudget}
-                onChange={handleInputChange}
-                placeholder="円まで"
-                className={styles.inputStyled}
-              />
+              <label htmlFor="purchaseBudget">購入の場合：総額（万円まで）</label>
+              <div className={styles.inputWithUnit}>
+                <input
+                  type="number"
+                  id="purchaseBudget"
+                  name="purchaseBudget"
+                  value={formData.purchaseBudget}
+                  onChange={handleInputChange}
+                  placeholder="例：200"
+                  min="1"
+                  step="1"
+                  className={styles.inputStyled}
+                />
+                <span className={styles.unit}>万円</span>
+              </div>
             </div>
 
             <label>住まいの必須条件・希望条件（複数選択可）:</label>

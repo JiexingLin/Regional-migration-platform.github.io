@@ -7,10 +7,8 @@ import sys
 import os
 import json
 import asyncio
-from dotenv import load_dotenv
 
-# 加载环境变量
-load_dotenv()
+
 
 from local_migration import JapaneseMigrationAgent
 from chat_service import chat_service

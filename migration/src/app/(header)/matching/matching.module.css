@@ -286,4 +286,27 @@
 
 .h1Color {
   color: #333;
+}
+
+/* 带单位显示的输入框容器 */
+.inputWithUnit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  margin-bottom: 16px;
+}
+
+.inputWithUnit .inputStyled {
+  margin-top: 0;
+  margin-bottom: 0;
+  flex: 1;
+}
+
+.unit {
+  font-size: 1rem;
+  color: #666;
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 0 4px;
 } 
