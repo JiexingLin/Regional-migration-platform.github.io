@@ -8,6 +8,6 @@ google-generativeai==0.8.0
 google-api-python-client
 google-search-results
 python-dotenv
-pydantic==2.5.0
+pydantic>=2.7.4,<3.0.0
 aiofiles
 asyncio-throttle 
