@@ -11,6 +11,7 @@ export default function MatchingPage() {
     currentLocation: '',
     familyStructure: '',
     familyStructureOther: '',
+    childAge: '', // 🔧 添加缺失的childAge字段
     migrationReason: '',
     
     // 第2部：移住先での暮らしのご希望
@@ -153,7 +154,7 @@ export default function MatchingPage() {
   // 处理输入框变化
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value || '' }));
   };
 
   return (
