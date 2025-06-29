@@ -1,8 +1,13 @@
 fastapi
 uvicorn
 python-multipart
-langchain
-langchain-google-genai
-google-generativeai
+langchain==0.3.0
+langchain-core==0.3.0
+langchain-google-genai==2.0.0
+google-generativeai==0.8.0
 google-api-python-client
-google-search-results 
+google-search-results
+python-dotenv
+pydantic==2.5.0
+aiofiles
+asyncio-throttle 

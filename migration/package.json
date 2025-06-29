@@ -6,7 +6,12 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "python:install": "cd api && pip install -r requirements.txt",
+    "python:start": "cd api && python start.py",
+    "python:dev": "cd api && python main.py",
+    "dev:full": "concurrently \"npm run python:start\" \"npm run dev\"",
+    "postinstall": "echo '🔧 前端依赖安装完成。请运行 npm run python:install 安装Python依赖'"
   },
   "dependencies": {
     "@stagewise-plugins/react": "^0.4.7",
@@ -19,6 +24,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "concurrently": "^8.2.2",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
     "postcss": "^8.5.4",

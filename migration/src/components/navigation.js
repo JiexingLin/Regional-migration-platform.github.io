@@ -43,14 +43,7 @@ const NavBar = () => {
               私たちについて
             </Link>
           </li>
-          <li>
-            <Link 
-              href="/chatbot" 
-              className={pathname === '/chatbot' ? 'active' : ''} onClick={() => setMenuOpen(false)}
-            >
-              チャットボット
-            </Link>
-          </li>
+
           <li>
             <Link 
               href="/matching" 
