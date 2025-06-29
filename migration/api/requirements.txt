@@ -4,10 +4,9 @@ python-multipart
 langchain==0.3.0
 langchain-core==0.3.0
 langchain-google-genai==2.0.0
-google-generativeai==0.8.0
+google-generativeai>=0.7.0,<0.8.0
 google-api-python-client
 google-search-results
 python-dotenv
 pydantic>=2.7.4,<3.0.0
 aiofiles
-asyncio-throttle 
