@@ -1,10 +1,18 @@
 
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const PYTHON_API_URL = process.env.PYTHON_API_URL || 'http://127.0.0.1:8000';
+
 export async function POST(request) {
   try {
     const { user_profile } = await request.json();
     
-    // 转发请求到FastAPI服务器
-    const response = await fetch('http://localhost:8000/api/migration/search', {
+    // 根据环境选择不同的 API 端点
+    const apiUrl = IS_PRODUCTION 
+      ? `/api/python/migration/search`  // 生产环境使用 Vercel 函数
+      : `${PYTHON_API_URL}/api/migration/search`;  // 开发环境使用本地服务器
+    
+    // 转发请求到后端服务器
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -33,7 +41,9 @@ export async function POST(request) {
       { 
         error: 'Internal Server Error', 
         detail: error.message,
-        hint: 'Please make sure the FastAPI server is running on port 8000'
+        hint: IS_PRODUCTION 
+          ? 'Python function error in production environment'
+          : 'Please make sure the FastAPI server is running on port 8000'
       },
       { status: 500 }
     );

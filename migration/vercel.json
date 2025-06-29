@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/**/*.py": {
-      "runtime": "python3.9",
+      "runtime": "python@3.9",
       "maxDuration": 30
     }
   },
@@ -12,8 +12,8 @@
   },
   "rewrites": [
     {
-      "source": "/api/migration/(.*)",
-      "destination": "/api/$1"
+      "source": "/api/python/(.*)",
+      "destination": "/api/main_handler.py"
     }
   ]
 } 

@@ -11,14 +11,7 @@ const nextConfig = {
     }
     return config
   },
-  async rewrites() {
-    return [
-      {
-        source: '/api/migration/:path*',
-        destination: 'http://localhost:8000/api/migration/:path*' // FastAPI服务器
-      }
-    ]
-  }
+  // 移除了本地开发的重写规则，在生产环境中使用 Vercel 的 API 路由
 }
 
 module.exports = nextConfig 

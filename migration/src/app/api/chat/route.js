@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 // Python后端API配置
 const PYTHON_API_URL = process.env.PYTHON_API_URL || 'http://127.0.0.1:8000';
 const USE_PYTHON_BACKEND = process.env.USE_PYTHON_BACKEND !== 'false';
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 // 模拟流式AI响应的函数（备用方案）
 async function* generateMockResponse(message) {
@@ -56,7 +57,12 @@ async function* generateMockResponse(message) {
 // 调用Python后端的流式API
 async function* callPythonBackend(message, sessionId) {
   try {
-    const response = await fetch(`${PYTHON_API_URL}/api/chat`, {
+    // 根据环境选择不同的 API 端点
+    const apiUrl = IS_PRODUCTION 
+      ? `/api/python/chat`  // 生产环境使用统一的 Vercel 函数
+      : `${PYTHON_API_URL}/api/chat`;  // 开发环境使用本地服务器
+    
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -173,7 +179,11 @@ export async function POST(request) {
 export async function GET() {
   try {
     // 检查Python后端状态
-    const pythonStatus = await fetch(`${PYTHON_API_URL}/api/chat/status`, {
+    const statusUrl = IS_PRODUCTION 
+      ? '/api/python/chat/status'  // 生产环境
+      : `${PYTHON_API_URL}/api/chat/status`;  // 开发环境
+    
+    const pythonStatus = await fetch(statusUrl, {
       method: 'GET',
       timeout: 5000
     }).then(res => res.json()).catch(() => ({ status: 'offline' }));
