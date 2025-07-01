@@ -1,0 +1,26 @@
+# Vercel Python Runtime 依存ファイル - 完全機能版を使用
+# 注意：VercelはPython 3.12を使用、一部パッケージのバージョンが互換性必要
+
+# Google AIサービス
+google-generativeai==0.7.2
+
+# 検索機能
+google-search-results==2.4.2
+serpapi==0.1.5
+
+# データ処理と検証
+pydantic==2.7.4
+
+# HTTPと非同期リクエスト
+httpx==0.25.2
+aiohttp==3.9.1
+requests==2.31.0
+
+# 環境変数管理
+python-dotenv==1.0.0
+
+# ファイル処理
+aiofiles==23.2.1
+
+# ファイルアップロード処理（元migration/api用）
+python-multipart==0.0.6 
