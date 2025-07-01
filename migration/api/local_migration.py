@@ -51,7 +51,7 @@ class JapaneseMigrationAgent:
         # 初始化 Google Generative AI
         try:
             genai.configure(api_key=google_api_key)
-            self.model = genai.GenerativeModel('gemini-2.0-flash-exp')
+            self.model = genai.GenerativeModel('gemini-2.0-flash')
         except Exception as e:
             raise RuntimeError("モデルの初期化に失敗しました: {}".format(e))
             

@@ -200,42 +200,64 @@ const ChatBot = () => {
   const formatBotMessage = (content) => {
     if (!content) return '';
     
-    let formatted = content
-      // 1. 处理Markdown链接 [text](url) -> <a href="url" target="_blank" rel="noopener noreferrer">text</a>
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="chat-link">$1</a>')
+    // 分步处理，避免在链式调用中引用未完成的变量
+    let formatted = content;
+    
+    // 1. 先处理Markdown链接 [text](url) -> <a href="url" target="_blank" rel="noopener noreferrer">text</a>
+    formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+      // 检查URL长度，超过50字符使用特殊样式
+      const className = url.length > 50 ? 'long-url' : 'chat-link';
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="${className}">${text}</a>`;
+    });
+    
+    // 2. 处理裸露的长URL（没有markdown格式的直接URL）
+    formatted = formatted.replace(/(https?:\/\/[^\s<>"{}|\\^`\[\]]+)/g, (match, url, offset, string) => {
+      // 检查URL前后是否已经被包裹在链接标签中
+      const beforeMatch = string.substring(Math.max(0, offset - 10), offset);
+      const afterMatch = string.substring(offset + match.length, Math.min(string.length, offset + match.length + 10));
       
-      // 2. 处理双星号加粗 (**text**)
-      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      if (beforeMatch.includes('href="') || afterMatch.includes('</a>')) {
+        return match; // 已经是链接的一部分，不处理
+      }
       
-      // 3. 处理数字列表 (1. 内容)
-      .replace(/(\d+\.\s)/g, '\n\n$1')
-      
-      // 4. 处理星号列表项 (* 内容)
-      .replace(/(\*\s+)([^*\n]+)/g, '\n• $2')
-      
-      // 5. 处理减号列表项 (- 内容)
-      .replace(/(-\s+)([^-\n]+)/g, '\n• $2')
-      
-      // 6. 处理冒号后的内容（主要用于分类标题）
-      .replace(/([^:\n]):(?=\s*[^\n])/g, '$1:\n')
-      
-      // 7. 处理问号和感叹号后的段落
-      .replace(/([？?!！])(\s*)([あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん例まず福詳])/g, '$1\n\n$3')
-      
-      // 8. 处理句号后的段落
-      .replace(/([。])(\s*)([１２３４５１-９0-9例まず福あいうえお詳])/g, '$1\n\n$3')
-      
-      // 9. 处理特殊关键词前的换行
-      .replace(/(例えば|まず|また|さらに|なお|ちなみに|つまり|具体的には|詳細情報)/g, '\n\n$1')
-      
-      // 10. 多个连续空格转换为单一换行
-      .replace(/\s{2,}/g, ' ')
-      
-      // 11. 清理多余的换行符
-      .replace(/\n{3,}/g, '\n\n')
-      
-      // 12. 去除开头和结尾的空白
-      .trim();
+      // 对于长URL使用特殊样式，短URL使用普通样式
+      const className = url.length > 50 ? 'long-url' : 'chat-link';
+      const displayText = url.length > 60 ? url.substring(0, 40) + '...' + url.substring(url.length - 15) : url;
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="${className}" title="${url}">${displayText}</a>`;
+    });
+    
+    // 3. 处理双星号加粗 (**text**)
+    formatted = formatted.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    
+    // 4. 处理数字列表 (1. 内容)
+    formatted = formatted.replace(/(\d+\.\s)/g, '\n\n$1');
+    
+    // 5. 处理星号列表项 (* 内容)
+    formatted = formatted.replace(/(\*\s+)([^*\n]+)/g, '\n• $2');
+    
+    // 6. 处理减号列表项 (- 内容)
+    formatted = formatted.replace(/(-\s+)([^-\n]+)/g, '\n• $2');
+    
+    // 7. 处理冒号后的内容（主要用于分类标题）
+    formatted = formatted.replace(/([^:\n]):(?=\s*[^\n])/g, '$1:\n');
+    
+    // 8. 处理问号和感叹号后的段落
+    formatted = formatted.replace(/([？?!！])(\s*)([あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん例まず福詳])/g, '$1\n\n$3');
+    
+    // 9. 处理句号后的段落
+    formatted = formatted.replace(/([。])(\s*)([１２３４５１-９0-9例まず福あいうえお詳])/g, '$1\n\n$3');
+    
+    // 10. 处理特殊关键词前的换行
+    formatted = formatted.replace(/(例えば|まず|また|さらに|なお|ちなみに|つまり|具体的には|詳細情報)/g, '\n\n$1');
+    
+    // 11. 多个连续空格转换为单一换行
+    formatted = formatted.replace(/\s{2,}/g, ' ');
+    
+    // 12. 清理多余的换行符
+    formatted = formatted.replace(/\n{3,}/g, '\n\n');
+    
+    // 13. 去除开头和结尾的空白
+    formatted = formatted.trim();
     
     return formatted;
   };

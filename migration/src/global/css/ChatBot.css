@@ -166,6 +166,12 @@
   line-height: 1.6;
   white-space: pre-wrap;  /* 保持换行符和空格 */
   word-wrap: break-word;  /* 长单词自动换行 */
+  /* 新增：强制处理长单词和URL的换行 */
+  word-break: break-word;
+  overflow-wrap: break-word;
+  /* 确保内容不会超出容器 */
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .message.user .message-content {
@@ -268,7 +274,7 @@
   -ms-user-select: text;
 }
 
-/* 聊天链接样式 */
+/* 聊天链接样式 - 修改后的版本 */
 .message.bot .message-content .chat-link {
   color: #667eea;
   text-decoration: none;
@@ -279,7 +285,14 @@
   transition: all 0.3s ease;
   font-weight: 500;
   display: inline-block;
-  margin: 2px;
+  margin: 2px 4px 2px 0;
+  /* 新增：确保链接能够正确换行 */
+  word-break: break-all;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  box-sizing: border-box;
+  /* 链接在窄屏幕下的特殊处理 */
+  hyphens: auto;
 }
 
 .message.bot .message-content .chat-link:hover {
@@ -302,7 +315,7 @@
   margin-left: 2px;
 }
 
-/* 链接在移动端的优化 */
+/* 链接在移动端的优化 - 更新版本 */
 @media (max-width: 768px) {
   .message.bot .message-content .chat-link {
     padding: 4px 8px;
@@ -310,16 +323,25 @@
     margin: 2px 0;
     display: inline-block;
     word-break: break-all;
+    overflow-wrap: anywhere; /* 更强制的换行 */
+    line-height: 1.4;
   }
 }
 
-/* 格式化内容容器 */
+/* 格式化内容容器 - 增强版本 */
 .message.bot .message-content .formatted-content {
   width: 100%;
+  /* 新增：确保内容容器能够正确处理溢出 */
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
 }
 
 .message.bot .message-content .formatted-content > * {
   margin: 0;
+  /* 新增：确保所有子元素都遵循换行规则 */
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .message.bot .message-content .formatted-content > * + * {
@@ -329,11 +351,34 @@
 /* 确保链接在格式化内容中正确显示 */
 .message.bot .message-content .formatted-content .chat-link {
   margin: 2px 4px 2px 0;
+  /* 新增：在格式化内容中的链接也要能正确换行 */
+  max-width: calc(100% - 8px);
 }
 
 /* 详细信息部分的特殊样式 */
 .message.bot .message-content .formatted-content {
   line-height: 1.6;
+}
+
+/* 新增：特殊处理超长URL */
+.message.bot .message-content .long-url {
+  font-size: 12px;
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px dashed rgba(102, 126, 234, 0.3);
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  display: block;
+  margin: 4px 0;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.message.bot .message-content .long-url:hover {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: #667eea;
 }
 
 /* 突出显示重要信息 */
