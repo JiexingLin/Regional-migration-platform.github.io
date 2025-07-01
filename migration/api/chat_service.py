@@ -24,7 +24,7 @@ class ChatBotService:
         self._initialize_model()
         
     def _load_trusted_urls(self) -> Dict[str, str]:
-        """加载可信的官方URL数据库"""
+        
         return {
             # 都道府県公式サイト
             'hokkaido': 'https://www.pref.hokkaido.lg.jp/',
