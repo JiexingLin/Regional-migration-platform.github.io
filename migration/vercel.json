@@ -3,11 +3,7 @@
     "env": {
       "USE_PYTHON_BACKEND": "true",
       "NODE_ENV": "production"
-    },
-    "functions": {
-      "api/**/*.py": {
-        "runtime": "python@3.12"
-      }
+    }
     }
   }
   
