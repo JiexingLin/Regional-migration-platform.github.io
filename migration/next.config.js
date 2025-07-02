@@ -1,9 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
-  experimental: {
-    serverComponentsExternalPackages: ['python-shell']
-  },
+  serverExternalPackages: ['python-shell'],
   webpack: (config, { isServer }) => {
     // 优化 bundle 大小
     if (isServer) {
