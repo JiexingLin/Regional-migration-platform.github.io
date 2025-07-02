@@ -4,14 +4,9 @@
     "USE_PYTHON_BACKEND": "true",
     "NODE_ENV": "production"
   },
-  "builds": [
-    {
-      "src": "next.config.js",
-      "use": "@vercel/next"
-    },
-    {
-      "src": "api/**/*.py",
-      "use": "@vercel/python"
+  "functions": {
+    "api/**/*.py": {
+      "runtime": "python@3.11"
     }
-  ]
+  }
 } 

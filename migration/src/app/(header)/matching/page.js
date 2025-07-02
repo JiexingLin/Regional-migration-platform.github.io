@@ -63,7 +63,7 @@ export default function MatchingPage() {
     
     try {
       // 发送数据到后端API
-      const response = await fetch('http://localhost:8000/api/migration/search', {
+      const response = await fetch('/api/migration/search', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
