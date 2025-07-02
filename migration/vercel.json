@@ -13,16 +13,5 @@
       "src": "api/**/*.py",
       "use": "@vercel/python"
     }
-  ],
-  "functions": {
-    "api/main_handler.py": {
-      "runtime": "python3.12"
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/api/python/:path*",
-      "destination": "/api/main_handler.py"
-    }
   ]
 } 

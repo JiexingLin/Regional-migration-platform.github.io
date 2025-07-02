@@ -54,12 +54,12 @@ async function* generateMockResponse(message) {
   yield { type: 'end' };
 }
 
-// 调用Python后端的流式API
+// 调用Python后端API
 async function* callPythonBackend(message, sessionId) {
   try {
     // 根据环境选择不同的 API 端点
     const apiUrl = IS_PRODUCTION 
-      ? `/api/python/chat`  // 生产环境使用统一的 Vercel 函数
+      ? `/api/chat`  // 生产环境使用标准的 Vercel 函数
       : `${PYTHON_API_URL}/api/chat`;  // 开发环境使用本地服务器
     
     const response = await fetch(apiUrl, {
@@ -78,28 +78,14 @@ async function* callPythonBackend(message, sessionId) {
       throw new Error(`Python backend error: ${response.status}`);
     }
 
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
+    // 对于Vercel函数，响应是JSON而不是流
+    const data = await response.json();
+    yield {
+      type: 'chunk',
+      content: data.response || data.error || 'エラーが発生しました'
+    };
+    yield { type: 'end' };
 
-    while (true) {
-      const { done, value } = await reader.read();
-      
-      if (done) break;
-
-      const chunk = decoder.decode(value);
-      const lines = chunk.split('\n').filter(line => line.trim());
-
-      for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          try {
-            const data = JSON.parse(line.slice(6));
-            yield data;
-          } catch (parseError) {
-            console.error('Failed to parse Python backend response:', parseError);
-          }
-        }
-      }
-    }
   } catch (error) {
     console.error('Python backend call failed:', error);
     // 如果Python后端失败，返回错误消息
@@ -180,7 +166,7 @@ export async function GET() {
   try {
     // 检查Python后端状态
     const statusUrl = IS_PRODUCTION 
-      ? '/api/python/chat/status'  // 生产环境
+      ? '/api/chat'  // 生产环境 - 发送GET请求到chat端点获取状态
       : `${PYTHON_API_URL}/api/chat/status`;  // 开发环境
     
     const pythonStatus = await fetch(statusUrl, {
