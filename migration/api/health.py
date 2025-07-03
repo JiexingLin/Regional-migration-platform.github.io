@@ -27,7 +27,8 @@ class handler(BaseHTTPRequestHandler):
                     'has_serpapi_key': bool(serpapi_key),
                     'use_python_backend': use_python_backend,
                     'python_version': self._get_python_version()
-                }
+                },
+                'dependencies': self._check_dependencies()
             }
             
             # 如果缺少关键配置，调整状态
@@ -63,6 +64,51 @@ class handler(BaseHTTPRequestHandler):
         """获取Python版本信息"""
         import sys
         return f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+    
+    def _check_dependencies(self):
+        """检查所需的依赖包"""
+        dependencies = []
+        required_packages = [
+            ('google.generativeai', 'genai'),
+            ('serpapi', 'GoogleSearch'),
+            ('requests', 'requests'),
+            ('json', 'json'),
+            ('asyncio', 'asyncio')
+        ]
+        
+        for package_name, import_name in required_packages:
+            try:
+                if import_name == 'GoogleSearch':
+                    from serpapi import GoogleSearch
+                    version = 'available'
+                elif import_name == 'genai':
+                    import google.generativeai as genai
+                    version = getattr(genai, '__version__', 'unknown')
+                else:
+                    module = __import__(import_name)
+                    version = getattr(module, '__version__', 'unknown')
+                
+                dependencies.append({
+                    'package': package_name,
+                    'status': 'installed',
+                    'version': version
+                })
+            except ImportError as e:
+                dependencies.append({
+                    'package': package_name,
+                    'status': 'missing',
+                    'version': None,
+                    'error': str(e)
+                })
+            except Exception as e:
+                dependencies.append({
+                    'package': package_name,
+                    'status': 'error',
+                    'version': None,
+                    'error': str(e)
+                })
+        
+        return dependencies
 
     def _send_json_response(self, data, status_code=200):
         """发送JSON响应"""

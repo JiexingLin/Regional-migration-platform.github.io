@@ -2,7 +2,7 @@
 import os
 import re
 import asyncio
-import aiohttp
+import requests
 from typing import List, Dict, Any, AsyncGenerator
 import google.generativeai as genai
 import logging
@@ -430,12 +430,11 @@ class ChatBotService:
             return True
         return False
 
-    async def _validate_url(self, url: str) -> bool:
-        """URL的有效性验证（异步）"""
+    def _validate_url(self, url: str) -> bool:
+        """URL的有效性验证（同步版本）"""
         try:
-            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=5)) as session:
-                async with session.head(url) as response:
-                    return response.status < 400
+            response = requests.head(url, timeout=5, allow_redirects=True)
+            return response.status_code < 400
         except Exception as e:
             logger.warning(f"URL validation failed for {url}: {e}")
             return False
@@ -540,7 +539,7 @@ class ChatBotService:
                 # 验证是否为官方网站
                 if self._is_official_site(url, title):
                     # 再次验证URL有效性
-                    if await self._validate_url(url):
+                    if self._validate_url(url):
                         urls.append(url)
             
             return urls
@@ -581,7 +580,7 @@ class ChatBotService:
         fixed_content = content
         for url in urls:
             try:
-                is_valid = await self._validate_url(url)
+                is_valid = self._validate_url(url)
                 if not is_valid:
                     # 移除无效URL，替换为搜索建议
                     logger.warning(f"Invalid URL detected and removed: {url}")
@@ -634,7 +633,7 @@ class ChatBotService:
                 url_section = "\n\n**関連公式サイト:**\n"
                 for i, url in enumerate(official_urls, 1):
                     # 尝试获取网站标题
-                    title = await self._get_site_title(url) or f"公式サイト{i}"
+                    title = self._get_site_title(url) or f"公式サイト{i}"
                     url_section += f"- [{title}]({url})\n"
                 
                 content += url_section
@@ -688,17 +687,16 @@ class ChatBotService:
         
         return ""
     
-    async def _get_site_title(self, url: str) -> str:
-        """获取网站标题"""
+    def _get_site_title(self, url: str) -> str:
+        """获取网站标题（同步版本）"""
         try:
-            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=3)) as session:
-                async with session.get(url) as response:
-                    if response.status == 200:
-                        html = await response.text()
-                        # 简单的标题提取
-                        title_match = re.search(r'<title>(.*?)</title>', html, re.IGNORECASE)
-                        if title_match:
-                            return title_match.group(1).strip()[:50]  # 限制长度
+            response = requests.get(url, timeout=3, allow_redirects=True)
+            if response.status_code == 200:
+                html = response.text
+                # 简单的标题提取
+                title_match = re.search(r'<title>(.*?)</title>', html, re.IGNORECASE)
+                if title_match:
+                    return title_match.group(1).strip()[:50]  # 限制长度
         except Exception:
             pass
         return ""

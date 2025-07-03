@@ -68,4 +68,27 @@
 | `SERPAPI_API_KEY` | 可选 | 搜索API密钥（增强URL搜索） |
 | `USE_PYTHON_BACKEND` | 推荐 | 设置为 `true` |
 
-**注意**: 只有 `GOOGLE_API_KEY` 是绝对必需的，其他都是可选的。 
+**注意**: 只有 `GOOGLE_API_KEY` 是绝对必需的，其他都是可选的。
+
+## 🔧 故障诊断
+
+### 🔍 依赖诊断（推荐首先运行）
+```bash
+cd migration/api
+python test_imports.py  # 全面测试包导入和服务初始化
+```
+
+### 🏥 健康检查
+访问以下URL查看详细状态：
+- `https://你的域名.vercel.app/api/health` - 完整健康检查与依赖状态
+- `https://你的域名.vercel.app/api/chat/status` - 聊天服务状态
+
+### 📊 常见问题
+1. **ChatBot显示"インポートエラー"**: 
+   - 检查Vercel构建日志
+   - 运行 `python test_imports.py` 诊断
+   - 确认 `api/requirements.txt` 中没有冲突的包
+
+2. **环境变量问题**:
+   - 确认在Vercel中设置了 `GOOGLE_API_KEY`
+   - 检查 `/api/health` 端点的配置状态 

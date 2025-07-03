@@ -10,21 +10,32 @@ try:
     print("✅ ChatBotService initialized successfully")
     
 except ImportError as e:
+    import traceback
+    error_detail = traceback.format_exc()
     print(f"❌ Import error: {e}")
+    print(f"📋 Full traceback: {error_detail}")
+    
+    # 检测具体的缺失模块
+    missing_module = str(e).split("'")[-2] if "'" in str(e) else str(e)
+    print(f"🔍 Missing module: {missing_module}")
+    
     # 导入失败时使用模拟服务
     class MockChatService:
         async def generate_streaming_response(self, message, session_id):
             # 模拟流式响应
-            yield {"type": "chunk", "content": f"❌ サービス初期化エラー: 必要なモジュールが見つかりません。\n"}
-            yield {"type": "chunk", "content": f"メッセージ: {message}\n"}
-            yield {"type": "chunk", "content": f"管理者にお問い合わせください。"}
+            yield {"type": "chunk", "content": f"❌ インポートエラー: {missing_module} モジュールが見つかりません。\n\n"}
+            yield {"type": "chunk", "content": f"【解決方法】\n"}
+            yield {"type": "chunk", "content": f"1. Vercelダッシュボードのbuildsログを確認\n"}
+            yield {"type": "chunk", "content": f"2. requirements.txtのパッケージバージョンを確認\n"}
+            yield {"type": "chunk", "content": f"3. 再デプロイを実行\n\n"}
+            yield {"type": "chunk", "content": f"お送りいただいたメッセージ: {message}"}
             yield {"type": "end"}
         
         async def generate_simple_response(self, message, session_id):
-            return f"❌ サービス初期化エラー: 必要なモジュールが見つかりません。メッセージ: {message}"
+            return f"❌ インポートエラー: {missing_module} モジュールが見つかりません。メッセージ: {message}"
         
         def get_service_status(self):
-            return {"status": "error", "error": "Import failed - missing dependencies"}
+            return {"status": "error", "error": f"Import failed: {missing_module} module not found"}
     
     chat_service = MockChatService()
 
