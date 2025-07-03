@@ -124,6 +124,14 @@ class handler(BaseHTTPRequestHandler):
             self._send_cors_headers_only()
             self.end_headers()
             
+            # 立即发送一个"start"心跳包，避免前端或CDN超时
+            try:
+                init_chunk = json.dumps({"type": "start", "timestamp": self._get_timestamp()}) + "\n"
+                self.wfile.write(init_chunk.encode('utf-8'))
+                self.wfile.flush()
+            except Exception as heartbeat_err:
+                print(f"Failed to send heartbeat: {heartbeat_err}")
+            
             # 异步生成流式响应
             async def stream_response():
                 try:
@@ -206,4 +214,9 @@ class handler(BaseHTTPRequestHandler):
         """只发送CORS头部，不发送响应"""
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type') 
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+
+    def _get_timestamp(self):
+        """获取当前时间戳"""
+        import datetime
+        return datetime.datetime.now().isoformat() 
