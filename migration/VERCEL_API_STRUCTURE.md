@@ -43,15 +43,81 @@ migration/api/
       "src": "api/**/*.py",
       "use": "@vercel/python"
     }
-  ]
+  ],
+  "functions": {
+    "api/**/*.py": {
+      "runtime": "python3.9"
+    }
+  }
 }
 ```
 
-### 特点
-- ✅ **标准化**: 按照Vercel官方标准实现
-- ✅ **简化配置**: 无需复杂的rewrites规则
-- ✅ **自动映射**: Vercel自动将`api/*.py`映射为函数端点
-- ✅ **独立函数**: 每个端点独立部署，提高性能
+## 🔑 **必须设置的环境变量**
+
+### **Step 1: 获取Google AI API密钥**
+1. 访问 [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. 点击 "Create API Key"
+3. 复制生成的API密钥
+
+### **Step 2: 在Vercel中设置环境变量**
+1. 访问您的 [Vercel Dashboard](https://vercel.com/dashboard)
+2. 选择您的项目
+3. 点击 **Settings** 标签页
+4. 在左侧菜单中选择 **Environment Variables**
+5. 添加以下环境变量：
+
+| 变量名 | 值 | 说明 |
+|-------|-----|------|
+| `GOOGLE_API_KEY` | 您的Google AI API密钥 | **必需** - 用于AI聊天和移住推荐 |
+| `SERPAPI_API_KEY` | 您的SerpAPI密钥（可选） | 可选 - 用于搜索官方URL |
+| `USE_PYTHON_BACKEND` | `true` | 必需 - 启用Python后端 |
+| `NODE_ENV` | `production` | 建议 - 生产环境标识 |
+
+### **Step 3: 重新部署**
+设置环境变量后，需要重新部署：
+1. 在Vercel项目页面点击 **Deployments** 标签页
+2. 点击最新部署右侧的三个点按钮
+3. 选择 **Redeploy**
+4. 等待部署完成
+
+## 🚨 **常见问题解决**
+
+### **聊天机器人显示"Google APIキーが設定されていません"**
+- ✅ 检查是否正确设置了 `GOOGLE_API_KEY` 环境变量
+- ✅ 确认API密钥有效且没有过期
+- ✅ 重新部署项目
+
+### **移住搜索功能不工作**
+- ✅ 检查是否正确设置了 `GOOGLE_API_KEY` 环境变量
+- ✅ 重新部署项目
+
+### **部署成功但功能不工作**
+1. 检查Vercel函数日志：
+   - 项目页面 → Functions 标签页
+   - 查看最近的函数调用日志
+2. 验证环境变量：
+   - 访问 `/api/health` 端点检查服务状态
+
+## 🔧 **本地开发环境设置**
+
+1. **创建 `.env` 文件**：
+```bash
+GOOGLE_API_KEY=your_google_api_key_here
+SERPAPI_API_KEY=your_serpapi_key_here  # 可选
+USE_PYTHON_BACKEND=true
+```
+
+2. **安装依赖**：
+```bash
+cd migration/api
+pip install -r requirements.txt
+```
+
+3. **运行开发服务器**：
+```bash
+cd migration
+npm run dev
+```
 
 ## 🚀 部署要求
 
@@ -60,17 +126,17 @@ migration/api/
    - Framework: Next.js
    - Node.js Version: 18.x
 
-2. **环境变量**:
+2. **环境变量**（在Vercel Dashboard中设置）:
    ```
    GOOGLE_API_KEY=your_google_api_key
-   SERPAPI_API_KEY=your_serpapi_key
+   SERPAPI_API_KEY=your_serpapi_key  # 可选
    USE_PYTHON_BACKEND=true
    NODE_ENV=production
    ```
 
 ## 📋 Python 函数标准格式
 
-每个Python函数都按照以下格式实现：
+每个API端点都必须按照Vercel Python Runtime标准实现：
 
 ```python
 from http.server import BaseHTTPRequestHandler
@@ -87,16 +153,50 @@ class handler(BaseHTTPRequestHandler):
     
     def do_OPTIONS(self):
         # 处理CORS预检请求
-        pass
+        self._send_cors_headers()
+    
+    def _send_cors_headers(self):
+        # CORS头部设置
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.end_headers()
 ```
 
-## 🔧 本地开发
+### 特点
+- ✅ **标准化**: 按照Vercel官方标准实现
+- ✅ **简化配置**: 无需复杂的rewrites规则
+- ✅ **自动映射**: Vercel自动将`api/*.py`映射为函数端点
+- ✅ **独立函数**: 每个端点独立部署，提高性能
 
-对于本地开发，可以使用 `main.py` 中的FastAPI服务器：
+## 🔍 **调试和监控**
 
-```bash
-cd migration/api
-python main.py
+### **查看函数日志**
+1. Vercel Dashboard → 您的项目
+2. Functions 标签页
+3. 点击特定函数查看详细日志
+
+### **健康检查端点**
+访问 `/api/health` 获取系统状态：
+```json
+{
+  "status": "healthy",
+  "services": {
+    "migration": "active",
+    "chat": "active"
+  },
+  "version": "1.0.0"
+}
 ```
 
-这将在 `http://127.0.0.1:8000` 启动本地开发服务器。 
+### **聊天服务状态检查**
+访问 `/api/chat/status` 获取详细服务状态：
+```json
+{
+  "status": "active",
+  "model": "gemini-2.0-flash",
+  "has_google_api_key": true,
+  "model_initialized": true
+}
+``` 

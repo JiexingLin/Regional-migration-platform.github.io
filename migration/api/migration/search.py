@@ -12,30 +12,55 @@ try:
     
     # 初始化移住服务
     migration_agent = JapaneseMigrationAgent()
+    print("✅ JapaneseMigrationAgent initialized successfully")
     
 except ImportError as e:
-    print(f"Import error: {e}")
+    print(f"❌ Import error: {e}")
     # 导入失败时使用模拟服务
     class MockMigrationAgent:
         async def process_migration_consultation(self, user_profile):
             return {
-                "error": "移住サービスが正しく読み込まれていません", 
+                "error": "❌ 移住サービス初期化エラー: 必要なモジュールが見つかりません", 
                 "user_profile": user_profile,
-                "status": "mock"
+                "status": "import_error",
+                "solution": "管理者にお問い合わせください"
             }
     
     migration_agent = MockMigrationAgent()
 
 except Exception as e:
-    print(f"Service initialization error: {e}")
+    error_msg = str(e)
+    print(f"❌ Service initialization error: {error_msg}")
+    
+    # 环境变量相关错误的特殊处理
+    if "GOOGLE_API_KEY" in error_msg:
+        print("💡 解决方案: Vercelダッシュボードでenvironment variablesを設定してください")
+    
     # 初始化失败时使用模拟服务
     class MockMigrationAgent:
         async def process_migration_consultation(self, user_profile):
-            return {
-                "error": f"サービス初期化に失敗: {str(e)}", 
-                "user_profile": user_profile,
-                "status": "error"
-            }
+            if "GOOGLE_API_KEY" in error_msg:
+                return {
+                    "error": "❌ Google APIキーが設定されていません",
+                    "user_profile": user_profile,
+                    "status": "api_key_missing",
+                    "solution": {
+                        "steps": [
+                            "1. Vercelダッシュボードにアクセス",
+                            "2. プロジェクト設定 → Environment Variables",
+                            "3. GOOGLE_API_KEY を追加", 
+                            "4. 再デプロイ"
+                        ]
+                    },
+                    "note": "Google AI APIキーが必要です"
+                }
+            else:
+                return {
+                    "error": f"❌ サービス初期化エラー: {error_msg}", 
+                    "user_profile": user_profile,
+                    "status": "initialization_error",
+                    "solution": "管理者にお問い合わせください"
+                }
     
     migration_agent = MockMigrationAgent()
 

@@ -1,21 +1,49 @@
 from http.server import BaseHTTPRequestHandler
 import json
+import os
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         """健康检查端点"""
         try:
+            # 检查环境变量
+            google_api_key = os.getenv('GOOGLE_API_KEY')
+            serpapi_key = os.getenv('SERPAPI_API_KEY')
+            use_python_backend = os.getenv('USE_PYTHON_BACKEND')
+            
             # 基本健康检查
             health_status = {
                 'status': 'healthy',
                 'services': {
-                    'migration': 'active',
-                    'chat': 'active'
+                    'migration': 'active' if google_api_key else 'config_missing',
+                    'chat': 'active' if google_api_key else 'config_missing'
                 },
                 'version': '1.0.0',
                 'environment': 'production',
-                'timestamp': self._get_timestamp()
+                'timestamp': self._get_timestamp(),
+                'configuration': {
+                    'has_google_api_key': bool(google_api_key),
+                    'google_api_key_length': len(google_api_key) if google_api_key else 0,
+                    'has_serpapi_key': bool(serpapi_key),
+                    'use_python_backend': use_python_backend,
+                    'python_version': self._get_python_version()
+                }
             }
+            
+            # 如果缺少关键配置，调整状态
+            if not google_api_key:
+                health_status['status'] = 'configuration_error'
+                health_status['error'] = 'GOOGLE_API_KEY environment variable is not set'
+                health_status['solution'] = {
+                    'steps': [
+                        '1. Go to Vercel Dashboard',
+                        '2. Select your project',
+                        '3. Navigate to Settings → Environment Variables',
+                        '4. Add GOOGLE_API_KEY with your Google AI API key',
+                        '5. Redeploy the project'
+                    ],
+                    'api_key_link': 'https://makersuite.google.com/app/apikey'
+                }
             
             self._send_json_response(health_status)
             
@@ -30,6 +58,11 @@ class handler(BaseHTTPRequestHandler):
         """获取当前时间戳"""
         from datetime import datetime
         return datetime.utcnow().isoformat() + 'Z'
+    
+    def _get_python_version(self):
+        """获取Python版本信息"""
+        import sys
+        return f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
 
     def _send_json_response(self, data, status_code=200):
         """发送JSON响应"""

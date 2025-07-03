@@ -7,38 +7,61 @@ try:
     
     # 初始化聊天服务
     chat_service = ChatBotService()
+    print("✅ ChatBotService initialized successfully")
     
 except ImportError as e:
-    print(f"Import error: {e}")
+    print(f"❌ Import error: {e}")
     # 导入失败时使用模拟服务
     class MockChatService:
         async def generate_streaming_response(self, message, session_id):
             # 模拟流式响应
-            yield {"type": "chunk", "content": f"メッセージを受信: {message} (モック応答)"}
+            yield {"type": "chunk", "content": f"❌ サービス初期化エラー: 必要なモジュールが見つかりません。\n"}
+            yield {"type": "chunk", "content": f"メッセージ: {message}\n"}
+            yield {"type": "chunk", "content": f"管理者にお問い合わせください。"}
             yield {"type": "end"}
         
         async def generate_simple_response(self, message, session_id):
-            return f"メッセージを受信: {message} (モック応答)"
+            return f"❌ サービス初期化エラー: 必要なモジュールが見つかりません。メッセージ: {message}"
         
         def get_service_status(self):
-            return {"status": "mock", "error": "サービスが正しく読み込まれていません"}
+            return {"status": "error", "error": "Import failed - missing dependencies"}
     
     chat_service = MockChatService()
 
 except Exception as e:
-    print(f"Service initialization error: {e}")
+    error_msg = str(e)
+    print(f"❌ Service initialization error: {error_msg}")
+    
+    # 环境变量相关错误的特殊处理
+    if "GOOGLE_API_KEY" in error_msg:
+        print("💡 解决方案: Vercelダッシュボードでenvironment variablesを設定してください")
+    
     # 初始化失败时使用模拟服务
     class MockChatService:
         async def generate_streaming_response(self, message, session_id):
             # 模拟流式响应
-            yield {"type": "chunk", "content": f"API未設定、モック応答: {message}"}
+            if "GOOGLE_API_KEY" in error_msg:
+                yield {"type": "chunk", "content": "❌ Google APIキーが設定されていません。\n\n"}
+                yield {"type": "chunk", "content": "【解決方法】\n"}
+                yield {"type": "chunk", "content": "1. Vercelダッシュボードにアクセス\n"}
+                yield {"type": "chunk", "content": "2. プロジェクト設定 → Environment Variables\n"}
+                yield {"type": "chunk", "content": "3. GOOGLE_API_KEY を追加\n"}
+                yield {"type": "chunk", "content": "4. 再デプロイ\n\n"}
+                yield {"type": "chunk", "content": f"お送りいただいたメッセージ: {message}"}
+            else:
+                yield {"type": "chunk", "content": f"❌ システムエラー: {error_msg}\n"}
+                yield {"type": "chunk", "content": f"メッセージ: {message}\n"}
+                yield {"type": "chunk", "content": "管理者にお問い合わせください。"}
             yield {"type": "end"}
         
         async def generate_simple_response(self, message, session_id):
-            return f"API未設定、モック応答: {message}"
+            if "GOOGLE_API_KEY" in error_msg:
+                return f"❌ Google APIキーが設定されていません。Vercelの環境変数設定が必要です。メッセージ: {message}"
+            else:
+                return f"❌ システムエラー: {error_msg}. メッセージ: {message}"
         
         def get_service_status(self):
-            return {"status": "mock", "error": f"初期化に失敗: {str(e)}"}
+            return {"status": "error", "error": f"Initialization failed: {error_msg}"}
     
     chat_service = MockChatService()
 

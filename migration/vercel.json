@@ -1,6 +1,9 @@
 {
+    "version": 2,
     "env": {
-      "USE_PYTHON_BACKEND": "true"
+      "USE_PYTHON_BACKEND": "true",
+      "NODE_ENV": "production"
     }
-    }
+
+}
   
