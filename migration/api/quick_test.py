@@ -39,7 +39,7 @@ def test_services():
     
     try:
         # 测试chat_service
-        from chat_service import ChatBotService
+        from lib.chat_service import ChatBotService
         print("✅ ChatBotService 导入成功")
         
         # 只有在有API密钥时才测试初始化

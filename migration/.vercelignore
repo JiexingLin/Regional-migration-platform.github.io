@@ -20,6 +20,9 @@ site-packages/
 lib/python*/
 .python_packages/
 
+# 但要确保我们的lib目录不被忽略
+!lib/
+
 # Vercel构建相关
 .vercel/
 .output/

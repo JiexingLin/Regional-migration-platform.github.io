@@ -54,7 +54,7 @@ def test_specific_imports():
     print("=" * 50)
     
     try:
-        from chat_service import ChatBotService
+        from lib.chat_service import ChatBotService
         print("✅ ChatBotService: 导入成功")
         
         # 测试初始化

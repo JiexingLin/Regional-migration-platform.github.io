@@ -8,10 +8,14 @@ import os
 import json
 import asyncio
 
-
+# 添加项目根目录到Python路径
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(current_dir)
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
 from local_migration import JapaneseMigrationAgent
-from chat_service import chat_service
+from lib.chat_service import chat_service
 
 app = FastAPI(title="Migration Platform API", version="1.0.0")
 
