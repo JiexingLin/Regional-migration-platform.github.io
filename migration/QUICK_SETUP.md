@@ -65,10 +65,14 @@
 | 变量名 | 必需性 | 说明 |
 |-------|--------|------|
 | `GOOGLE_API_KEY` | **必需** | Google AI API密钥 |
-| `SERPAPI_API_KEY` | 可选 | 搜索API密钥（增强URL搜索） |
+| `SERPAPI_API_KEY` | **必需** | SerpAPI密钥（搜索功能必需） |
 | `USE_PYTHON_BACKEND` | 推荐 | 设置为 `true` |
 
-**注意**: 只有 `GOOGLE_API_KEY` 是绝对必需的，其他都是可选的。
+### 🔗 获取API密钥
+1. **Google AI API**: [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. **SerpAPI**: [SerpAPI注册](https://serpapi.com/users/sign_up) - 提供免费额度
+
+**重要**: `GOOGLE_API_KEY` 和 `SERPAPI_API_KEY` 都是必需的，缺少任何一个都会导致功能异常。
 
 ## 🔧 故障诊断
 

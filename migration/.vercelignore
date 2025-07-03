@@ -8,6 +8,28 @@ api/env/
 api/.venv/
 api/.env/
 
+# Python 包缓存（防止包安装问题）
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*/__pycache__/
+*/*/__pycache__/
+
+# 防止Python包与项目目录冲突
+serpapi/
+google/
+aiohttp/
+requests/
+asyncio/
+site-packages/
+lib/python*/
+.python_packages/
+
+# Vercel构建相关
+.vercel/
+.output/
+
 # 开发工具和文档
 *.md
 LINK_FORMAT_GUIDE.md
@@ -38,6 +60,8 @@ yarn-error.log*
 test/
 tests/
 __tests__/
+api/quick_test.py
+api/test_imports.py
 
 # 源码映射文件（生产环境不需要）
 *.map
