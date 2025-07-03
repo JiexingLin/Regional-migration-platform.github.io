@@ -12,6 +12,11 @@ except ImportError as e:
     print(f"Import error: {e}")
     # 导入失败时使用模拟服务
     class MockChatService:
+        async def generate_streaming_response(self, message, session_id):
+            # 模拟流式响应
+            yield {"type": "chunk", "content": f"メッセージを受信: {message} (モック応答)"}
+            yield {"type": "end"}
+        
         async def generate_simple_response(self, message, session_id):
             return f"メッセージを受信: {message} (モック応答)"
         
@@ -24,6 +29,11 @@ except Exception as e:
     print(f"Service initialization error: {e}")
     # 初始化失败时使用模拟服务
     class MockChatService:
+        async def generate_streaming_response(self, message, session_id):
+            # 模拟流式响应
+            yield {"type": "chunk", "content": f"API未設定、モック応答: {message}"}
+            yield {"type": "end"}
+        
         async def generate_simple_response(self, message, session_id):
             return f"API未設定、モック応答: {message}"
         
@@ -34,7 +44,7 @@ except Exception as e:
 
 class handler(BaseHTTPRequestHandler):
     def do_POST(self):
-        """处理聊天请求"""
+        """处理聊天请求 - 支持流式响应"""
         try:
             # 读取请求体
             content_length = int(self.headers.get('Content-Length', 0))
@@ -47,6 +57,7 @@ class handler(BaseHTTPRequestHandler):
             
             message = body.get('message')
             session_id = body.get('session_id', 'default')
+            stream = body.get('stream', True)  # 默认启用流式响应
             
             if not message:
                 self._send_error_response(400, "Message is required")
@@ -59,20 +70,68 @@ class handler(BaseHTTPRequestHandler):
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
             
-            response = loop.run_until_complete(
-                chat_service.generate_simple_response(message, session_id)
-            )
-            
-            self._send_json_response({
-                'response': response,
-                'session_id': session_id,
-                'type': 'complete'
-            })
+            if stream:
+                # 流式响应
+                self._handle_streaming_response(message, session_id, loop)
+            else:
+                # 非流式响应
+                response = loop.run_until_complete(
+                    chat_service.generate_simple_response(message, session_id)
+                )
+                
+                self._send_json_response({
+                    'response': response,
+                    'session_id': session_id,
+                    'type': 'complete'
+                })
             
         except json.JSONDecodeError:
             self._send_error_response(400, "Invalid JSON format")
         except Exception as e:
             self._send_error_response(500, f"Chat service error: {str(e)}")
+
+    def _handle_streaming_response(self, message, session_id, loop):
+        """处理流式响应"""
+        try:
+            # 设置流式响应头
+            self.send_response(200)
+            self.send_header('Content-Type', 'text/plain; charset=utf-8')
+            self.send_header('Cache-Control', 'no-cache')
+            self.send_header('Connection', 'keep-alive')
+            self._send_cors_headers_only()
+            self.end_headers()
+            
+            # 异步生成流式响应
+            async def stream_response():
+                try:
+                    async for chunk in chat_service.generate_streaming_response(message, session_id):
+                        # 将每个chunk转换为JSON字符串并发送
+                        chunk_json = json.dumps(chunk, ensure_ascii=False)
+                        yield chunk_json + '\n'
+                except Exception as e:
+                    # 发送错误chunk
+                    error_chunk = json.dumps({
+                        "type": "error",
+                        "content": f"ストリーミングエラー: {str(e)}"
+                    }, ensure_ascii=False)
+                    yield error_chunk + '\n'
+            
+            # 运行流式响应
+            async def run_stream():
+                async for chunk in stream_response():
+                    self.wfile.write(chunk.encode('utf-8'))
+                    self.wfile.flush()
+            
+            loop.run_until_complete(run_stream())
+            
+        except Exception as e:
+            print(f"Streaming error: {e}")
+            # 如果流式响应失败，发送错误
+            error_chunk = json.dumps({
+                "type": "error",
+                "content": f"ストリーミングエラーが発生しました: {str(e)}"
+            }, ensure_ascii=False)
+            self.wfile.write((error_chunk + '\n').encode('utf-8'))
 
     def do_GET(self):
         """处理GET请求 - 检查聊天状态"""
@@ -86,7 +145,7 @@ class handler(BaseHTTPRequestHandler):
                     'message': 'Chat API endpoint',
                     'methods': ['POST', 'GET'],
                     'endpoints': {
-                        'POST /api/chat': 'Send chat message',
+                        'POST /api/chat': 'Send chat message (supports streaming)',
                         'GET /api/chat/status': 'Get service status'
                     }
                 })

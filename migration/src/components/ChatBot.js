@@ -88,7 +88,7 @@ const ChatBot = () => {
     }
   };
 
-  // 发送消息 - 支持流式响应
+  // 发送消息 - 支持流式响应和简单响应
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
 
@@ -100,16 +100,7 @@ const ChatBot = () => {
     setIsLoading(true);
 
     try {
-      // 创建一个临时的机器人消息用于流式显示
-      const tempBotMessageId = Date.now();
-      setMessages(prev => [...prev, { 
-        id: tempBotMessageId,
-        type: 'bot', 
-        content: '', 
-        isStreaming: true 
-      }]);
-
-      // 调用流式API
+      // 发送请求
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
@@ -117,7 +108,8 @@ const ChatBot = () => {
         },
         body: JSON.stringify({
           message: currentInput,
-          sessionId: sessionId
+          sessionId: sessionId,
+          stream: true  // 请求流式响应
         }),
       });
 
@@ -125,11 +117,46 @@ const ChatBot = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
+      // 检查响应类型
+      const contentType = response.headers.get('Content-Type');
+      
+      if (contentType && contentType.includes('text/plain')) {
+        // 流式响应处理
+        await handleStreamingResponse(response);
+      } else {
+        // 简单JSON响应处理
+        await handleSimpleResponse(response);
+      }
 
-      let streamingContent = '';
+    } catch (error) {
+      console.error('Chat API Error:', error);
+      
+      // 添加错误消息
+      setMessages(prev => [...prev, { 
+        type: 'bot', 
+        content: 'すみません、システムエラーが発生しました。しばらくしてから再度お試しください。',
+        isError: true
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  // 处理流式响应
+  const handleStreamingResponse = async (response) => {
+    const tempBotMessageId = Date.now();
+    setMessages(prev => [...prev, { 
+      id: tempBotMessageId,
+      type: 'bot', 
+      content: '', 
+      isStreaming: true 
+    }]);
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let streamingContent = '';
+
+    try {
       while (true) {
         const { done, value } = await reader.read();
         
@@ -158,7 +185,7 @@ const ChatBot = () => {
                   ? { ...msg, isStreaming: false }
                   : msg
               ));
-              break;
+              return;
             } else if (data.type === 'error') {
               // 处理错误
               setMessages(prev => prev.map(msg => 
@@ -166,29 +193,52 @@ const ChatBot = () => {
                   ? { ...msg, content: data.content, isStreaming: false, isError: true }
                   : msg
               ));
-              break;
+              return;
             }
           } catch (parseError) {
             console.error('Failed to parse stream data:', parseError);
+            // 如果解析失败，尝试将整个chunk作为内容
+            if (line.trim()) {
+              streamingContent += line;
+              setMessages(prev => prev.map(msg => 
+                msg.id === tempBotMessageId 
+                  ? { ...msg, content: streamingContent }
+                  : msg
+              ));
+            }
           }
         }
       }
-
     } catch (error) {
-      console.error('Chat API Error:', error);
-      
-      // 添加错误消息
-      setMessages(prev => [...prev, { 
-        type: 'bot', 
-        content: 'すみません、システムエラーが発生しました。しばらくしてから再度お試しください。',
-        isError: true
-      }]);
-    } finally {
-      setIsLoading(false);
+      console.error('Streaming error:', error);
+      setMessages(prev => prev.map(msg => 
+        msg.id === tempBotMessageId 
+          ? { ...msg, content: 'ストリーミングエラーが発生しました。', isStreaming: false, isError: true }
+          : msg
+      ));
     }
   };
 
-
+  // 处理简单JSON响应
+  const handleSimpleResponse = async (response) => {
+    try {
+      const data = await response.json();
+      
+      // 添加机器人响应
+      setMessages(prev => [...prev, { 
+        type: 'bot', 
+        content: data.response || data.content || 'レスポンスが空です。',
+        isError: !data.response && !data.content
+      }]);
+    } catch (error) {
+      console.error('JSON parse error:', error);
+      setMessages(prev => [...prev, { 
+        type: 'bot', 
+        content: 'レスポンスの解析に失敗しました。',
+        isError: true
+      }]);
+    }
+  };
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
