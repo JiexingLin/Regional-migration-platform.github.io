@@ -48,4 +48,7 @@ __tests__/
 
 # 不必要的静态资源（如果有的话）
 src/global/pref/
-public/global/img/ 
+public/global/img/
+
+# pip console scripts
+bin/ 
