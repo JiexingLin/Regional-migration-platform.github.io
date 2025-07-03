@@ -1,6 +1,6 @@
 # 核心 API 框架
 fastapi==0.104.1
-uvicorn[standard]==0.24.0
+uvicorn==0.24.0
 
 # 文件处理
 python-multipart==0.0.6
