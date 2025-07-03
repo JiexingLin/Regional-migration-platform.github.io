@@ -3,7 +3,11 @@
     "env": {
       "USE_PYTHON_BACKEND": "true",
       "NODE_ENV": "production"
+    },
+    "build": {
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
     }
-
-}
+  }
   
