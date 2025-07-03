@@ -9,12 +9,6 @@ api/.venv/
 api/.env/
 
 # Python 包缓存（防止包安装问题）
-__pycache__/
-*.pyc
-*.pyo
-.pytest_cache/
-*/__pycache__/
-*/*/__pycache__/
 
 # 防止Python包与项目目录冲突
 serpapi/
