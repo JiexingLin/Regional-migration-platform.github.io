@@ -2,7 +2,8 @@
     "version": 2,
     "env": {
       "USE_PYTHON_BACKEND": "true",
-      "NODE_ENV": "production"
+      "NODE_ENV": "production",
+      "PYTHONDONTWRITEBYTECODE": "1"
     },
     "build": {
       "env": {

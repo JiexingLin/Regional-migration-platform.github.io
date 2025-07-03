@@ -27,8 +27,9 @@ lib/python*/
 # 开发工具和文档
 *.md
 LINK_FORMAT_GUIDE.md
-PYTHON_MIGRATION_README.md
+QUICK_SETUP.md
 README.md
+VERCEL_API_STRUCTURE.md
 
 # 系统文件
 .DS_Store
@@ -69,4 +70,9 @@ src/global/pref/
 public/global/img/
 
 # pip console scripts
-bin/ 
+bin/
+
+# Git和系统文件
+.git/
+.env.local
+.env 
